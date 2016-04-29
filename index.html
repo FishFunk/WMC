@@ -46,20 +46,20 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#page-top" data-bind="click: onPageScroll">WashMyCar</a>
+                <a class="navbar-brand" href="#page-top" data-bind="click: OnPageScroll">WashMyCar</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="#how-it-works" data-bind="click: onPageScroll">How It Works</a>
+                        <a href="#how-it-works" data-bind="click: OnPageScroll">How It Works</a>
                     </li>
                     <li>
-                        <a href="#services" data-bind="click: onPageScroll">Services</a>
+                        <a href="#services" data-bind="click: OnPageScroll">Services</a>
                     </li>
                     <li>
-                        <a href="#contact" data-bind="click: onPageScroll">Contact</a>
+                        <a href="#contact" data-bind="click: OnPageScroll">Contact</a>
                     </li>
                 </ul>
             </div>
@@ -74,7 +74,7 @@
             <div class="intro-text">
                 <div class="intro-lead-in">Welcome To <strong>Wash My Car!</strong></div>
                 <div class="intro-heading">NoVa's Most Reliable Mobile Detailing Service</div>
-                <a class="btn btn-xl" data-bind="click: onShowOrderForm" href="#">Schedule Now!</a>
+                <a class="btn btn-xl" data-bind="click: OnShowOrderForm" href="#">Schedule Now!</a>
             </div>
         </div>
     </header>
@@ -195,7 +195,6 @@
         </div>
     </section>
 
-
     <footer>
         <div class="container">
             <div>
@@ -227,111 +226,130 @@
         </div>
     </footer>
 
+    <div id="login-modal" class="modal fade" role="dialog">
+        <div class="container modal-content jumbotron">
+            <div class="row">
+                <p>With an account you don't have to re-enter your vehicle and address info. We'll never save your billing information though!</p>
+                <button type="button" class="btn btn-lg btn-primary">Log In</button>
+                <hr>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-link" data-bind="click: OnCreateNewAccount">Create New Account</button>
+                    <button type="button" class="btn btn-sm btn-link" data-bind="click: OnContinueAsGuest">Continue As Guest</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="order-form-modal" class="modal fade" role="dialog">
     	<div class="container modal-content">
 	    	<form id="order-form" data-toggle="validator" role="form" autocomplete="off">
 	    		<div class="row">
-						<legend>Order Details</legend>
+					<legend>Order Details</legend>
 						<div class="form-group col-sm-5">
 							<label class="control-label" for="checkbox">Service Options</label>
-		      		<div name="select-service">
-		      			<div class="checkbox">
-								  <label><input type="checkbox" disabled checked>Exterior Hand Wash - $32</label>
-								</div>
-								<div class="checkbox">
-								  <label><input type="checkbox" data-bind="checked: addShine">Deep Tire Clean & Shine - $20</label>
-								</div>
-								<div class="checkbox">
-								  <label><input type="checkbox" data-bind="checked: addWax">Hand Wax & Buff - $75</label>
-								</div>
-								<div class="checkbox">
-								  <label><input type="checkbox" data-bind="checked: addInterior">Full Interior - $50</label>
-								</div>
-		        	</div>
+		      		    <div name="select-service">
+		      		       <div class="checkbox">
+						      <label><input type="checkbox" disabled checked>Exterior Hand Wash - $32</label>
+							</div>
+							<div class="checkbox">
+								<label><input type="checkbox" data-bind="checked: addShine">Deep Tire Clean & Shine - $20</label>
+							</div>
+							<div class="checkbox">
+								<label><input type="checkbox" data-bind="checked: addWax">Hand Wax & Buff - $75</label>
+							</div>
+							<div class="checkbox">
+								<label><input type="checkbox" data-bind="checked: addInterior">Full Interior - $50</label>
+							</div>
+		        	     </div>
 						</div>
-						<div class="form-group col-sm-3">
-							<label class="control-label" for="select">Car Size</label>
-		      		<select data-bind="options: carSizeMultiples, optionsText: 'size', value: selectedCarSize" class="form-control"></select>
-		        	<br>
-							<label class="control-label" for="select">Condition</label>
-			      	<select name="select-condition" class="form-control">
-				        <option value="light" selected="selected">Light Dirt</option>
-				        <option value="mdeium">Medium Dirt</option>
-				        <option value="heavy">Heavy Dirt</option>
-				        <option value="filthy">Filthy</option>
-			        </select>
-						</div>
-						<div class="form-group col-sm-4">
-							<label class="control-label" for="checkbox">Date</label>
-              <div class='input-group date' id='datetimepicker'>
-                  <input type='text' class="form-control" />
-                  <span class="input-group-addon">
-                      <span class="glyphicon glyphicon-calendar"></span>
-                  </span>
-              </div>
-              <br>
-              <label class="control-label" for="select">Time Range</label>
-			      	<select name="select-time" class="form-control">
-				        <option value="1" selected="selected">9:00 - 12:00 PM</option>
-				        <option value="2">12:00 - 3:00 PM</option>
-				        <option value="3">3:00 - 6:00 PM</option>
-				        <option value="4">6:00 - 9:00 PM</option>
-			        </select>
-            </div>
+					<div class="form-group col-sm-3">
+						<label class="control-label" for="select">Car Size</label>
+		      		    <select data-bind="options: carSizeMultiples, optionsText: 'size', value: selectedCarSize" class="form-control"></select>
+		        	    <br>
+						<label class="control-label" for="select">Condition</label>
+    			      	<select name="select-condition" class="form-control">
+    				        <option value="light" selected="selected">Light Dirt</option>
+    				        <option value="mdeium">Medium Dirt</option>
+    				        <option value="heavy">Heavy Dirt</option>
+    				        <option value="filthy">Filthy</option>
+    			        </select>
 					</div>
+					<div class="form-group col-sm-4">
+						<label class="control-label" for="checkbox">Date</label>
+                        <div class='input-group date' id='datetimepicker'>
+                            <input type='text' class="form-control" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                        <br>
+                        <label class="control-label" for="select">Time Range</label>
+    			      	<select name="select-time" class="form-control">
+    				        <option value="1" selected="selected">9:00 - 12:00 PM</option>
+    				        <option value="2">12:00 - 3:00 PM</option>
+    				        <option value="3">3:00 - 6:00 PM</option>
+    				        <option value="4">6:00 - 9:00 PM</option>
+    			        </select>
+                    </div>
+				</div>
 					<div class="row">
+                        <h5>Vehicle Info</h5>
 						<div class="form-group">
-							<label class="col-sm-4 control-label" for="textinput">Make</label>
-							<div class="col-sm-6">
-							  <input name="make" placeholder="Make" class="form-control">
+							<label class="col-sm-1 control-label" for="textinput">Make</label>
+							<div class="col-sm-5">
+							  <input name="make" placeholder="Volkswagen" class="form-control">
+							</div>
+							<label class="col-sm-1 control-label" for="textinput">Model</label>
+							<div class="col-sm-5">
+							  <input name="model" placeholder="Golf" class="form-control">
 							</div>
 						</div>
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label" for="textinput">Color</label>
+                            <div class="col-sm-5">
+                              <input name="color" maxlength="12" placeholder="Silver" class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label" for="textinput">Tag*</label>
+                            <div class="col-sm-5">
+                              <input name="tag" maxlength="12" placeholder="000-0000" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h5>Contact Info</h5>
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label" for="textinput">Email</label>
+                            <div class="col-sm-5">
+                              <input type="email" name="email" maxlength="45" placeholder="johnny@appleseed.com" class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label" for="textinput">Phone</label>
+                            <div class="col-sm-5">
+                              <input name="phone" maxlength="12" placeholder="000-000-0000" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h5>Vehicle Location</h5>
 						<div class="form-group">
-							<label class="col-sm-4 control-label" for="textinput">Model</label>
-							<div class="col-sm-6">
-							  <input name="model" placeholder="Model" class="form-control">
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-4 control-label" for="textinput">Street</label>
-							<div class="col-sm-6">
+							<label class="col-sm-1 control-label" for="textinput">Street</label>
+							<div class="col-sm-11">
 							  <input name="street" placeholder="Street" class="form-control">
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-4 control-label" for="textinput">City</label>
-							<div class="col-sm-6">
+							<label class="col-sm-1 control-label" for="textinput">City</label>
+							<div class="col-sm-11">
 							  <input name="city" placeholder="City" class="form-control">
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-4 control-label" for="textinput">State</label>
-							<div class="col-sm-6">
+							<label class="col-sm-1 control-label" for="textinput">State</label>
+							<div class="col-sm-5">
 							  <input name="state" maxlength="2" placeholder="XX" class="form-control">
 							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-4 control-label" for="textinput">Zip</label>
-							<div class="col-sm-6">
+							<label class="col-sm-1 control-label" for="textinput">Zip</label>
+							<div class="col-sm-5">
 							  <input name="zip" maxlength="9" placeholder="Postal Code" class="form-control">
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-4 control-label" for="textinput">Email</label>
-							<div class="col-sm-6">
-							  <input type="email" name="email" maxlength="45" placeholder="johnny@appleseed.com" class="form-control">
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-4 control-label" for="textinput">Phone</label>
-							<div class="col-sm-6">
-							  <input name="phone" maxlength="12" placeholder="000-000-0000" class="form-control">
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-4 control-label" for="textinput">Plates (Optional)</label>
-							<div class="col-sm-6">
-							  <input name="plates" maxlength="12" placeholder="000-0000" class="form-control">
 							</div>
 						</div>
 					</div>
@@ -433,8 +451,8 @@
 					<div class="control-group">
 					  <div class="controls">
 					    <center>
-					      <button data-bind="click: onFormCancel" class="btn btn-secondary">Cancel</button>
-					      <button class="btn btn-success" type="submit" data-bind="click: onSubmit">Pay Now</button>
+					      <button data-bind="click: OnFormCancel" class="btn btn-secondary">Cancel</button>
+					      <button class="btn btn-success" type="submit" data-bind="click: OnSubmit">Pay Now</button>
 					    </center>
 					  </div>
 					</div>
@@ -452,23 +470,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.simpleWeather/3.1.0/jquery.simpleWeather.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
-	<script>
-	  window.fbAsyncInit = function() {
-	    FB.init({
-	      appId      : 'WashMyCar',
-	      xfbml      : true,
-	      version    : 'v2.5'
-	    });
-	  };
 
-	  (function(d, s, id){
-	     var js, fjs = d.getElementsByTagName(s)[0];
-	     if (d.getElementById(id)) {return;}
-	     js = d.createElement(s); js.id = id;
-	     js.src = "//connect.facebook.net/en_US/sdk.js";
-	     fjs.parentNode.insertBefore(js, fjs);
-	   }(document, 'script', 'facebook-jssdk'));
-	</script>
     <script src="js/classie.js"></script>
     <script src="js/cbpAnimatedHeader.min.js"></script>
     <script src="js/index.js"></script>

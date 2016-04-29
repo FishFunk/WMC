@@ -2,17 +2,18 @@ var mongoose = require('mongoose');
 
 var carSchema = new mongoose.Schema({
 	color: {type: String, required: true},
-	make:{ type: String, required: true},
+	make: {type: String, required: true},
 	model: {type: String, required: true},
-	year: {type: Number, required: true},
-	tag: String
+	size: String, // 2-door, SUV, etc.
+	tag: String, // License plate
+	year: {type: Number, required: true}
 });
 
 var locationSchema = new mongoose.Schema({
 	city: {type: String, required: true},
 	state: {type: String, required: true},
 	street: {type: String, required: true},	
-	title: String,
+	title: String, // Home, work, etc.
 	zip: {type: String, required: true}
 });
 
@@ -21,8 +22,7 @@ var appointmentSchema = new mongoose.Schema({
 	date: { type: Date, required: true},
 	location: locationSchema,
 	services: [String],
-	timeRange: { type: String, required: true},
-	usr: {type: String, required: true}
+	timeRange: { type: String, required: true}
 });
 
 var userSchema = new mongoose.Schema({
@@ -31,9 +31,10 @@ var userSchema = new mongoose.Schema({
 	email: {type: String, required: true},
 	phone: {type: String, required: true},
 	fullName: String,
-	usr: {type: String, required: true},
-	pwd: {type: String, required: true},
-	locations: [locationSchema]
+	usr: {type: String},
+	pwd: {type: String},
+	locations: [locationSchema],
+	lastLogin: Date
 });
 
 mongoose.model('User', userSchema);

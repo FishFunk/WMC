@@ -98,3 +98,8 @@ select.error, textarea.error, input.error {
 	width:200px;
 }
 
+#login-modal {
+	top:30%;
+    text-align: center;
+}
+

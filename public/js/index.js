@@ -1,15 +1,10 @@
-/*!
- * Start Bootstrap - Agency Bootstrap Theme (http://startbootstrap.com)
- * Code licensed under the Apache License v2.0.
- * For details, see http://www.apache.org/licenses/LICENSE-2.0.
- */
-
 window.jQuery(document).ready(function($) {
-	var DEBUG_MODE = true;
 	var CarSizeMultiple = function(size, multiple){
 			this.size = size;
 			this.multiple = multiple;
 		};
+
+	var storageHelper = new LocalStorageHelper(sessionStorage);
 
 	function App(){
 		var self = this;
@@ -18,6 +13,7 @@ window.jQuery(document).ready(function($) {
 		this.INTERIOR_COST = 75;
 		this.WAX_COST = 50
 
+		this.isGuest = ko.observable(false);
 		this.showBillingAddress = ko.observable(false);
 		this.addShine = ko.observable(false);
 		this.addWax = ko.observable(false);
@@ -45,21 +41,12 @@ window.jQuery(document).ready(function($) {
 				self.selectedCarSize().multiple.toString());
 		});
 
-		this.onFormCancel = function(){
+		this.OnFormCancel = function(){
 			$('#order-form-modal').modal('hide');
 			window.location = "#page-top";			
 		};
 
-		this.populateExpYearOptions = function(){
-			var $expiry = $("#exp-year");
-			var year = new Date().getFullYear();
-
-			for (var i = 0; i < 12; i++) {
-			    $expiry.append($("<option value='"+(i + year)+"' "+(i === 0 ? "selected" : "")+">"+(i + year)+"</option>"))
-			}
-		};
-
-		this.onPageScroll = function(data, event) {
+		this.OnPageScroll = function(data, event) {
 		    var $anchor = $(event.currentTarget);
 		    $('html, body').stop().animate({
 		        scrollTop: $($anchor.attr('href')).offset().top
@@ -68,11 +55,26 @@ window.jQuery(document).ready(function($) {
 	    };
 
 		// Show Order Form Modal
-		this.onShowOrderForm = function(){
+		this.OnShowOrderForm = function(){
+			if(storageHelper.GetIsUserLoggedIn()){
+				$('#order-form-modal').modal('show');
+			} else {
+				$('#login-modal').modal('show');
+			}
+		};
+
+		this.OnCreateNewAccount = function(){
+
+		};
+
+		this.OnContinueAsGuest = function(){
+			self.isGuest(true);
+			storageHelper.SetIsUserLoggedIn(true);
+			$('#login-modal').modal('hide');
 			$('#order-form-modal').modal('show');
 		};
 
-		this.onSubmit = function(){
+		this.OnSubmit = function(){
 			if($('#order-form').valid())
 			{
 				// additionanl validation
@@ -101,6 +103,7 @@ window.jQuery(document).ready(function($) {
 			rules:{
 				make: "required",
 				model: "required",
+				color: "required",
 				street: "required",
 				city: "required",
 				state: "required",
@@ -136,37 +139,43 @@ window.jQuery(document).ready(function($) {
 				email: "Please enter a valid email address.",
 			}
 		});
-
-		// Load FB SDK
-		window.fbAsyncInit = function() {
-		    FB.init({
-		      appId      : 'WashMyCar',
-		      xfbml      : true,
-		      version    : 'v2.5'
-		    });
-
-		    FB.getLoginStatus(function(response) {
-			  if (response.status === 'connected') {
-			    console.log('Logged in.');
-			  }
-			  else {
-			    FB.login();
-			  }
-			});
-		};
-
-		(function(d, s, id){
-		    var js, fjs = d.getElementsByTagName(s)[0];
-		    if (d.getElementById(id)) {return;}
-		    js = d.createElement(s); js.id = id;
-		    js.src = "//connect.facebook.net/en_US/sdk.js";
-		    fjs.parentNode.insertBefore(js, fjs);
-		}(document, 'script', 'facebook-jssdk'));
 	};
 
-	var app = new App();
-	app.populateExpYearOptions();
-	ko.applyBindings(app);
+	var populateExpYearOptions = function(){
+		var $expiry = $("#exp-year");
+		var year = new Date().getFullYear();
+
+		for (var i = 0; i < 12; i++) {
+		    $expiry.append($("<option value='"+(i + year)+"' "+(i === 0 ? "selected" : "")+">"+(i + year)+"</option>"))
+		}
+	};
+
+	populateExpYearOptions();
+	ko.applyBindings(new App());
 });
+
+class LocalStorageHelper{
+	constructor(storageType){
+		if(typeof(Storage) === "undefined") {
+			console.log("No local storage available.");
+		} else {
+			this.storageType = storageType;
+		}
+	}
+
+	SetIsUserLoggedIn(bool){
+		if(this.storageType){
+			this.storageType.isUserLoggedIn = bool.toString();			
+		}
+	}
+
+	GetIsUserLoggedIn(bool){
+		if(this.storageType){
+			return Boolean(this.storageType.isUserLoggedIn);
+		} else {
+			return false;
+		}
+	}
+}
 
 
