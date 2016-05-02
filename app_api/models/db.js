@@ -4,7 +4,7 @@ require('./users');
 var dbURI = 'mongodb://localhost/WMC';
 
 if (process.env.NODE_ENV === 'production'){
-	dbUri = process.env.MONGOLAB_URI;
+	dbUri = process.env.MONGODB_URI;
 }
 
 mongoose.connection.on('connected', function(){
