@@ -84,6 +84,14 @@ ul.social-buttons li a:hover,ul.social-buttons li a:focus,ul.social-buttons li a
 	margin-right: 5%;
 }
 
+.modal {
+	overflow-y: scroll;
+}
+
+body.modal-open {
+	overflow-y: hidden;
+}
+
 #order-form-modal{margin-top: 10px;}
 #order-form-modal .container{background-color: white; border-color: black; border-radius: 30px;  width: auto; max-width: 650px;}
 #order-form-modal form,.row{padding:10px;}

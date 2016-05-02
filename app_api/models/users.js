@@ -21,8 +21,11 @@ var appointmentSchema = new mongoose.Schema({
 	cars: [carSchema],
 	date: { type: Date, required: true},
 	location: locationSchema,
+	price: Number,
 	services: [String],
+	timeEstimate: Number, // minutes
 	timeRange: { type: String, required: true}
+
 });
 
 var userSchema = new mongoose.Schema({
@@ -31,8 +34,7 @@ var userSchema = new mongoose.Schema({
 	email: {type: String, required: true},
 	phone: {type: String, required: true},
 	fullName: String,
-	usr: {type: String},
-	pwd: {type: String},
+	pwd: String,
 	locations: [locationSchema],
 	lastLogin: Date
 });

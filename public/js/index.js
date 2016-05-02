@@ -1,10 +1,15 @@
 window.jQuery(document).ready(function($) {
+	
 	var CarSizeMultiple = function(size, multiple){
 			this.size = size;
 			this.multiple = multiple;
 		};
 
 	var storageHelper = new LocalStorageHelper(sessionStorage);
+
+	$loginModal = $("#login-modal");
+	$orderFormModal = $("#order-form-modal");
+	$orderForm = $("#order-form");
 
 	function App(){
 		var self = this;
@@ -42,7 +47,7 @@ window.jQuery(document).ready(function($) {
 		});
 
 		this.OnFormCancel = function(){
-			$('#order-form-modal').modal('hide');
+			$orderFormModal.modal('hide');
 			window.location = "#page-top";			
 		};
 
@@ -57,9 +62,9 @@ window.jQuery(document).ready(function($) {
 		// Show Order Form Modal
 		this.OnShowOrderForm = function(){
 			if(storageHelper.GetIsUserLoggedIn()){
-				$('#order-form-modal').modal('show');
+				$orderFormModal.modal();
 			} else {
-				$('#login-modal').modal('show');
+				$loginModal.modal();
 			}
 		};
 
@@ -70,12 +75,13 @@ window.jQuery(document).ready(function($) {
 		this.OnContinueAsGuest = function(){
 			self.isGuest(true);
 			storageHelper.SetIsUserLoggedIn(true);
-			$('#login-modal').modal('hide');
-			$('#order-form-modal').modal('show');
+			$loginModal.removeClass('fade');
+			$loginModal.modal('hide');
+			$orderFormModal.modal('show');
 		};
 
 		this.OnSubmit = function(){
-			if($('#order-form').valid())
+			if($orderForm.valid())
 			{
 				// additionanl validation
 				// weather
@@ -99,7 +105,7 @@ window.jQuery(document).ready(function($) {
 			format: 'MM/DD/YY'
 		});
 
-		$('#order-form').validate({
+		$orderForm.validate({
 			rules:{
 				make: "required",
 				model: "required",
