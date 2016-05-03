@@ -1,18 +1,50 @@
 window.jQuery(document).ready(function($) {
-	
-	var CarSizeMultiple = function(size, multiple){
-			this.size = size;
-			this.multiple = multiple;
-		};
+
+	// Initialize UI Items
+
+	// Closes the Responsive Menu on Menu Item Click
+	$('.navbar-collapse ul li a').click(function() {
+	    $('.navbar-toggle:visible').click();
+	});
+
+	// Highlight the top nav as scrolling occurs
+	$('body').scrollspy({
+	    target: '.navbar-fixed-top'
+	});
+
+	// Set min date and format for date picker
+	$('#datetimepicker').datetimepicker({
+		minDate: new Date(),
+		format: 'MM/DD/YY'
+	});
+
+	// Populate dropdown with 12 expiry years from current year
+	var populateExpYearOptions = function(){
+		var $expiry = $("#exp-year");
+		var year = new Date().getFullYear();
+
+		for (var i = 0; i < 12; i++) {
+		    $expiry.append($("<option value='"+(i + year)+"' "+(i === 0 ? "selected" : "")+">"+(i + year)+"</option>"))
+		}
+	};
+
+	populateExpYearOptions();
 
 	var storageHelper = new LocalStorageHelper(sessionStorage);
+	var webSvc = new WebService();
+	ko.applyBindings(new App(storageHelper, webSvc));
+});
 
-	$loginModal = $("#login-modal");
-	$orderFormModal = $("#order-form-modal");
-	$orderForm = $("#order-form");
-
-	function App(){
+// Main ViewModel Class
+class App {
+	constructor(storageHelper, webSvc){
 		var self = this;
+		this.storageHelper = storageHelper;
+		this.webSvc = webSvc;
+
+		this.$loginModal = $("#login-modal");
+		this.$orderFormModal = $("#order-form-modal");
+		this.$orderForm = $("#order-form");
 
 		this.TIRE_SHINE_COST = 25;
 		this.INTERIOR_COST = 75;
@@ -46,66 +78,62 @@ window.jQuery(document).ready(function($) {
 				self.selectedCarSize().multiple.toString());
 		});
 
-		this.OnFormCancel = function(){
-			$orderFormModal.modal('hide');
-			window.location = "#page-top";			
-		};
+		this._initValidation();
+	}
 
-		this.OnPageScroll = function(data, event) {
-		    var $anchor = $(event.currentTarget);
-		    $('html, body').stop().animate({
-		        scrollTop: $($anchor.attr('href')).offset().top
-		    }, 1500, 'easeInOutExpo');
-		    event.preventDefault();
-	    };
+	OnFormCancel(){
+		this.$orderFormModal.modal('hide');
+		window.location = "#page-top";			
+	};
 
-		// Show Order Form Modal
-		this.OnShowOrderForm = function(){
-			if(storageHelper.GetIsUserLoggedIn()){
-				$orderFormModal.modal();
-			} else {
-				$loginModal.modal();
-			}
-		};
+	OnPageScroll(data, event) {
+	    var $anchor = $(event.currentTarget);
+	    $('html, body').stop().animate({
+	        scrollTop: $($anchor.attr('href')).offset().top
+	    }, 1500, 'easeInOutExpo');
+	    event.preventDefault();
+    };
 
-		this.OnCreateNewAccount = function(){
+	// Show Order Form Modal
+	OnShowOrderForm(){
+		if(this.storageHelper.GetIsUserLoggedIn()){
+			this.$orderFormModal.modal();
+			this.webSvc.GetAllAppointments()
+				.then(function(data){
+					console.log(data);
+				})
+				.fail(function(err){
+					console.log(err);
+				});
+		} else {
+			this.$loginModal.modal();
+		}
+	};
 
-		};
+	OnCreateNewAccount(){
 
-		this.OnContinueAsGuest = function(){
-			self.isGuest(true);
-			storageHelper.SetIsUserLoggedIn(true);
-			$loginModal.removeClass('fade');
-			$loginModal.modal('hide');
-			$orderFormModal.modal('show');
-		};
+	};
 
-		this.OnSubmit = function(){
-			if($orderForm.valid())
-			{
-				// additionanl validation
-				// weather
-				// is date/time overbooked
-				// etc...
-			}
-		};
+	OnContinueAsGuest(){
+		this.isGuest(true);
+		this.storageHelper.SetIsUserLoggedIn(true);
+		this.$loginModal.removeClass('fade');
+		this.$loginModal.modal('hide');
+		this.$orderFormModal.modal('show');
+	};
 
-		// Closes the Responsive Menu on Menu Item Click
-		$('.navbar-collapse ul li a').click(function() {
-		    $('.navbar-toggle:visible').click();
-		});
+	OnSubmit(){
+		if(this.$orderForm.valid())
+		{
+			// additionanl validation
+			// weather
+			// is date/time overbooked
+			// etc...
+		}
+	};
 
-		// Highlight the top nav as scrolling occurs
-		$('body').scrollspy({
-		    target: '.navbar-fixed-top'
-		});
-
-		$('#datetimepicker').datetimepicker({
-			minDate: new Date(),
-			format: 'MM/DD/YY'
-		});
-
-		$orderForm.validate({
+	_initValidation(){
+		this.$orderForm.validate({
 			rules:{
 				make: "required",
 				model: "required",
@@ -146,19 +174,7 @@ window.jQuery(document).ready(function($) {
 			}
 		});
 	};
-
-	var populateExpYearOptions = function(){
-		var $expiry = $("#exp-year");
-		var year = new Date().getFullYear();
-
-		for (var i = 0; i < 12; i++) {
-		    $expiry.append($("<option value='"+(i + year)+"' "+(i === 0 ? "selected" : "")+">"+(i + year)+"</option>"))
-		}
-	};
-
-	populateExpYearOptions();
-	ko.applyBindings(new App());
-});
+}
 
 class LocalStorageHelper{
 	constructor(storageType){
@@ -184,4 +200,47 @@ class LocalStorageHelper{
 	}
 }
 
+class CarSizeMultiple {
+	constructor(size, multiple){
+			this.size = size;
+			this.multiple = multiple;
+	};
+}
+
+
+class WebService {
+	constructor(){
+		var self = this;
+		this.baseUrl = document.location.origin;
+		this.ajaxOptions = {
+			type: 'GET',
+			dataType: 'JSON',
+			error: self._onError.bind(self),
+			success: self._onSuccess.bind(self),
+			timeout: 10000
+		}
+		this.deferred = null;
+	}
+
+	GetAllAppointments(){
+		this.deferred = $.Deferred();
+		this.ajaxOptions.url = this.baseUrl + "/api/getAllAppointments";
+		$.ajax(this.ajaxOptions);
+		return this.deferred.promise();
+	}
+
+	_onSuccess(data, textStatus, jqXHR){
+		console.log(data, textStatus, jqXHR);
+		if(this.deferred){
+			this.deferred.resolve(data);
+		}
+	}
+
+	_onError(jqXHR, textStatus, err){
+		console.log(jqXHR, textStatus, err);
+		if(this.deferred){
+			this.deferred.reject(err);
+		}
+	}
+}
 
