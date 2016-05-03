@@ -93,8 +93,12 @@ body.modal-open {
 }
 
 #order-form-modal{margin-top: 10px;}
-#order-form-modal .container{background-color: white; border-color: black; border-radius: 30px;  width: auto; max-width: 650px;}
-#order-form-modal form,.row{padding:10px;}
+#order-form-modal .container{padding:20px;background-color: white; border-color: black; border-radius: 30px;  width: auto; max-width: 650px;}
+#order-form-modal .row{padding:5px;}
+
+.form-control{
+	margin-bottom:2px;
+}
 
 select.error, textarea.error, input.error {
     border-color:#FF0000 !important;

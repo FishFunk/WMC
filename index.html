@@ -240,9 +240,9 @@
     </div>
 </div>
 
-<div id="order-form-modal" class="modal fade" role="dialog">
+<div id="order-form-modal" class="modal fade pinch" role="dialog">
    <div class="container modal-content">
-      <form id="order-form" data-toggle="validator" role="form" autocomplete="off">
+      <form id="order-form" data-toggle="validator" role="form" autocomplete="off" data-bind="with: OrderFormVm">
          <div class="row">
            <legend>Order Details</legend>
            <div class="form-group col-sm-5">
@@ -267,89 +267,79 @@
       <select data-bind="options: carSizeMultiples, optionsText: 'size', value: selectedCarSize" class="form-control"></select>
       <br>
       <label class="control-label" for="select">Condition</label>
-      <select name="select-condition" class="form-control">
-        <option value="light" selected="selected">Light Dirt</option>
-        <option value="mdeium">Medium Dirt</option>
-        <option value="heavy">Heavy Dirt</option>
-        <option value="filthy">Filthy</option>
-    </select>
+      <select data-bind="options: carConditions, value: condition" class="form-control"></select>
 </div>
 <div class="form-group col-sm-4">
   <label class="control-label" for="checkbox">Date</label>
   <div class='input-group date' id='datetimepicker'>
-    <input type='text' class="form-control" />
+    <input type='text' class="form-control" data-bind="value: date"/>
     <span class="input-group-addon">
         <span class="glyphicon glyphicon-calendar"></span>
     </span>
 </div>
 <br>
 <label class="control-label" for="select">Time Range</label>
-<select name="select-time" class="form-control">
-    <option value="1" selected="selected">9:00 - 12:00 PM</option>
-    <option value="2">12:00 - 3:00 PM</option>
-    <option value="3">3:00 - 6:00 PM</option>
-    <option value="4">6:00 - 9:00 PM</option>
-</select>
+<select data-bind="options: timeRanges, value: selectedTimeRange" class="form-control"></select>
 </div>
 </div>
 <div class="row">
     <h5>Vehicle Info</h5>
     <div class="form-group">
-     <label class="col-sm-1 control-label" for="textinput">Make</label>
+     <label class="col-sm-1 control-label">Make</label>
      <div class="col-sm-5">
-       <input name="make" placeholder="Volkswagen" class="form-control">
+       <input data-bind="value: make" name="make" placeholder="Volkswagen" class="form-control">
    </div>
-   <label class="col-sm-1 control-label" for="textinput">Model</label>
+   <label class="col-sm-1 control-label">Model</label>
    <div class="col-sm-5">
-       <input name="model" placeholder="Golf" class="form-control">
+       <input data-bind="value: model" name="model" placeholder="Golf" class="form-control">
    </div>
 </div>
 <div class="form-group">
-    <label class="col-sm-1 control-label" for="textinput">Color</label>
+    <label class="col-sm-1 control-label">Color</label>
     <div class="col-sm-5">
-      <input name="color" maxlength="12" placeholder="Silver" class="form-control">
+      <input data-bind="value: color" name="color" maxlength="12" placeholder="Silver" class="form-control">
   </div>
-  <label class="col-sm-1 control-label" for="textinput">Tag*</label>
+  <label class="col-sm-1 control-label">Tag*</label>
   <div class="col-sm-5">
-      <input name="tag" maxlength="12" placeholder="000-0000" class="form-control">
+      <input data-bind="value: tag" name="tag" maxlength="12" placeholder="000-0000" class="form-control">
   </div>
 </div>
 </div>
 <div class="row">
     <h5>Contact Info</h5>
     <div class="form-group">
-        <label class="col-sm-1 control-label" for="textinput">Email</label>
+        <label class="col-sm-1 control-label">Email</label>
         <div class="col-sm-5">
-          <input type="email" name="email" maxlength="45" placeholder="johnny@appleseed.com" class="form-control">
+          <input type="value: email" name="email" maxlength="45" placeholder="johnny@appleseed.com" class="form-control">
       </div>
-      <label class="col-sm-1 control-label" for="textinput">Phone</label>
+      <label class="col-sm-1 control-label">Phone</label>
       <div class="col-sm-5">
-          <input name="phone" maxlength="12" placeholder="000-000-0000" class="form-control">
+          <input data-bind="value: phone" name="phone" maxlength="12" placeholder="000-000-0000" class="form-control">
       </div>
   </div>
 </div>
 <div class="row">
     <h5>Vehicle Location</h5>
     <div class="form-group">
-     <label class="col-sm-1 control-label" for="textinput">Street</label>
+     <label class="col-sm-1 control-label">Street</label>
      <div class="col-sm-11">
-       <input name="street" placeholder="Street" class="form-control">
+       <input data-bind="value: street" name="street" placeholder="Street" class="form-control">
    </div>
 </div>
 <div class="form-group">
- <label class="col-sm-1 control-label" for="textinput">City</label>
+ <label class="col-sm-1 control-label">City</label>
  <div class="col-sm-11">
-   <input name="city" placeholder="City" class="form-control">
+   <input data-bind="value: city" name="city" placeholder="City" class="form-control">
 </div>
 </div>
 <div class="form-group">
- <label class="col-sm-1 control-label" for="textinput">State</label>
+ <label class="col-sm-1 control-label">State</label>
  <div class="col-sm-5">
-   <input name="state" maxlength="2" placeholder="XX" class="form-control">
+   <input data-bind="value: state" name="state" maxlength="2" placeholder="XX" class="form-control">
 </div>
-<label class="col-sm-1 control-label" for="textinput">Zip</label>
+<label class="col-sm-1 control-label">Zip</label>
 <div class="col-sm-5">
-   <input name="zip" maxlength="9" placeholder="Postal Code" class="form-control">
+   <input data-bind="value: zip" name="zip" maxlength="9" placeholder="Postal Code" class="form-control">
 </div>
 </div>
 </div>
@@ -361,27 +351,27 @@
    </div>
    <fieldset data-bind="visible: !showBillingAddress()">
      <div class="form-group">
-        <label class="col-sm-4 control-label" for="textinput">Street</label>
+        <label class="col-sm-4 control-label">Street</label>
         <div class="col-sm-6">
-          <input name="billstreet" placeholder="Street" class="form-control">
+          <input data-bind="value: billStreet" name="billstreet" placeholder="Street" class="form-control">
       </div>
   </div>
   <div class="form-group">
-    <label class="col-sm-4 control-label" for="textinput">City</label>
+    <label class="col-sm-4 control-label">City</label>
     <div class="col-sm-6">
-      <input name="billcity" placeholder="City" class="form-control">
+      <input data-bind="value: billCity" name="billcity" placeholder="City" class="form-control">
   </div>
 </div>
 <div class="form-group">
-    <label class="col-sm-4 control-label" for="textinput">State</label>
+    <label class="col-sm-4 control-label">State</label>
     <div class="col-sm-6">
-      <input name="billstate" maxlength="2" placeholder="XX" class="form-control">
+      <input data-bind="value: billState" name="billstate" maxlength="2" placeholder="XX" class="form-control">
   </div>
 </div>
 <div class="form-group">
-    <label class="col-sm-4 control-label" for="textinput">Zip</label>
+    <label class="col-sm-4 control-label">Zip</label>
     <div class="col-sm-6">
-      <input name="billzip" maxlength="9" placeholder="Zip" class="form-control">
+      <input data-bind="value: billZip" name="billzip" maxlength="9" placeholder="Zip" class="form-control">
   </div>
 </div>
 </fieldset>
@@ -389,45 +379,32 @@
 <div class="row">
  <legend>Payment</legend>
  <div class="form-group">
-    <label class="col-sm-4 control-label" for="textinput">Card Holder's Name</label>
+    <label class="col-sm-4 control-label">Card Holder's Name</label>
     <div class="col-sm-6">
-      <input name="ccname" maxlength="70" placeholder="Card Holder Name" class="form-control">
+      <input data-bind="value: ccName" name="ccname" maxlength="70" placeholder="Card Holder Name" class="form-control">
   </div>
 </div>
 <div class="form-group">
-    <label class="col-sm-4 control-label" for="textinput">Card Number</label>
+    <label class="col-sm-4 control-label">Card Number</label>
     <div class="col-sm-6">
-      <input name="ccnumber" maxlength="19" placeholder="Card Number" class="form-control">
+      <input data-bind="value: ccNumber" name="ccnumber" maxlength="19" placeholder="Card Number" class="form-control">
   </div>
 </div>
 <div class="form-group">
-    <label class="col-sm-4 control-label" for="textinput">Card Expiry Date</label>
+    <label class="col-sm-4 control-label">Card Expiry Date</label>
     <div class="col-sm-6">
       <div class="form-inline">
-        <select id="expmonth" name="exp-month" data-stripe="exp-month" class="card-expiry-month stripe-sensitive form-control">
-          <option value="01" selected="selected">01</option>
-          <option value="02">02</option>
-          <option value="03">03</option>
-          <option value="04">04</option>
-          <option value="05">05</option>
-          <option value="06">06</option>
-          <option value="07">07</option>
-          <option value="08">08</option>
-          <option value="09">09</option>
-          <option value="10">10</option>
-          <option value="11">11</option>
-          <option value="12">12</option>
-      </select>
-      <span> / </span>
-      <select id="exp-year" name="exp-year" data-stripe="exp-year" class="stripe-sensitive form-control">
+        <select data-bind="options: ccExpiryMos, value: ccExpiryMo" data-stripe="exp-month" class="card-expiry-month stripe-sensitive form-control"></select>
+      &nbsp;&nbsp;
+      <select data-bind="options: ccExpiryYrs, value: ccExpiryYr" data-stripe="exp-year" class="stripe-sensitive form-control">
       </select>
   </div>
 </div>
 </div>
 <div class="form-group">
-    <label class="col-sm-4 control-label" for="textinput">CVV/CVV2</label>
+    <label class="col-sm-4 control-label">CVV/CVV2</label>
     <div class="col-sm-3">
-      <input id="cvv" name="cvv" placeholder="CVV" maxlength="4" class="form-control">
+      <input data-bind="value: cvv" name="cvv" placeholder="CVV" maxlength="4" class="form-control">
   </div>
 </div>
 </div>
@@ -438,25 +415,21 @@
    <h3 class="panel-title">Please Review Your Order!</h3>
 </div>
 <div class="panel-body">
-    <label>Exterior Hand Wash:&nbsp;</label><span>$32</span>
-    <div><label>Deep Tire Clean & Shine:&nbsp;</label><span>$20</span></div>
-    <div><label>Hand Wax & Buff:&nbsp;</label><span>$75</span></div>
-    <div><label>Full Interior Cleaning:&nbsp;</label><span>$50</span></div>
-    <div><label data-bind="text: selectedCarSize().size"></label>&nbsp;<span data-bind="text: selectedCarSize().multiple"></span>x multiplier</div>
+    <p data-bind="html: orderSummary"></p>
     <p>Your card will be charged $<strong data-bind="text: orderTotal"></strong> after submit.</p>
 </div>
 </div>
+</form>
 
 <!-- Submit -->
 <div class="control-group">
  <div class="controls">
    <center>
      <button data-bind="click: OnFormCancel" class="btn btn-secondary">Cancel</button>
-     <button class="btn btn-success" type="submit" data-bind="click: OnSubmit">Pay Now</button>
- </center>
+     <button class="btn btn-success" data-bind="click: OnSubmit">Pay Now</button>
+    </center>
+  </div>
 </div>
-</div>
-</form>
 </div>
 </div>
 
