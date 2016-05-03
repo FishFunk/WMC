@@ -13,7 +13,7 @@ const api = require('./app_api/routes/index');
 
 const app = express();
 
-const port = 1337;
+const port = process.env.PORT || 1337;
 
  /* serves main page */
  app.get("/", function(req, res) {
