@@ -7,7 +7,7 @@ const createSuccessCode = 201;
 const readSuccessCode = 200;
 const noContentSuccessCode = 204;
 
-module.exports.updateUser = function(req, res){
+module.exports.updateUser = (req, res)=>{
 	if(req.body)
 	{
 		Usr.update({email: req.email},
@@ -19,7 +19,7 @@ module.exports.updateUser = function(req, res){
 			pwd: req.body.pwd,
 			locations: req.body.locations,
 			lastLogin: new Date()
-		}, function(err, usr){
+		}, (err, usr)=>{
 			if(err){
 				sendJsonResponse(res, internalErrorCode, "DB Failure - updateUser", err);
 			} else {
@@ -31,23 +31,20 @@ module.exports.updateUser = function(req, res){
 	}
 };
 
-module.exports.getAllAppointments = function(req, res){
+module.exports.getAppointmentDatesAndTimes = (req, res)=>{
 	Usr.find()
-	   .select('appointments')
-	   .exec(function(err, docs){
+	   .select('appointments.date appointments.timeEstimate appointments.timeRange')
+	   .exec((err, docs)=>{
 		if(err){
 			sendJsonResponse(res, internalErrorCode, "DB Failure - getAllAppointments", err);
 		} else {
-			var result = [];
-			docs.forEach(function(doc){
-				result = result.concat(doc.appointments);
-			});
+			result = docs;
 			sendJsonResponse(res, readSuccessCode, "Success", result);
 		}
 	});
 };
 
-module.exports.createUser = function(req, res){
+module.exports.createUser = (req, res)=>{
 	if(req.body)
 	{
 		Usr.create({
@@ -59,7 +56,7 @@ module.exports.createUser = function(req, res){
 			pwd: req.body.pwd,
 			locations: req.body.locations,
 			lastLogin: new Date()
-		}, function(err, usr){
+		}, (err, usr)=>{
 			if(err){
 				sendJsonResponse(res, internalErrorCode, "DB Failure - createUser", err);
 			} else {
@@ -71,10 +68,10 @@ module.exports.createUser = function(req, res){
 	}
 };
 
-module.exports.getUserByEmail = function(req, res){
+module.exports.getUserByEmail = (req, res)=>{
 	if(req.body && req.body.email)
 	{
-		Usr.findOne({email: req.body.email}, function(err, usr){
+		Usr.findOne({email: req.body.email}, (err, usr)=>{
 			if(!usr)
 			{
 				sendJsonResponse(res, noContentSuccessCode, "User email not found");
@@ -91,10 +88,10 @@ module.exports.getUserByEmail = function(req, res){
 	}
 };
 
-module.exports.getUserByEmailAndPwd = function(req, res){
+module.exports.getUserByEmailAndPwd = (req, res)=>{
 	if(req.body && req.body.email && req.body.pwd)
 	{
-		Usr.findOne({email: req.body.email, pwd: req.body.pwd}, function(err, usr){
+		Usr.findOne({email: req.body.email, pwd: req.body.pwd}, (err, usr)=>{
 			if(!usr){
 				sendJsonResponse(res, noContentSuccessCode, "No matching usr and pwd");
 			}
@@ -111,7 +108,7 @@ module.exports.getUserByEmailAndPwd = function(req, res){
 };
 
 
-var sendJsonResponse = function(res, status, msg, data){
+var sendJsonResponse = (res, status, msg, data)=>{
 	res.setHeader('Content-Type', 'application/json');
 	res.status(status);
 	res.send({

@@ -5,6 +5,8 @@ const TIRE_SHINE_COST = 25,
       INTERIOR_TIME = 50,
       WAX_TIME = 50,
       WASH_COST = 29,
+      DEFAULT_JOB_TIME_MINS = 120,
+      MAX_JOB_TIME_PER_DAY_MINS = 720
       ZIP_WHITE_LIST = ["22314", "22003"]
 
 class Constants {

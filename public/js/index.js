@@ -1,21 +1,15 @@
-window.jQuery(document).ready(function($) {
+window.jQuery(document).ready(($)=>{
 
 	// Initialize UI Items
 
 	// Closes the Responsive Menu on Menu Item Click
-	$('.navbar-collapse ul li a').click(function() {
+	$('.navbar-collapse ul li a').click(()=>{
 	    $('.navbar-toggle:visible').click();
 	});
 
 	// Highlight the top nav as scrolling occurs
 	$('body').scrollspy({
 	    target: '.navbar-fixed-top'
-	});
-
-	// Set min date and format for date picker
-	$('#datetimepicker').datetimepicker({
-		minDate: new Date(),
-		format: 'MM/DD/YY'
 	});
 
 	var storageHelper = new LocalStorageHelper(sessionStorage);
@@ -26,6 +20,7 @@ window.jQuery(document).ready(function($) {
 // Main ViewModel Class
 class App {
 	constructor(storageHelper, webSvc){
+		var self = this;
 		this.storageHelper = storageHelper;
 		this.webSvc = webSvc;
 
@@ -33,9 +28,7 @@ class App {
 		this.$orderFormModal = $("#order-form-modal");
 		this.$orderForm = $("#order-form");
 
-		// this.isGuest = ko.observable(true);
-
-		if(this.storageHelper.GetLoggedInUser()){
+		if(this.storageHelper.LoggedInUser){
 			this.zipVerified = ko.observable(true);
 		} else {
 			this.zipVerified = ko.observable(false);
@@ -44,6 +37,7 @@ class App {
 		this.OrderFormVm = new OrderFormViewModel();
 
 		this._initValidation();
+		this._cacheAppointments();
 	}
 
 	OnFormCancel(){
@@ -61,15 +55,8 @@ class App {
 
 	// Show Order Form Modal
 	OnShowOrderForm(){
-		if(this.storageHelper.GetLoggedInUser()){
+		if(this.storageHelper.LoggedInUser){
 			this.$orderFormModal.modal();
-			this.webSvc.GetAllAppointments()
-				.then(function(data){
-					console.info(data);
-				})
-				.fail(function(err){
-					console.error(err);
-				});
 		} else {
 			this.$loginModal.modal();
 		}
@@ -103,30 +90,30 @@ class App {
 		var self = this;
 		if(this.$orderForm.valid())
 		{
-			if(!this.GetLoggedInUser())
+			if(!this.LoggedInUser)
 			{
 				this.webSvc.GetUserByEmail(this.OrderFormViewModel.email())
-					.then(function(usr){
+					.then((usr)=>{
 						var tmpUser = self.OrderFormViewModel.MakeTempUserSchema();
 						if(usr){
 							// email already exists - update current??
 							// join temporary and existing data...
-							self.storageHelper.SetLoggedInUser(usr);
+							self.storageHelper.LoggedInUser = usr;
 						} else {
 							// create new temp user
 							var tmpUser = self.OrderFormViewModel.MakeTempUserSchema();
 							tmpUser.IsGuest = true;
-							self.storageHelper.SetLoggedInUser(tmpUser);
+							self.storageHelper.LoggedInUser = tmpUser;
 							self.webSvc.CreateUser(tmpUser)
-								.then(function(){
+								.then(()=>{
 									bootbox.alert("Thank you! Your order has been placed.");
 								})
-								.fail(function(err){
+								.fail((err)=>{
 									bootbox.alert("There was a problem submitting your order.");
 								});
 						}
 					})
-					.fail(function(err){
+					.fail((err)=>{
 						bootbox.alert("There was a problem submitting your order.");
 					});
 			}
@@ -135,6 +122,33 @@ class App {
 				// Update existing user
 			}
 		}
+	};
+
+	_getListOfDisabledDates(appointments){
+		if(!appointments || appointments.length === 0){
+			return [];
+		}
+
+		var datesToDisable = [];
+		var apptsByDate = _.groupBy(appointments, (x)=> x.date);
+
+		for(var i=0; i<apptsByDate.length;i++){
+			var time = 0;
+			var appts = apptsByDate[i];
+			_.each(appts, (a)=>{
+				if(a.timeEstimate){
+					time+=a.timeEstimate;
+				} else {
+					// default time estimate in minutes
+					time+=Contsants.DEFAULT_JOB_TIME_MINS;
+				}
+			});
+			if(time > Constants.MAX_JOB_TIME_PER_DAY_MINS){
+				datesToDisable.push(_.first(appts).date);
+			}
+		}
+
+		return datesToDisable;
 	};
 
 	_initValidation(){
@@ -177,6 +191,23 @@ class App {
 			messages:{
 				email: "Please enter a valid email address.",
 			}
+		});
+	};
+
+	_cacheAppointments(){
+		var self = this;
+		this.webSvc.GetAllAppointments()
+			.then((appointments)=>{
+				self.storageHelper.Appointments = appointments;
+				var disabledDates = self._getListOfDisabledDates(appointments);
+				$('#datetimepicker').datetimepicker({
+					minDate: new Date(),
+					format: 'MM/DD/YY',
+					disabledDates: disabledDates
+				});
+			})
+			.fail((err)=>{
+				console.error(err);
 		});
 	};
 }
@@ -241,7 +272,7 @@ class OrderFormViewModel {
 
 		this.cvv = ko.observable("");
 
-		this.orderTotal = ko.computed(function(){
+		this.orderTotal = ko.computed(()=>{
 			var total = parseFloat((Constants.WASH_COST + (self.addShine() ? Constants.TIRE_SHINE_COST : 0) + 
 				(self.addWax() ? Constants.WAX_COST : 0) + 
 				(self.addInterior() ? Constants.INTERIOR_COST : 0)) *
@@ -249,7 +280,7 @@ class OrderFormViewModel {
 			return total >= 100 ? total.toPrecision(5) : total.toPrecision(4);
 		});
 
-		this.orderSummary = ko.computed(function(){
+		this.orderSummary = ko.computed(()=>{
 			return $.validator.format("Exterior Hand Wash<br>{0}{1}{2}{3} = {4}x cost multiple.", 
 				(self.addShine() ? "Deep Tire Clean & Shine<br>" : ""),
 				(self.addWax() ? "Hand Wax & Buff<br>" : ""),
@@ -329,17 +360,31 @@ class LocalStorageHelper{
 		}
 	}
 
-	SetLoggedInUser(user){
-		if(this.storageType){
-			this.storageType.loggedInUser = JSON.stringify(user);
+	get Appointments(){
+		if(this.storageType && this.storageType.appointments){
+			return JSON.parse(this.storageType.appointments);
+		} else {
+			return [];
 		}
 	}
 
-	GetLoggedInUser(){
+	set Appointments(appts){
+		if(this.storageType){
+			this.storageType.appointments = JSON.stringify(appts);
+		}
+	}
+
+	get LoggedInUser(){
 		if(this.storageType && this.storageType.loggedInUser){
 			return JSON.parse(this.storageType.loggedInUser);
 		} else {
 			return null;
+		}
+	}
+
+	set LoggedInUser(user){
+		if(this.storageType){
+			this.storageType.loggedInUser = JSON.stringify(user);
 		}
 	}
 }
@@ -359,7 +404,7 @@ class WebService {
 	}
 
 	GetAllAppointments(){
-		return this._executeAjaxCall('GET', "/api/getAllAppointments");
+		return this._executeAjaxCall('GET', "/api/getAppointmentDatesAndTimes");
 	}
 
 	CreateUser(user){
@@ -385,10 +430,10 @@ class WebService {
 		return this.deferred.promise();
 	}
 
-	_onSuccess(data, textStatus, jqXHR){
-		console.info(data, textStatus, jqXHR);
+	_onSuccess(res, textStatus, jqXHR){
+		console.info(res, textStatus, jqXHR);
 		if(this.deferred){
-			this.deferred.resolve(data);
+			this.deferred.resolve(res.data);
 		}
 	}
 
