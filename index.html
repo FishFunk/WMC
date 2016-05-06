@@ -74,7 +74,19 @@
                 <div class="intro-text">
                     <div class="intro-lead-in">Welcome To <strong>Wash My Car!</strong></div>
                     <div class="intro-heading">NoVa's Most Reliable Mobile Detailing Service</div>
-                    <a class="btn btn-xl" data-bind="click: OnShowOrderForm" href="#">Schedule Now!</a>
+                    <div data-bind="visible: zipVerified">
+                      <h4>Great news! You are within our boundaries.</h4>
+                      <a class="btn btn-xl ghost-btn" data-bind="click: OnShowOrderForm" href="#">Schedule Now!</a>
+                    </div>
+                    <div data-bind="visible: !zipVerified()">
+                      <h4>Let's make sure we service your area first...</h4>
+                      <div id="verify-zip" class="input-group">
+                        <input type="text" class="form-control" placeholder="Zipcode" data-bind="value: OrderFormVm.zip">
+                        <span class="input-group-btn">
+                          <button class="btn btn-default" type="button" data-bind="click: OnVerifyZip">OK</button>
+                        </span>
+                      </div>
+                    </div>
                 </div>
             </div>
         </header>
@@ -110,7 +122,7 @@
                             <i class="fa fa-smile-o fa-stack-1x fa-inverse"></i>
                         </span>
                         <h4 class="service-heading">Smile</h4>
-                        <p class="text-muted pinch">Our professional hand washing techniques are <strong>10x more thorough and effective</strong> than a drive-thru car wash. Top notch quality and convenience starting at <strong>$32!</strong></p>
+                        <p class="text-muted pinch">Our professional hand washing techniques are <strong>10x more thorough and effective</strong> than a drive-thru car wash. Top notch quality and convenience starting at <strong>$<span data-bind="text: WASH_COST"></span>!</strong></p>
                     </div>
                 </div>
             </div>
@@ -230,7 +242,7 @@
     <div class="container modal-content jumbotron">
         <div class="row">
             <p>With an account you don't have to re-enter your vehicle and address info. We'll never save your billing information though!</p>
-            <button type="button" class="btn btn-lg btn-primary">Log In</button>
+            <button type="button" class="btn btn-lg btn-primary" data-bind="click: OnLogIn">Log In</button>
             <hr>
             <div class="btn-group">
                 <button type="button" class="btn btn-sm btn-link" data-bind="click: OnCreateNewAccount">Create New Account</button>
@@ -245,43 +257,49 @@
       <form id="order-form" data-toggle="validator" role="form" autocomplete="off" data-bind="with: OrderFormVm">
          <div class="row">
            <legend>Order Details</legend>
-           <div class="form-group col-sm-5">
+           <div class="form-group col-sm-12">
              <label class="control-label" for="checkbox">Service Options</label>
-             <div name="select-service">
+             <div class="form-inline">
                <div class="checkbox">
-                <label><input type="checkbox" disabled checked>Exterior Hand Wash - $32</label>
+                <label><input type="checkbox" disabled checked>&nbsp;Exterior Hand Wash&nbsp;(<strong>$<span data-bind="text: WASH_COST"></span></strong>)</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" data-bind="checked: addShine">&nbsp;Deep Tire Clean & Shine&nbsp;(<strong>$<span data-bind="text: TIRE_SHINE_COST"></span></strong>)</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" data-bind="checked: addWax">&nbsp;Hand Wax & Buff&nbsp;(<strong>$<span data-bind="text: WAX_COST"></span></strong>)</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" data-bind="checked: addInterior">&nbsp;Full Interior&nbsp;(<strong>$<span data-bind="text: INTERIOR_COST"></span></strong>)</label>
+                </div>
+              </div>
             </div>
-            <div class="checkbox">
-                <label><input type="checkbox" data-bind="checked: addShine">Deep Tire Clean & Shine - $20</label>
+          </div>
+          <div class="row">
+            <div class="form-group col-sm-4">
+              <label class="control-label" for="select">Car Size</label>
+              <select data-bind="options: carSizeMultiples, optionsText: 'size', value: selectedCarSize" class="form-control"></select>
             </div>
-            <div class="checkbox">
-                <label><input type="checkbox" data-bind="checked: addWax">Hand Wax & Buff - $75</label>
+            <div class="form-group col-sm-4">
+              <label class="control-label">Date</label>
+              <div class='input-group date' id='datetimepicker'>
+                <input type='text' class="form-control" data-bind="value: date"/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+              </div>
             </div>
-            <div class="checkbox">
-                <label><input type="checkbox" data-bind="checked: addInterior">Full Interior - $50</label>
+            <div class="form-group col-sm-4">
+              <label class="control-label" for="select">Time Range</label>
+              <select data-bind="options: timeRanges, value: selectedTimeRange" class="form-control"></select>
             </div>
-        </div>
-    </div>
-    <div class="form-group col-sm-3">
-      <label class="control-label" for="select">Car Size</label>
-      <select data-bind="options: carSizeMultiples, optionsText: 'size', value: selectedCarSize" class="form-control"></select>
-      <br>
-      <label class="control-label" for="select">Condition</label>
-      <select data-bind="options: carConditions, value: condition" class="form-control"></select>
-</div>
-<div class="form-group col-sm-4">
-  <label class="control-label" for="checkbox">Date</label>
-  <div class='input-group date' id='datetimepicker'>
-    <input type='text' class="form-control" data-bind="value: date"/>
-    <span class="input-group-addon">
-        <span class="glyphicon glyphicon-calendar"></span>
-    </span>
-</div>
-<br>
-<label class="control-label" for="select">Time Range</label>
-<select data-bind="options: timeRanges, value: selectedTimeRange" class="form-control"></select>
-</div>
-</div>
+          </div>
+          <div class="row">
+            <div class="form-group col-xs-12">
+              <label class="control-label" for="select">Description</label>
+              <textarea data-bind="value: description" maxlength="100" class="form-control" placeholder="Anything else we should know? What condition is your vehicle in? Will it be parked in the street, driveway, or garage? Special requests?"></textarea>
+            </div>
+          </div>
 <div class="row">
     <h5>Vehicle Info</h5>
     <div class="form-group">
@@ -382,29 +400,28 @@
     <label class="col-sm-4 control-label">Card Holder's Name</label>
     <div class="col-sm-6">
       <input data-bind="value: ccName" name="ccname" maxlength="70" placeholder="Card Holder Name" class="form-control">
-  </div>
+    </div>
 </div>
 <div class="form-group">
     <label class="col-sm-4 control-label">Card Number</label>
     <div class="col-sm-6">
       <input data-bind="value: ccNumber" name="ccnumber" maxlength="19" placeholder="Card Number" class="form-control">
+    </div>
+</div>
+<div class="form-group">
+  <label class="col-sm-4 control-label">Card Expiry Date</label>
+  <div class="col-sm-6">
+    <div class="form-inline">
+      <select data-bind="options: ccExpiryMos, value: ccExpiryMo" data-stripe="exp-month" class="card-expiry-month stripe-sensitive form-control"></select>
+        &nbsp;&nbsp;
+      <select data-bind="options: ccExpiryYrs, value: ccExpiryYr" data-stripe="exp-year" class="stripe-sensitive form-control"></select>
+    </div>
   </div>
 </div>
 <div class="form-group">
-    <label class="col-sm-4 control-label">Card Expiry Date</label>
-    <div class="col-sm-6">
-      <div class="form-inline">
-        <select data-bind="options: ccExpiryMos, value: ccExpiryMo" data-stripe="exp-month" class="card-expiry-month stripe-sensitive form-control"></select>
-      &nbsp;&nbsp;
-      <select data-bind="options: ccExpiryYrs, value: ccExpiryYr" data-stripe="exp-year" class="stripe-sensitive form-control">
-      </select>
-  </div>
-</div>
-</div>
-<div class="form-group">
-    <label class="col-sm-4 control-label">CVV/CVV2</label>
-    <div class="col-sm-3">
-      <input data-bind="value: cvv" name="cvv" placeholder="CVV" maxlength="4" class="form-control">
+  <label class="col-sm-4 control-label">CVV/CVV2</label>
+  <div class="col-sm-3">
+    <input data-bind="value: cvv" name="cvv" placeholder="CVV" maxlength="4" class="form-control">
   </div>
 </div>
 </div>
@@ -443,10 +460,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.simpleWeather/3.1.0/jquery.simpleWeather.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 
 <script src="js/classie.js"></script>
 <script src="js/cbpAnimatedHeader.min.js"></script>
 <script src="js/index.js"></script>
+<script src="js/constants.js"></script>
 
 </body>
 

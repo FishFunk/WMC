@@ -18,18 +18,6 @@ window.jQuery(document).ready(function($) {
 		format: 'MM/DD/YY'
 	});
 
-	// Populate dropdown with 12 expiry years from current year
-	var populateExpYearOptions = function(){
-		var $expiry = $("#exp-year");
-		var year = new Date().getFullYear();
-
-		for (var i = 0; i < 12; i++) {
-		    $expiry.append($("<option value='"+(i + year)+"' "+(i === 0 ? "selected" : "")+">"+(i + year)+"</option>"))
-		}
-	};
-
-	populateExpYearOptions();
-
 	var storageHelper = new LocalStorageHelper(sessionStorage);
 	var webSvc = new WebService();
 	ko.applyBindings(new App(storageHelper, webSvc));
@@ -38,7 +26,6 @@ window.jQuery(document).ready(function($) {
 // Main ViewModel Class
 class App {
 	constructor(storageHelper, webSvc){
-		var self = this;
 		this.storageHelper = storageHelper;
 		this.webSvc = webSvc;
 
@@ -46,7 +33,13 @@ class App {
 		this.$orderFormModal = $("#order-form-modal");
 		this.$orderForm = $("#order-form");
 
-		this.isGuest = ko.observable(false);
+		// this.isGuest = ko.observable(true);
+
+		if(this.storageHelper.GetLoggedInUser()){
+			this.zipVerified = ko.observable(true);
+		} else {
+			this.zipVerified = ko.observable(false);
+		}
 
 		this.OrderFormVm = new OrderFormViewModel();
 
@@ -68,7 +61,7 @@ class App {
 
 	// Show Order Form Modal
 	OnShowOrderForm(){
-		if(this.storageHelper.GetIsUserLoggedIn()){
+		if(this.storageHelper.GetLoggedInUser()){
 			this.$orderFormModal.modal();
 			this.webSvc.GetAllAppointments()
 				.then(function(data){
@@ -86,20 +79,56 @@ class App {
 
 	};
 
+	OnLogIn(){
+	};
+
+	OnVerifyZip(){
+		var zip = this.OrderFormVm.zip().trim();
+		if(_.contains(Constants.ZIP_WHITE_LIST, zip)){
+			this.zipVerified(true);
+		} else {
+			bootbox.alert("Sorry about this but we don't service your area yet! \
+			We're still young and growing so check back soon. \
+			Feel free to <a href='#contact'>contact us</a> to expedite the process. <BR><BR> Sincerely, <BR> - The WMC Team");
+		}
+	};
+
 	OnContinueAsGuest(){
-		this.isGuest(true);
-		this.storageHelper.SetIsUserLoggedIn(true);
 		this.$loginModal.removeClass('fade');
 		this.$loginModal.modal('hide');
 		this.$orderFormModal.modal('show');
 	};
 
 	OnSubmit(){
+		var self = this;
 		if(this.$orderForm.valid())
 		{
-			if(this.isGuest())
+			if(!this.GetLoggedInUser())
 			{
-				// Create tmp user
+				this.webSvc.GetUserByEmail(this.OrderFormViewModel.email())
+					.then(function(usr){
+						var tmpUser = self.OrderFormViewModel.MakeTempUserSchema();
+						if(usr){
+							// email already exists - update current??
+							// join temporary and existing data...
+							self.storageHelper.SetLoggedInUser(usr);
+						} else {
+							// create new temp user
+							var tmpUser = self.OrderFormViewModel.MakeTempUserSchema();
+							tmpUser.IsGuest = true;
+							self.storageHelper.SetLoggedInUser(tmpUser);
+							self.webSvc.CreateUser(tmpUser)
+								.then(function(){
+									bootbox.alert("Thank you! Your order has been placed.");
+								})
+								.fail(function(err){
+									bootbox.alert("There was a problem submitting your order.");
+								});
+						}
+					})
+					.fail(function(err){
+						bootbox.alert("There was a problem submitting your order.");
+					});
 			}
 			else
 			{
@@ -126,11 +155,11 @@ class App {
 				ccname: "required",
 				ccnumber: {
 					required: true,
-					maxLength: 19
+					maxlength: 19
 				},
 				cvv: {
 					required: true,
-					maxLength: 4
+					maxlength: 4
 				},
 				billstreet: {
 					required: "#billingCheckbox:unchecked"
@@ -155,10 +184,11 @@ class App {
 class OrderFormViewModel {
 	constructor(){
 		var self = this;
-		
-		this.TIRE_SHINE_COST = 25;
-		this.INTERIOR_COST = 75;
-		this.WAX_COST = 50
+
+		this.TIRE_SHINE_COST = Constants.TIRE_SHINE_COST;
+		this.INTERIOR_COST = Constants.INTERIOR_COST;
+		this.WAX_COST = Constants.WAX_COST;
+		this.WASH_COST = Constants.WASH_COST;
 
 		this.addShine = ko.observable(false);
 		this.addWax = ko.observable(false);
@@ -172,8 +202,7 @@ class OrderFormViewModel {
 		];
 		this.selectedCarSize = ko.observable(this.carSizeMultiples[0]);
 
-		this.carConditions = ["Light Dirt", "Medium Dirt", "Heavy Dirt", "Filthy"];
-		this.condition = ko.observable(this.carConditions[0]);
+		this.description = ko.observable("");
 
 		this.timeRanges = ["9:00 - 12:00 PM", "12:00 - 3:00 PM", "3:00 - 6:00 PM", "6:00 - 9:00 PM"];
 		this.selectedTimeRange = ko.observable(this.timeRanges[0]);
@@ -191,7 +220,7 @@ class OrderFormViewModel {
 		this.city = ko.observable("");
 		this.state = ko.observable("");
 		this.zip = ko.observable("");
-		
+
 		this.billStreet = ko.observable("");
 		this.billCity = ko.observable("");
 		this.billState = ko.observable("");
@@ -213,9 +242,9 @@ class OrderFormViewModel {
 		this.cvv = ko.observable("");
 
 		this.orderTotal = ko.computed(function(){
-			var total = parseFloat((32 + (self.addShine() ? self.TIRE_SHINE_COST : 0) + 
-				(self.addWax() ? self.WAX_COST : 0) + 
-				(self.addInterior() ? self.INTERIOR_COST : 0)) *
+			var total = parseFloat((Constants.WASH_COST + (self.addShine() ? Constants.TIRE_SHINE_COST : 0) + 
+				(self.addWax() ? Constants.WAX_COST : 0) + 
+				(self.addInterior() ? Constants.INTERIOR_COST : 0)) *
 				(self.selectedCarSize().multiple));
 			return total >= 100 ? total.toPrecision(5) : total.toPrecision(4);
 		});
@@ -229,6 +258,66 @@ class OrderFormViewModel {
 				self.selectedCarSize().multiple.toString());
 		});
 	}
+
+	MakeTempUserSchema(){
+		return {
+			appointments: [this._makeAppointmentSchema()],
+			cars: [this._makeCarSchema()],
+			email: this.email(),
+			phone: this.phone(),
+			fullName: this.fullName(),
+			pwd: "n/a",
+			locations: [_this._makeLocationSchema()]
+		}
+	}
+
+	_makeCarSchema(){
+		return {
+			color: this.color(),
+			make: this.make(),
+			model: this.model(),
+			size: this.selectedCarSize(),
+			tag: this.tag(),
+			year: parseInt(this.year())
+		}
+	}
+
+	_makeAppointmentSchema(){
+		return {
+			cars: [this._makeCarSchema()],
+			date: new Date(this.date()),
+			location: this._makeLocationSchema(),
+			price: this.orderTotal(),
+			services: this._buildServicesArray(),
+			timeEstimate: null,
+			timeRange: this.selectedTimeRange(),
+			description: this.description()
+		}
+	}
+
+	_makeLocationSchema(){
+		return {
+			city: this.city(),
+			state: this.state(),
+			street: this.street(),
+			//title: this.title(),
+			zip: this.zip()
+		}
+	}
+
+	_buildServicesArray(){
+		var services = ["Hand wash"];
+		if(this.addShine()){
+			services.push("Tire shine");
+		}
+		if(this.addWax()){
+			services.push("Wax & Buff");
+		}
+		if(this.addInterior()){
+			services.push("Interior");
+		}
+		return services;
+	}
 }
 
 class LocalStorageHelper{
@@ -240,17 +329,17 @@ class LocalStorageHelper{
 		}
 	}
 
-	SetIsUserLoggedIn(bool){
+	SetLoggedInUser(user){
 		if(this.storageType){
-			this.storageType.isUserLoggedIn = bool.toString();			
+			this.storageType.loggedInUser = JSON.stringify(user);
 		}
 	}
 
-	GetIsUserLoggedIn(bool){
-		if(this.storageType){
-			return Boolean(this.storageType.isUserLoggedIn);
+	GetLoggedInUser(){
+		if(this.storageType && this.storageType.loggedInUser){
+			return JSON.parse(this.storageType.loggedInUser);
 		} else {
-			return false;
+			return null;
 		}
 	}
 }
@@ -275,6 +364,10 @@ class WebService {
 
 	CreateUser(user){
 		return this._executeAjaxCall('PUT', "/api/createUser", user);
+	}
+
+	GetUserByEmail(email){
+		return this._executeAjaxCall('GET', "/api/getUserByEmail", {email: email});
 	}
 
 	// 'data' is an optional param
@@ -306,4 +399,3 @@ class WebService {
 		}
 	}
 }
-

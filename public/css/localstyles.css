@@ -22,6 +22,10 @@ h1,h2,h3,h4,h5,h6{font-family:Montserrat,"Helvetica Neue",Helvetica,Arial,sans-s
 .btn-xl:active,.btn-xl.active,.open .dropdown-toggle.btn-xl{background-image:none}
 .btn-xl.disabled,.btn-xl[disabled],fieldset[disabled] .btn-xl,.btn-xl.disabled:hover,.btn-xl[disabled]:hover,fieldset[disabled] .btn-xl:hover,.btn-xl.disabled:focus,.btn-xl[disabled]:focus,fieldset[disabled] .btn-xl:focus,.btn-xl.disabled:active,.btn-xl[disabled]:active,fieldset[disabled] .btn-xl:active,.btn-xl.disabled.active,.btn-xl[disabled].active,fieldset[disabled] .btn-xl.active{background-color:#0064ff;border-color:#0064ff}
 .btn-xl .badge{color:#0064ff;background-color:#fff}
+.ghost-btn{
+	background-color: transparent;
+	border-color: white;
+}
 
 .navbar-default{background-color:#222;}
 .navbar-default .navbar-brand{color:#0064ff;font-family:"BOLDfinger";}
@@ -113,5 +117,14 @@ select.error, textarea.error, input.error {
 #login-modal {
 	top:30%;
     text-align: center;
+}
+
+#verify-zip{
+	max-width: 150px;
+	margin:auto;
+}
+
+.checkbox {
+	padding: 5px;
 }
 

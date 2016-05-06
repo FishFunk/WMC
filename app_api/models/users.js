@@ -24,8 +24,8 @@ var appointmentSchema = new mongoose.Schema({
 	price: Number,
 	services: [String],
 	timeEstimate: Number, // minutes
-	timeRange: { type: String, required: true}
-
+	timeRange: { type: String, required: true},
+	description: String
 });
 
 var userSchema = new mongoose.Schema({
