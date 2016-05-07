@@ -1,20 +1,18 @@
 window.jQuery(document).ready(($)=>{
 
-	// Initialize UI Items
-
-	// Closes the Responsive Menu on Menu Item Click
-	$('.navbar-collapse ul li a').click(()=>{
-	    $('.navbar-toggle:visible').click();
-	});
-
-	// Highlight the top nav as scrolling occurs
-	$('body').scrollspy({
-	    target: '.navbar-fixed-top'
-	});
-
-	var storageHelper = new LocalStorageHelper(sessionStorage);
-	var webSvc = new WebService();
-	ko.applyBindings(new App(storageHelper, webSvc));
+	// Initialize Application
+	Bootstrapper.Run()
+		.then(()=>{
+			var to = setTimeout(()=>{
+				$('#splash').fadeOut(1000);
+				clearTimeout(to);
+			},2000)
+		})
+		.fail((err)=>{
+			console.error(err);
+			bootbox.alert("This is embarrassing... something went wrong and our app will not work correctly.\
+				Please make sure you have a good internet connection and refresh the page.");
+		});
 });
 
 // Main ViewModel Class
@@ -37,7 +35,6 @@ class App {
 		this.OrderFormVm = new OrderFormViewModel();
 
 		this._initValidation();
-		this._cacheAppointments();
 	}
 
 	OnFormCancel(){
@@ -74,9 +71,11 @@ class App {
 		if(_.contains(Constants.ZIP_WHITE_LIST, zip)){
 			this.zipVerified(true);
 		} else {
-			bootbox.alert("Sorry about this but we don't service your area yet! \
+			bootbox.alert(
+				s.sprintf("Sorry about this but we don't service your area yet! \
 			We're still young and growing so check back soon. \
-			Feel free to <a href='#contact'>contact us</a> to expedite the process. <BR><BR> Sincerely, <BR> - The WMC Team");
+			Feel free to <a href=%s>contact us</a> to expedite the process. <BR><BR> Sincerely, <BR> - The WMC Team", 
+			"javascript:$('.modal').modal('hide');$('#contact-nav').click();"));
 		}
 	};
 
@@ -124,33 +123,6 @@ class App {
 		}
 	};
 
-	_getListOfDisabledDates(appointments){
-		if(!appointments || appointments.length === 0){
-			return [];
-		}
-
-		var datesToDisable = [];
-		var apptsByDate = _.groupBy(appointments, (x)=> x.date);
-
-		for(var i=0; i<apptsByDate.length;i++){
-			var time = 0;
-			var appts = apptsByDate[i];
-			_.each(appts, (a)=>{
-				if(a.timeEstimate){
-					time+=a.timeEstimate;
-				} else {
-					// default time estimate in minutes
-					time+=Contsants.DEFAULT_JOB_TIME_MINS;
-				}
-			});
-			if(time > Constants.MAX_JOB_TIME_PER_DAY_MINS){
-				datesToDisable.push(_.first(appts).date);
-			}
-		}
-
-		return datesToDisable;
-	};
-
 	_initValidation(){
 		this.$orderForm.validate({
 			rules:{
@@ -191,23 +163,6 @@ class App {
 			messages:{
 				email: "Please enter a valid email address.",
 			}
-		});
-	};
-
-	_cacheAppointments(){
-		var self = this;
-		this.webSvc.GetAllAppointments()
-			.then((appointments)=>{
-				self.storageHelper.Appointments = appointments;
-				var disabledDates = self._getListOfDisabledDates(appointments);
-				$('#datetimepicker').datetimepicker({
-					minDate: new Date(),
-					format: 'MM/DD/YY',
-					disabledDates: disabledDates
-				});
-			})
-			.fail((err)=>{
-				console.error(err);
 		});
 	};
 }
@@ -443,4 +398,105 @@ class WebService {
 			this.deferred.reject(err);
 		}
 	}
+}
+
+class Bootstrapper{
+	static Run(){
+		var deferred = $.Deferred();
+		// Closes the Responsive Menu on Menu Item Click
+		$('.navbar-collapse ul li a').click(()=>{
+		    $('.navbar-toggle:visible').click();
+		});
+
+		// Highlight the top nav as scrolling occurs
+		$('body').scrollspy({
+		    target: '.navbar-fixed-top'
+		});
+
+		// Load Templates
+		async.series([
+				(callback)=>{
+					$('#guest-order-form-tmpl')
+					.load('./templates/guest-order-form-tmpl.html', (res, status, jqHXR)=>{
+						if(status==="error"){
+							callback("Application failed to initialize.");
+						} else {
+							callback();
+						}
+					});
+				},
+				(callback)=>{
+					$('#user-order-form-tmpl')
+					.load('./templates/user-order-form-tmpl.html', (res, status, jqHXR)=>{
+						if(status==="error"){
+							callback("Application failed to initialize.");
+						} else {
+							callback();
+						}
+					});
+				},
+				(callback)=>{
+					// Cache Appointment Data
+					var storageHelper = new LocalStorageHelper(sessionStorage);
+					var webSvc = new WebService();
+					ko.applyBindings(new App(storageHelper, webSvc));
+
+					webSvc.GetAllAppointments()
+						.then((appointments)=> {
+							storageHelper.Appointments = appointments;
+							var disabledDates = Utils.GetListOfDisabledDates(appointments);
+							$('#datetimepicker').datetimepicker({
+								minDate: new Date(),
+								format: 'MM/DD/YY',
+								disabledDates: disabledDates
+							});
+							callback();
+						})
+						.fail((err)=>{
+							callback(err);
+					});
+
+				}
+			],
+			(possibleError)=>{
+				if(possibleError){
+					deferred.reject(possibleError);
+				} else {
+					deferred.resolve();
+				}
+			});
+
+		return deferred.promise();
+	}
+}
+
+
+
+class Utils{
+	static GetListOfDisabledDates(appointments){
+		if(!appointments || appointments.length === 0){
+			return [];
+		}
+
+		var datesToDisable = [];
+		var apptsByDate = _.groupBy(appointments, (x)=> moment(x.date).format("MM/DD/YYYY"));
+
+		for(var i=0; i<apptsByDate.length;i++){
+			var time = 0;
+			var appts = apptsByDate[i];
+			_.each(appts, (a)=>{
+				if(a.timeEstimate){
+					time+=a.timeEstimate;
+				} else {
+					// default time estimate in minutes
+					time+=Contsants.DEFAULT_JOB_TIME_MINS;
+				}
+			});
+			if(time > Constants.MAX_JOB_TIME_PER_DAY_MINS){
+				datesToDisable.push(_.first(appts).date);
+			}
+		}
+
+		return datesToDisable;
+	};
 }
