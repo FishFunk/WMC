@@ -7,7 +7,7 @@ router.post('/createUser', ctrlUsers.createUser);
 router.post('/getUserByEmail', ctrlUsers.getUserByEmail);
 router.post('/getUserByEmailAndPwd', ctrlUsers.getUserByEmailAndPwd);
 
-router.get('/getAppointmentDatesAndTimes', ctrlUsers.getAppointmentDatesAndTimes);
+router.get('/getFutureApptDatesAndTimes', ctrlUsers.getFutureApptDatesAndTimes);
 
 router.put('/updateUser', ctrlUsers.updateUser);
 

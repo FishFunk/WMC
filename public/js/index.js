@@ -3,9 +3,9 @@ window.jQuery(document).ready(($)=>{
 	// Initialize Application
 	Bootstrapper.Run()
 		.then(()=>{
-			var to = setTimeout(()=>{
+			var timer = setTimeout(()=>{
 				$('#splash').fadeOut(1000);
-				clearTimeout(to);
+				clearTimeout(timer);
 			},2000)
 		})
 		.fail((err)=>{
@@ -252,7 +252,7 @@ class OrderFormViewModel {
 			email: this.email(),
 			phone: this.phone(),
 			fullName: this.fullName(),
-			pwd: "n/a",
+			pwd: Utils.GenerateUUID(),
 			locations: [_this._makeLocationSchema()]
 		}
 	}
@@ -275,7 +275,7 @@ class OrderFormViewModel {
 			location: this._makeLocationSchema(),
 			price: this.orderTotal(),
 			services: this._buildServicesArray(),
-			timeEstimate: null,
+			timeEstimate: null, // TODO
 			timeRange: this.selectedTimeRange(),
 			description: this.description()
 		}
@@ -286,7 +286,7 @@ class OrderFormViewModel {
 			city: this.city(),
 			state: this.state(),
 			street: this.street(),
-			//title: this.title(),
+			//title: this.title(), // TODO
 			zip: this.zip()
 		}
 	}
@@ -348,155 +348,5 @@ class CarSizeMultiple {
 	constructor(size, multiple){
 			this.size = size;
 			this.multiple = multiple;
-	};
-}
-
-
-class WebService {
-	constructor(){
-		this.baseUrl = document.location.origin;
-		this.deferred = null;
-	}
-
-	GetAllAppointments(){
-		return this._executeAjaxCall('GET', "/api/getAppointmentDatesAndTimes");
-	}
-
-	CreateUser(user){
-		return this._executeAjaxCall('PUT', "/api/createUser", user);
-	}
-
-	GetUserByEmail(email){
-		return this._executeAjaxCall('GET', "/api/getUserByEmail", {email: email});
-	}
-
-	// 'data' is an optional param
-	_executeAjaxCall(type, ext, data){
-		this.deferred = $.Deferred();
-		$.ajax({
-			url: this.baseUrl + ext,
-			type: type,
-			dataType: 'JSON',
-			error: this._onError.bind(this),
-			success: this._onSuccess.bind(this),
-			timeout: 10000,
-			data: data ? JSON.stringify(data) : undefined
-		});
-		return this.deferred.promise();
-	}
-
-	_onSuccess(res, textStatus, jqXHR){
-		console.info(res, textStatus, jqXHR);
-		if(this.deferred){
-			this.deferred.resolve(res.data);
-		}
-	}
-
-	_onError(jqXHR, textStatus, err){
-		console.error(jqXHR, textStatus, err);
-		if(this.deferred){
-			this.deferred.reject(err);
-		}
-	}
-}
-
-class Bootstrapper{
-	static Run(){
-		var deferred = $.Deferred();
-		// Closes the Responsive Menu on Menu Item Click
-		$('.navbar-collapse ul li a').click(()=>{
-		    $('.navbar-toggle:visible').click();
-		});
-
-		// Highlight the top nav as scrolling occurs
-		$('body').scrollspy({
-		    target: '.navbar-fixed-top'
-		});
-
-		// Load Templates
-		async.series([
-				(callback)=>{
-					$('#guest-order-form-tmpl')
-					.load('./templates/guest-order-form-tmpl.html', (res, status, jqHXR)=>{
-						if(status==="error"){
-							callback("Application failed to initialize.");
-						} else {
-							callback();
-						}
-					});
-				},
-				(callback)=>{
-					$('#user-order-form-tmpl')
-					.load('./templates/user-order-form-tmpl.html', (res, status, jqHXR)=>{
-						if(status==="error"){
-							callback("Application failed to initialize.");
-						} else {
-							callback();
-						}
-					});
-				},
-				(callback)=>{
-					// Cache Appointment Data
-					var storageHelper = new LocalStorageHelper(sessionStorage);
-					var webSvc = new WebService();
-					ko.applyBindings(new App(storageHelper, webSvc));
-
-					webSvc.GetAllAppointments()
-						.then((appointments)=> {
-							storageHelper.Appointments = appointments;
-							var disabledDates = Utils.GetListOfDisabledDates(appointments);
-							$('#datetimepicker').datetimepicker({
-								minDate: new Date(),
-								format: 'MM/DD/YY',
-								disabledDates: disabledDates
-							});
-							callback();
-						})
-						.fail((err)=>{
-							callback(err);
-					});
-
-				}
-			],
-			(possibleError)=>{
-				if(possibleError){
-					deferred.reject(possibleError);
-				} else {
-					deferred.resolve();
-				}
-			});
-
-		return deferred.promise();
-	}
-}
-
-
-
-class Utils{
-	static GetListOfDisabledDates(appointments){
-		if(!appointments || appointments.length === 0){
-			return [];
-		}
-
-		var datesToDisable = [];
-		var apptsByDate = _.groupBy(appointments, (x)=> moment(x.date).format("MM/DD/YYYY"));
-
-		for(var i=0; i<apptsByDate.length;i++){
-			var time = 0;
-			var appts = apptsByDate[i];
-			_.each(appts, (a)=>{
-				if(a.timeEstimate){
-					time+=a.timeEstimate;
-				} else {
-					// default time estimate in minutes
-					time+=Contsants.DEFAULT_JOB_TIME_MINS;
-				}
-			});
-			if(time > Constants.MAX_JOB_TIME_PER_DAY_MINS){
-				datesToDisable.push(_.first(appts).date);
-			}
-		}
-
-		return datesToDisable;
 	};
 }

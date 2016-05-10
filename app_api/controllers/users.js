@@ -1,11 +1,22 @@
 var mongoose = require('mongoose');
 var Usr = mongoose.model('User');
+var _ = require('underscore');
+// var generator = require('../../tests/data_generator');
 
 const badRequestCode = 400;
 const internalErrorCode = 500;
 const createSuccessCode = 201;
 const readSuccessCode = 200;
 const noContentSuccessCode = 204;
+
+// var addData = ()=>{
+// 	for(var i=0; i<50; i++){
+// 		var usr = generator.MakeUser();
+// 		Usr.collection.insert(usr);
+// 	}
+// };
+
+// addData();
 
 module.exports.updateUser = (req, res)=>{
 	if(req.body)
@@ -31,15 +42,25 @@ module.exports.updateUser = (req, res)=>{
 	}
 };
 
-module.exports.getAppointmentDatesAndTimes = (req, res)=>{
+module.exports.getFutureApptDatesAndTimes = (req, res)=>{
 	Usr.find()
 	   .select('appointments.date appointments.timeEstimate appointments.timeRange')
 	   .exec((err, docs)=>{
 		if(err){
 			sendJsonResponse(res, internalErrorCode, "DB Failure - getAllAppointments", err);
 		} else {
-			result = docs;
-			sendJsonResponse(res, readSuccessCode, "Success", result);
+			var now = new Date();
+			var futureAppts = [];
+			var userAppointmentArrs = _.map(docs, (d)=>{ return d.appointments });
+			_.each(userAppointmentArrs, (arr)=>{
+				_.each(arr, (appt)=>{
+					if(appt.date > now){
+						futureAppts.push(appt);
+					}
+				});
+			});
+			
+			sendJsonResponse(res, readSuccessCode, "Success", futureAppts);
 		}
 	});
 };
