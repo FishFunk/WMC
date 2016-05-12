@@ -1,5 +1,5 @@
 <div class="container modal-content">
-  <form id="order-form" data-toggle="validator" role="form" autocomplete="off" data-bind="with: OrderFormVm">
+  <form id="order-form" data-toggle="validator" role="form" autocomplete="off">
     <div class="row">
       <legend>Order Details</legend>
       <div class="form-group col-sm-12">
@@ -22,13 +22,9 @@
   </div>
   <div class="row">
     <div class="form-group col-sm-4">
-      <label class="control-label" for="select">Car Size</label>
-      <select data-bind="options: carSizeMultiples, optionsText: 'size', value: selectedCarSize" class="form-control"></select>
-    </div>
-    <div class="form-group col-sm-4">
       <label class="control-label">Date</label>
       <div class='input-group date' id='datetimepicker'>
-        <input type='text' class="form-control" data-bind="value: date"/>
+        <input type='text' class="form-control"/>
         <span class="input-group-addon">
           <span class="glyphicon glyphicon-calendar"></span>
         </span>
@@ -36,7 +32,9 @@
     </div>
     <div class="form-group col-sm-4">
       <label class="control-label" for="select">Time Range</label>
-      <select data-bind="options: timeRanges, value: selectedTimeRange" class="form-control"></select>
+      <select class="form-control" data-bind="foreach: timeRangeOptions">
+        <option data-bind="attr:{ disabled: $data.disabled, value: $data.key }, text: $data.range"></option>
+      </select>
     </div>
   </div>
   <div class="row">
@@ -65,6 +63,16 @@
       <label class="col-sm-1 control-label">Tag*</label>
       <div class="col-sm-5">
         <input data-bind="value: tag" name="tag" maxlength="12" placeholder="000-0000" class="form-control">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-1 control-label">Year</label>
+      <div class="col-sm-5">
+        <select data-bind="options: carYears, value: carYear" class="form-control"></select>
+      </div>
+      <label class="control-label col-sm-1" for="select">Size</label>
+      <div class="col-sm-5">
+        <select data-bind="options: carSizeMultiples, optionsText: 'size', value: selectedCarSize" class="form-control"></select>
       </div>
     </div>
   </div>

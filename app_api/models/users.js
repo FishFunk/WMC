@@ -25,6 +25,7 @@ var appointmentSchema = new mongoose.Schema({
 	services: [String],
 	timeEstimate: Number, // minutes
 	timeRange: { type: String, required: true},
+	timeRangeEnum: {type: Number, required: true},
 	description: String
 });
 

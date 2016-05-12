@@ -23,32 +23,31 @@ class Bootstrapper{
 						}
 					});
 				},
-				(callback)=>{
-					$('#user-order-form-tmpl')
-					.load('./templates/user-order-form-tmpl.html', (res, status, jqHXR)=>{
-						if(status==="error"){
-							callback("Application failed to initialize.");
-						} else {
-							callback();
-						}
-					});
-				},
+				// (callback)=>{
+				// 	$('#user-order-form-tmpl')
+				// 	.load('./templates/user-order-form-tmpl.html', (res, status, jqHXR)=>{
+				// 		if(status==="error"){
+				// 			callback("Application failed to initialize.");
+				// 		} else {
+				// 			callback();
+				// 		}
+				// 	});
+				// },
 				(callback)=>{
 					// Cache Appointment Data
 					var storageHelper = new LocalStorageHelper(sessionStorage);
 					var webSvc = new WebService();
-					ko.applyBindings(new App(storageHelper, webSvc));
+					var orderFormVm = new OrderFormViewModel(storageHelper, webSvc);
+					var logInVm = new LogInViewModel();
+					
+					var mainVm = new MainViewModel(storageHelper, logInVm, orderFormVm);
+
+					ko.applyBindings(mainVm);
 
 					webSvc.GetAllAppointments()
 						.then((appointments)=> {
 							var apptsByDate = _.groupBy(appointments, (x)=> moment(x.date).format("MM/DD/YYYY"));
-							storageHelper.Appointments = apptsByDate;
-							var disabledDates = Utils.GetListOfDisabledDates(apptsByDate);
-							$('#datetimepicker').datetimepicker({
-								minDate: new Date(),
-								format: 'MM/DD/YY',
-								disabledDates: disabledDates
-							});
+							storageHelper.AppointmentsByDate = apptsByDate;
 							callback();
 						})
 						.fail((err)=>{

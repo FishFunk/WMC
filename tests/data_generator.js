@@ -18,13 +18,15 @@ class DataGenerator{
 	};
 
 	MakeFutureAppointment(){
+		var tr = this.GetRandomTimeRange();
 		return 	{
 			cars: [this.MakeCar()],
     		date: this.GetRandomFutureDate(),
     		location: this.MakeLocation(),
     		price: _.random(29, 250),
     		services: this.GetRandomServiceArray(),
-    		timeRange: this.GetRandomTimeRange(),
+    		timeRange: tr.range,
+    		timeRangeKey: tr.key,
     		timeEstimate: _.random(30, 120),
     		description: this.MakeRandomSentence()
 		};
@@ -77,7 +79,12 @@ class DataGenerator{
 	};
 
 	GetRandomTimeRange(){
-		return _.sample(["9:00 - 12:00PM","12:00 - 3:00PM","3:00 - 6:00PM","6:00 - 9:00PM"]);
+		return _.sample([
+			Constants.MORNING_TIME_RANGE,
+			Constants.AFTERNOON_TIME_RANGE,
+			Constants.EVENING_TIME_RANGE,
+			Constants.NIGHT_TIME_RANGE
+		]);
 	};
 
 	GetRandomServiceArray(){

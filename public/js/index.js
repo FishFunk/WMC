@@ -16,31 +16,31 @@ window.jQuery(document).ready(($)=>{
 });
 
 // Main ViewModel Class
-class App {
-	constructor(storageHelper, webSvc){
-		var self = this;
+class MainViewModel {
+	constructor(storageHelper, logInVm, orderFormVm){
+		
+		this.WASH_COST = Constants.WASH_DETAILS.price;
+		this.TireShinePriceHtml = "<sup>$</sup>"+Constants.TIRE_SHINE_DETAILS.price;
+		this.InteriorPriceHtml = "<sup>$</sup>"+Constants.INTERIOR_DETAILS.price;
+		this.WaxPriceHtml = "<sup>$</sup>"+Constants.WAX_DETAILS.price;
+
+		this.LogInViewModel = logInVm;
+		this.OrderFormViewModel = orderFormVm;
+
 		this.storageHelper = storageHelper;
-		this.webSvc = webSvc;
 
 		this.$loginModal = $("#login-modal");
 		this.$orderFormModal = $("#order-form-modal");
 		this.$orderForm = $("#order-form");
+
+		this.verifyZip = ko.observable("");
 
 		if(this.storageHelper.LoggedInUser){
 			this.zipVerified = ko.observable(true);
 		} else {
 			this.zipVerified = ko.observable(false);
 		}
-
-		this.OrderFormVm = new OrderFormViewModel();
-
-		this._initValidation();
 	}
-
-	OnFormCancel(){
-		this.$orderFormModal.modal('hide');
-		window.location = "#page-top";			
-	};
 
 	OnPageScroll(data, event) {
 	    var $anchor = $(event.currentTarget);
@@ -50,7 +50,6 @@ class App {
 	    event.preventDefault();
     };
 
-	// Show Order Form Modal
 	OnShowOrderForm(){
 		if(this.storageHelper.LoggedInUser){
 			this.$orderFormModal.modal();
@@ -59,15 +58,8 @@ class App {
 		}
 	};
 
-	OnCreateNewAccount(){
-
-	};
-
-	OnLogIn(){
-	};
-
 	OnVerifyZip(){
-		var zip = this.OrderFormVm.zip().trim();
+		var zip = this.verifyZip().trim();
 		if(_.contains(Constants.ZIP_WHITE_LIST, zip)){
 			this.zipVerified(true);
 		} else {
@@ -78,6 +70,14 @@ class App {
 			"javascript:$('.modal').modal('hide');$('#contact-nav').click();"));
 		}
 	};
+}
+
+class LogInViewModel {
+	constructor(){
+		this.$loginModal = $("#login-modal");
+		this.$orderFormModal = $("#order-form-modal");
+		this.$orderForm = $("#order-form");
+	}
 
 	OnContinueAsGuest(){
 		this.$loginModal.removeClass('fade');
@@ -85,22 +85,150 @@ class App {
 		this.$orderFormModal.modal('show');
 	};
 
+
+	OnCreateNewAccount(){
+	};
+
+	OnLogIn(){
+	};
+}
+
+class OrderFormViewModel {
+	constructor(storageHelper, webSvc){
+		var self = this;
+
+		this.webSvc = webSvc;
+		this.$orderFormModal = $('#order-form-modal');
+		this.$orderForm = $("#order-form");
+
+		this.storageHelper = storageHelper;
+
+		this.TIRE_SHINE_COST = Constants.TIRE_SHINE_DETAILS.price;
+		this.INTERIOR_COST = Constants.INTERIOR_DETAILS.price;
+		this.WAX_COST = Constants.WAX_DETAILS.price;
+		this.WASH_COST = Constants.WASH_DETAILS.price;
+
+		this.addShine = ko.observable(false);
+		this.addWax = ko.observable(false);
+		this.addInterior = ko.observable(false);
+		this.showBillingAddress = ko.observable(false);
+
+		this.carSizeMultiples = [
+			new CarSizeMultiple("Small (2-4 door)", 1.0),
+			new CarSizeMultiple("SUV (5-door)", 1.2),
+			new CarSizeMultiple("XXL", 1.5)
+		];
+		this.selectedCarSize = ko.observable(this.carSizeMultiples[0]);
+
+		this.carYears = [];
+		var year = new Date().getFullYear() + 1;
+		for (var i = 0; i < 25; i++) {
+		    this.carYears.push((year - i).toString());
+		}
+		this.carYear = ko.observable(this.carYears[1]);
+
+
+		this.description = ko.observable("");
+
+		this.timeRangeOptions = [
+			Constants.MORNING_TIME_RANGE,
+			Constants.AFTERNOON_TIME_RANGE,
+			Constants.EVENING_TIME_RANGE,
+			Constants.NIGHT_TIME_RANGE
+		];
+
+		this.date = ko.observable(moment().format("MM/DD/YY"));
+
+		this.make = ko.observable("");
+		this.model = ko.observable("");
+		this.color = ko.observable("");
+		this.year = ko.observable("");
+		this.tag = ko.observable("");
+
+		this.email = ko.observable("");
+		this.phone = ko.observable("");
+
+		this.street = ko.observable("");
+		this.city = ko.observable("");
+		this.state = ko.observable("");
+		this.zip = ko.observable("");
+
+		this.billStreet = ko.observable("");
+		this.billCity = ko.observable("");
+		this.billState = ko.observable("");
+		this.billZip = ko.observable("");
+
+		this.ccName = ko.observable("");
+		this.ccNumber = ko.observable("");
+		
+		this.ccExpiryMos = ["01","02","03","04","05","06","07","08","09","10","11","12"];
+		this.ccExpiryMo = ko.observable(this.ccExpiryMos[0]);
+
+		// Populate Expiry Years
+		this.ccExpiryYrs = [];
+		var year = new Date().getFullYear();
+		for (var i = 0; i < 12; i++) {
+		    this.ccExpiryYrs.push((i + year).toString());
+		}
+		this.ccExpiryYr = ko.observable(this.ccExpiryYrs[0]);
+
+		this.cvv = ko.observable("");
+
+		this.orderTotal = ko.computed(()=>{
+			var total = parseFloat((self.WASH_COST + (self.addShine() ? self.TIRE_SHINE_COST : 0) + 
+				(self.addWax() ? self.WAX_COST : 0) + 
+				(self.addInterior() ? self.INTERIOR_COST : 0)) *
+				(self.selectedCarSize().multiple));
+			return total >= 100 ? total.toPrecision(5) : total.toPrecision(4);
+		});
+
+		this.orderSummary = ko.computed(()=>{
+			return $.validator.format("Exterior Hand Wash<br>{0}{1}{2}{3} = {4}x cost multiple.", 
+				(self.addShine() ? "Deep Tire Clean & Shine<br>" : ""),
+				(self.addWax() ? "Hand Wax & Buff<br>" : ""),
+				(self.addInterior() ? "Full Interior Cleaning<br>" : ""),
+				self.selectedCarSize().size,
+				self.selectedCarSize().multiple.toString());
+		});
+
+		this._initValidation();
+	}
+
+	OnAfterRender(elements, self){
+		$('#datetimepicker').datetimepicker({
+			minDate: new Date(),
+			format: 'MM/DD/YY'
+		}).on('dp.change', self._onDatepickerChange.bind(self));
+	}
+
+	MakeTempUserSchema(){
+		return {
+			appointments: [this._makeAppointmentSchema()],
+			cars: [this._makeCarSchema()],
+			email: this.email(),
+			phone: this.phone(),
+			fullName: this.fullName(),
+			pwd: Utils.GenerateUUID(),
+			locations: [_this._makeLocationSchema()]
+		}
+	}
+
 	OnSubmit(){
 		var self = this;
 		if(this.$orderForm.valid())
 		{
 			if(!this.LoggedInUser)
 			{
-				this.webSvc.GetUserByEmail(this.OrderFormViewModel.email())
+				this.webSvc.GetUserByEmail(this.email())
 					.then((usr)=>{
-						var tmpUser = self.OrderFormViewModel.MakeTempUserSchema();
+						var tmpUser = self.MakeTempUserSchema();
 						if(usr){
 							// email already exists - update current??
 							// join temporary and existing data...
 							self.storageHelper.LoggedInUser = usr;
 						} else {
 							// create new temp user
-							var tmpUser = self.OrderFormViewModel.MakeTempUserSchema();
+							var tmpUser = self.MakeTempUserSchema();
 							tmpUser.IsGuest = true;
 							self.storageHelper.LoggedInUser = tmpUser;
 							self.webSvc.CreateUser(tmpUser)
@@ -122,6 +250,33 @@ class App {
 			}
 		}
 	};
+
+	OnFormCancel(){
+		this.$orderFormModal.modal('hide');
+		window.location = "#page-top";			
+	};
+
+	_onDatepickerChange(event){
+		var date = moment(event.date).format("MM/DD/YYYY");
+		this.date(date);
+		var appointments = this.storageHelper.AppointmentsByDate[date];
+		if(appointments){
+			const maxMinutesPerInterval = 180;
+			var morningAppts = _.filter(appointments, (appt) => appt.key === Constants.MORNING_TIME_RANGE.key);
+			var afternoonAppts = _.filter(appointments, (appt) => appt.key === Constants.AFTERNOON_TIME_RANGE.key);
+			var eveningAppts = _.filter(appointments, (appt) => appt.key === Constants.EVENING_TIME_RANGE.key);
+			var nightAppts = _.filter(appointments, (appt) => appt.key === Constants.NIGHT_TIME_RANGE.key);
+
+			Constants.MORNING_TIME_RANGE.disabled(
+				_.reduce(morningAppts, (memo, appt) => {return memo + appt.timeEstimate}, 0) > maxMinutesPerInterval);
+			Constants.AFTERNOON_TIME_RANGE.disabled(
+				_.reduce(afternoonAppts, (memo, appt) => {return memo + appt.timeEstimate}, 0) > maxMinutesPerInterval);
+			Constants.EVENING_TIME_RANGE.disabled(
+				_.reduce(eveningAppts, (memo, appt) => {return memo + appt.timeEstimate}, 0) > maxMinutesPerInterval);
+			Constants.NIGHT_TIME_RANGE.disabled(
+				_.reduce(nightAppts, (memo, appt) => {return memo + appt.timeEstimate}, 0) > maxMinutesPerInterval);
+		}
+	}
 
 	_initValidation(){
 		this.$orderForm.validate({
@@ -165,97 +320,6 @@ class App {
 			}
 		});
 	};
-}
-
-class OrderFormViewModel {
-	constructor(){
-		var self = this;
-
-		this.TIRE_SHINE_COST = Constants.TIRE_SHINE_COST;
-		this.INTERIOR_COST = Constants.INTERIOR_COST;
-		this.WAX_COST = Constants.WAX_COST;
-		this.WASH_COST = Constants.WASH_COST;
-
-		this.addShine = ko.observable(false);
-		this.addWax = ko.observable(false);
-		this.addInterior = ko.observable(false);
-		this.showBillingAddress = ko.observable(false);
-
-		this.carSizeMultiples = [
-			new CarSizeMultiple("Small (2-4 door)", 1.0),
-			new CarSizeMultiple("SUV (5-door)", 1.2),
-			new CarSizeMultiple("XXL", 1.5)
-		];
-		this.selectedCarSize = ko.observable(this.carSizeMultiples[0]);
-
-		this.description = ko.observable("");
-
-		this.timeRanges = ["9:00 - 12:00 PM", "12:00 - 3:00 PM", "3:00 - 6:00 PM", "6:00 - 9:00 PM"];
-		this.selectedTimeRange = ko.observable(this.timeRanges[0]);
-
-		this.date = ko.observable(moment().format("MM/DD/YY"));
-		this.make = ko.observable("");
-		this.model = ko.observable("");
-		this.color = ko.observable("");
-		this.tag = ko.observable("");
-
-		this.email = ko.observable("");
-		this.phone = ko.observable("");
-
-		this.street = ko.observable("");
-		this.city = ko.observable("");
-		this.state = ko.observable("");
-		this.zip = ko.observable("");
-
-		this.billStreet = ko.observable("");
-		this.billCity = ko.observable("");
-		this.billState = ko.observable("");
-		this.billZip = ko.observable("");
-
-		this.ccName = ko.observable("");
-		this.ccNumber = ko.observable("");
-		
-		this.ccExpiryMos = ["01","02","03","04","05","06","07","08","09","10","11","12"];
-		this.ccExpiryMo = ko.observable(this.ccExpiryMos[0]);
-
-		this.ccExpiryYrs = [];
-		var year = new Date().getFullYear();
-		for (var i = 0; i < 12; i++) {
-		    this.ccExpiryYrs.push((i + year).toString());
-		}
-		this.ccExpiryYr = ko.observable(this.ccExpiryYrs[0]);
-
-		this.cvv = ko.observable("");
-
-		this.orderTotal = ko.computed(()=>{
-			var total = parseFloat((Constants.WASH_COST + (self.addShine() ? Constants.TIRE_SHINE_COST : 0) + 
-				(self.addWax() ? Constants.WAX_COST : 0) + 
-				(self.addInterior() ? Constants.INTERIOR_COST : 0)) *
-				(self.selectedCarSize().multiple));
-			return total >= 100 ? total.toPrecision(5) : total.toPrecision(4);
-		});
-
-		this.orderSummary = ko.computed(()=>{
-			return $.validator.format("Exterior Hand Wash<br>{0}{1}{2}{3} = {4}x cost multiple.", 
-				(self.addShine() ? "Deep Tire Clean & Shine<br>" : ""),
-				(self.addWax() ? "Hand Wax & Buff<br>" : ""),
-				(self.addInterior() ? "Full Interior Cleaning<br>" : ""),
-				self.selectedCarSize().size,
-				self.selectedCarSize().multiple.toString());
-		});
-	}
-
-	MakeTempUserSchema(){
-		return {
-			appointments: [this._makeAppointmentSchema()],
-			cars: [this._makeCarSchema()],
-			email: this.email(),
-			phone: this.phone(),
-			fullName: this.fullName(),
-			pwd: Utils.GenerateUUID(),
-			locations: [_this._makeLocationSchema()]
-		}
-	}
 
 	_makeCarSchema(){
 		return {
@@ -315,7 +379,7 @@ class LocalStorageHelper{
 		}
 	}
 
-	get Appointments(){
+	get AppointmentsByDate(){
 		if(this.storageType && this.storageType.appointments){
 			return JSON.parse(this.storageType.appointments);
 		} else {
@@ -323,9 +387,9 @@ class LocalStorageHelper{
 		}
 	}
 
-	set Appointments(appts){
+	set AppointmentsByDate(apptsByDate){
 		if(this.storageType){
-			this.storageType.appointments = JSON.stringify(appts);
+			this.storageType.appointments = JSON.stringify(apptsByDate);
 		}
 	}
 

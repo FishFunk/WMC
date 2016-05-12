@@ -1,12 +1,41 @@
-const TIRE_SHINE_COST = 25,
-      INTERIOR_COST = 75,
-      WAX_COST = 50,
-      TIRE_SHINE_TIME = 30,
-      INTERIOR_TIME = 50,
-      WAX_TIME = 50,
-      WASH_COST = 29,
-      DEFAULT_JOB_TIME_MINS = 120,
+const DEFAULT_JOB_TIME_MINS = 120,
       MAX_JOB_TIME_PER_DAY_MINS = 720,
+      WASH_DETAILS = {
+        time: 30,
+        price: 29
+      },
+      TIRE_SHINE_DETAILS = {
+        time: 30,
+        price: 25
+      },
+      INTERIOR_DETAILS = {
+        time: 50,
+        price: 75
+      },
+      WAX_DETAILS = {
+        time: 50,
+        price: 50
+      },
+      MORNING_TIME_RANGE = {
+            range: "9:00 - 12:00 PM",
+            key: 1,
+            disabled: ko.observable(false)
+      },
+      AFTERNOON_TIME_RANGE = {
+            range: "12:00 - 3:00 PM",
+            key: 2,
+            disabled: ko.observable(false)
+      },
+      EVENING_TIME_RANGE = {
+            range: "3:00 - 6:00 PM",
+            key: 3,
+            disabled: ko.observable(false)
+      },
+      NIGHT_TIME_RANGE = {
+            range: "6:00 - 9:00 PM",
+            key: 4,
+            disabled: ko.observable(false)
+      },
       ZIP_WHITE_LIST = [
       "22314", // Alexandria
       "22301", // Del Ray
@@ -48,35 +77,39 @@ const TIRE_SHINE_COST = 25,
 
 class Constants {
 
-  static get TIRE_SHINE_COST() {
-    return TIRE_SHINE_COST;
+  static get TIRE_SHINE_DETAILS() {
+    return TIRE_SHINE_DETAILS;
   }
 
-  static get INTERIOR_COST() {
-    return INTERIOR_COST;
+  static get INTERIOR_DETAILS() {
+    return INTERIOR_DETAILS;
   }
 
-  static get WAX_COST() {
-    return WAX_COST;
+  static get WAX_DETAILS() {
+    return WAX_DETAILS;
   }
 
-  static get TIRE_SHINE_TIME() {
-    return TIRE_SHINE_TIME;
-  }
-
-  static get INTERIOR_TIME() {
-    return INTERIOR_TIME;
-  }
-
-  static get WAX_TIME() {
-    return WAX_TIME;
-  }
-
-  static get WASH_COST(){
-  	return WASH_COST;
+  static get WASH_DETAILS() {
+    return WASH_DETAILS;
   }
 
   static get ZIP_WHITE_LIST(){
   	return ZIP_WHITE_LIST;
+  }
+
+  static get MORNING_TIME_RANGE(){
+    return MORNING_TIME_RANGE;
+  }
+
+  static get AFTERNOON_TIME_RANGE(){
+    return AFTERNOON_TIME_RANGE;
+  }
+
+  static get EVENING_TIME_RANGE(){
+    return EVENING_TIME_RANGE;
+  }
+
+  static get NIGHT_TIME_RANGE(){
+    return NIGHT_TIME_RANGE;
   }
 }

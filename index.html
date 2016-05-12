@@ -81,7 +81,7 @@
                     <div data-bind="visible: !zipVerified()">
                       <h4>Let's make sure we service your area first...</h4>
                       <div id="verify-zip" class="input-group">
-                        <input type="text" class="form-control" placeholder="Zipcode" data-bind="value: OrderFormVm.zip">
+                        <input type="text" class="form-control" placeholder="Zipcode" data-bind="value: verifyZip">
                         <span class="input-group-btn">
                           <button class="btn btn-default" type="button" data-bind="click: OnVerifyZip">OK</button>
                         </span>
@@ -140,21 +140,21 @@
                 <div class="row text-center">
                     <div class="col-md-4">
                         <div class="circle">
-                           <span><sup>$</sup>25</span>
-                       </div>
-                       <h4 class="service-heading">Tire Shine</h4>
-                       <p class="text-muted">Really make your car stand out with this deep clean of your tire, rims, and wheel well plus a hand applied gel coating that will protect your tires from UV rays and make them shine like the day it rolled off the lot.</p>
+                           <span data-bind="html: TireShinePriceHtml"></span>
+                        </div>
+                        <h4 class="service-heading">Tire Shine</h4>
+                        <p class="text-muted">Really make your car stand out with this deep clean of your tire, rims, and wheel well plus a hand applied gel coating that will protect your tires from UV rays and make them shine like the day it rolled off the lot.</p>
                    </div>
                    <div class="col-md-4">
                     <div class="circle">
-                    	<span><sup>$</sup>75</span>
+                        <span data-bind="html: InteriorPriceHtml"></span>
                     </div>
                     <h4 class="service-heading">Interior</h4>
                     <p class="text-muted">Not only will your car turn heads on the sidewalk but your passengers will be in awe too. We will vacuum, spot remove stains, clean windows inside and out, and wipe down the interior, dash, door jambs, and trim.</p>
                 </div>
                 <div class="col-md-4">
                     <div class="circle">
-                    	<span><sup>$</sup>50</span>
+                    	<span data-bind="html: WaxPriceHtml"></span>
                     </div>
                     <h4 class="service-heading">Hand Wax & Buff</h4>
                     <p class="text-muted">Our most popular selection! With this service we hand wax your vehicle's body which provides an unbeatable shine and protection to your vehicle.</p>
@@ -238,7 +238,7 @@
     </div>
 </footer>
 
-<div id="login-modal" class="modal fade" role="dialog">
+<div id="login-modal" class="modal fade" role="dialog" data-bind="with: LogInViewModel">
     <div class="container modal-content jumbotron">
         <div class="row">
             <p>With an account you don't have to re-enter your vehicle and address info. We'll never save your billing information though!</p>
@@ -252,8 +252,8 @@
     </div>
 </div>
 
-<div id="order-form-modal" class="modal fade pinch" role="dialog">
-  <div data-bind="template: 'guest-order-form-tmpl'"></div>
+<div id="order-form-modal" class="modal fade pinch" role="dialog" data-bind="with: OrderFormViewModel">
+  <div data-bind="template: {name: 'guest-order-form-tmpl', afterRender: OnAfterRender }"></div>
 </div>
 
 <div id="splash">
@@ -279,7 +279,7 @@
 <script src="js/constants.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/bootstrapper.js"></script>
-<script src="js/webservice.js"></script>
+<script src="js/webService.js"></script>
 <script src="js/index.js"></script>
 
 
