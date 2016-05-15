@@ -36,6 +36,20 @@ const DEFAULT_JOB_TIME_MINS = 120,
             key: 4,
             disabled: ko.observable(false)
       },
+      CAR_SIZES = [
+        {
+          size: "Compact (2-4 door)",
+          multiplier: 1.0
+        },
+        {
+          size: "SUV (5-door)",
+          multiplier: 1.2
+        },
+        {
+          size: "XXL",
+          multiplier: 1.5
+        }
+      ],
       ZIP_WHITE_LIST = [
       "22314", // Alexandria
       "22301", // Del Ray
@@ -111,5 +125,9 @@ class Constants {
 
   static get NIGHT_TIME_RANGE(){
     return NIGHT_TIME_RANGE;
+  }
+
+  static get CAR_SIZES(){
+    return CAR_SIZES;
   }
 }

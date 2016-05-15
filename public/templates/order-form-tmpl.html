@@ -1,11 +1,10 @@
-<div class="container modal-content">
-  <form id="order-form" data-toggle="validator" role="form" autocomplete="off" data-bind="with: OrderFormVm">
-    <div class="row">
-      <legend>Order Details</legend>
-      <div class="form-group col-sm-12">
-        <label class="control-label" for="checkbox">Service Options</label>
-        <div class="form-inline">
-         <div class="checkbox">
+<div id="order-form-tmpl" class="container modal-content">
+  <div class="row">
+    <legend>Order Details</legend>
+    <div class="form-group col-sm-12">
+      <label class="control-label" for="checkbox">Service Options</label>
+      <div class="form-inline">
+        <div class="checkbox">
           <label><input type="checkbox" disabled checked>&nbsp;Exterior Hand Wash&nbsp;(<strong>$<span data-bind="text: WASH_COST"></span></strong>)</label>
         </div>
         <div class="checkbox">
@@ -22,13 +21,9 @@
   </div>
   <div class="row">
     <div class="form-group col-sm-4">
-      <label class="control-label" for="select">Car Size</label>
-      <select data-bind="options: carSizeMultiples, optionsText: 'size', value: selectedCarSize" class="form-control"></select>
-    </div>
-    <div class="form-group col-sm-4">
       <label class="control-label">Date</label>
       <div class='input-group date' id='datetimepicker'>
-        <input type='text' class="form-control" data-bind="value: date"/>
+        <input type='text' class="form-control"/>
         <span class="input-group-addon">
           <span class="glyphicon glyphicon-calendar"></span>
         </span>
@@ -36,7 +31,9 @@
     </div>
     <div class="form-group col-sm-4">
       <label class="control-label" for="select">Time Range</label>
-      <select data-bind="options: timeRanges, value: selectedTimeRange" class="form-control"></select>
+      <select class="form-control" data-bind="foreach: timeRangeOptions">
+        <option data-bind="attr:{ disabled: $data.disabled, value: $data.key }, text: $data.range"></option>
+      </select>
     </div>
   </div>
   <div class="row">
@@ -46,28 +43,50 @@
     </div>
   </div>
   <div class="row">
-    <h5>Vehicle Info</h5>
-    <div class="form-group">
-      <label class="col-sm-1 control-label">Make</label>
-      <div class="col-sm-5">
-        <input data-bind="value: make" name="make" placeholder="Volkswagen" class="form-control">
+    <legend class="col-xs-12">Vehicles
+      <button data-bind="click: OnAddNewVehicle, visible: !showAddVehicleForm()" class="btn btn-sm btn-success pull-right">Add New&nbsp;
+        <span class="fa fa-plus"></span>
+      </button>
+      <div data-bind="visible: showAddVehicleForm" class="pull-right">
+        <button data-bind="click: OnCancelNewVehicle" class="btn btn-danger"><span class="fa fa-times"></span></button>
+        <button class="btn btn-success" data-bind="click: OnSaveNewVehicle"><span class="fa fa-save"></span></button>
       </div>
-      <label class="col-sm-1 control-label">Model</label>
-      <div class="col-sm-5">
-        <input data-bind="value: model" name="model" placeholder="Golf" class="form-control">
+    </legend>
+    <form id="add-vehicle-form" data-toggle="validator" role="form" data-bind="visible: showAddVehicleForm" autocomplete="off">
+      <div class="form-group">
+        <label class="col-sm-1 control-label">Make</label>
+        <div class="col-sm-5">
+          <input data-bind="value: make" name="make" placeholder="Volkswagen" class="form-control">
+        </div>
+        <label class="col-sm-1 control-label">Model</label>
+        <div class="col-sm-5">
+          <input data-bind="value: model" name="model" placeholder="Golf" class="form-control">
+        </div>
       </div>
-    </div>
-    <div class="form-group">
-      <label class="col-sm-1 control-label">Color</label>
-      <div class="col-sm-5">
-        <input data-bind="value: color" name="color" maxlength="12" placeholder="Silver" class="form-control">
+      <div class="form-group">
+        <label class="col-sm-1 control-label">Color</label>
+        <div class="col-sm-5">
+          <input data-bind="value: color" name="color" maxlength="12" placeholder="Silver" class="form-control">
+        </div>
+        <label class="col-sm-1 control-label">Tag*</label>
+        <div class="col-sm-5">
+          <input data-bind="value: tag" name="tag" maxlength="12" placeholder="000-0000" class="form-control">
+        </div>
       </div>
-      <label class="col-sm-1 control-label">Tag*</label>
-      <div class="col-sm-5">
-        <input data-bind="value: tag" name="tag" maxlength="12" placeholder="000-0000" class="form-control">
+      <div class="form-group">
+        <label class="col-sm-1 control-label">Year</label>
+        <div class="col-sm-5">
+          <select data-bind="options: carYears, value: carYear" class="form-control"></select>
+        </div>
+        <label class="control-label col-sm-1" for="select">Size</label>
+        <div class="col-sm-5">
+          <select data-bind="options: carSizes, optionsText: 'size', value: selectedCarSize" class="form-control"></select>
+        </div>
       </div>
-    </div>
+    </form>
+    <div data-bind="template: { name: 'vehicle-tmpl', foreach: cars}"></div>
   </div>
+  <form id="order-details-form" data-toggle="validator" role="form" autocomplete="off">
   <div class="row">
     <h5>Contact Info</h5>
     <div class="form-group">

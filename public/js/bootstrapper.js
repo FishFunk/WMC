@@ -14,8 +14,8 @@ class Bootstrapper{
 		// Load Templates
 		async.series([
 				(callback)=>{
-					$('#guest-order-form-tmpl')
-					.load('./templates/guest-order-form-tmpl.html', (res, status, jqHXR)=>{
+					$('#order-form-tmpl')
+					.load('./templates/order-form-tmpl.html', (res, status, jqHXR)=>{
 						if(status==="error"){
 							callback("Application failed to initialize.");
 						} else {
@@ -23,16 +23,16 @@ class Bootstrapper{
 						}
 					});
 				},
-				// (callback)=>{
-				// 	$('#user-order-form-tmpl')
-				// 	.load('./templates/user-order-form-tmpl.html', (res, status, jqHXR)=>{
-				// 		if(status==="error"){
-				// 			callback("Application failed to initialize.");
-				// 		} else {
-				// 			callback();
-				// 		}
-				// 	});
-				// },
+				(callback)=>{
+					$('#vehicle-tmpl')
+					.load('./templates/vehicle-tmpl.html', (res, status, jqHXR)=>{
+						if(status==="error"){
+							callback("Application failed to initialize.");
+						} else {
+							callback();
+						}
+					});
+				},
 				(callback)=>{
 					// Cache Appointment Data
 					var storageHelper = new LocalStorageHelper(sessionStorage);

@@ -73,7 +73,7 @@
             <div class="container">
                 <div class="intro-text">
                     <div class="intro-lead-in">Welcome To <strong>Wash My Car!</strong></div>
-                    <div class="intro-heading">NoVa's Most Reliable Mobile Detailing Service</div>
+                    <div class="intro-heading">VA's Most Reliable Mobile Detailing Service</div>
                     <div data-bind="visible: zipVerified">
                       <h4>Great news! You are within our boundaries.</h4>
                       <a class="btn btn-xl ghost-btn" data-bind="click: OnShowOrderForm" href="#">Schedule Now!</a>
@@ -253,12 +253,15 @@
 </div>
 
 <div id="order-form-modal" class="modal fade pinch" role="dialog" data-bind="with: OrderFormViewModel">
-  <div data-bind="template: {name: 'guest-order-form-tmpl', afterRender: OnAfterRender }"></div>
+  <div data-bind="template: {name: 'order-form-tmpl', afterRender: OnAfterRender }"></div>
 </div>
 
 <div id="splash">
   <img src="img/wmc_logo.jpg">
 </div>
+
+<div hidden id="order-form-tmpl" data-bind="with: OrderFormViewModel"></div>
+<div hidden id="vehicle-tmpl"></div>
 
 <!-- spells -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>

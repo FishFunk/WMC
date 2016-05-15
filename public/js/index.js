@@ -31,7 +31,6 @@ class MainViewModel {
 
 		this.$loginModal = $("#login-modal");
 		this.$orderFormModal = $("#order-form-modal");
-		this.$orderForm = $("#order-form");
 
 		this.verifyZip = ko.observable("");
 
@@ -76,7 +75,6 @@ class LogInViewModel {
 	constructor(){
 		this.$loginModal = $("#login-modal");
 		this.$orderFormModal = $("#order-form-modal");
-		this.$orderForm = $("#order-form");
 	}
 
 	OnContinueAsGuest(){
@@ -99,7 +97,6 @@ class OrderFormViewModel {
 
 		this.webSvc = webSvc;
 		this.$orderFormModal = $('#order-form-modal');
-		this.$orderForm = $("#order-form");
 
 		this.storageHelper = storageHelper;
 
@@ -108,25 +105,11 @@ class OrderFormViewModel {
 		this.WAX_COST = Constants.WAX_DETAILS.price;
 		this.WASH_COST = Constants.WASH_DETAILS.price;
 
+		// Order Details
 		this.addShine = ko.observable(false);
 		this.addWax = ko.observable(false);
 		this.addInterior = ko.observable(false);
 		this.showBillingAddress = ko.observable(false);
-
-		this.carSizeMultiples = [
-			new CarSizeMultiple("Small (2-4 door)", 1.0),
-			new CarSizeMultiple("SUV (5-door)", 1.2),
-			new CarSizeMultiple("XXL", 1.5)
-		];
-		this.selectedCarSize = ko.observable(this.carSizeMultiples[0]);
-
-		this.carYears = [];
-		var year = new Date().getFullYear() + 1;
-		for (var i = 0; i < 25; i++) {
-		    this.carYears.push((year - i).toString());
-		}
-		this.carYear = ko.observable(this.carYears[1]);
-
 
 		this.description = ko.observable("");
 
@@ -139,12 +122,23 @@ class OrderFormViewModel {
 
 		this.date = ko.observable(moment().format("MM/DD/YY"));
 
+		// Car Info
+		this.showAddVehicleForm = ko.observable(false);
+		this.cars = ko.observableArray([]);
 		this.make = ko.observable("");
 		this.model = ko.observable("");
 		this.color = ko.observable("");
-		this.year = ko.observable("");
 		this.tag = ko.observable("");
+		this.carSizes = Constants.CAR_SIZES;
+		this.selectedCarSize = ko.observable(this.carSizes[0]);
+		this.carYears = [];
+		var year = new Date().getFullYear() + 1;
+		for (var i = 0; i < 25; i++) {
+		    this.carYears.push((year - i).toString());
+		}
+		this.carYear = ko.observable(this.carYears[1]);
 
+		// Contact Info
 		this.email = ko.observable("");
 		this.phone = ko.observable("");
 
@@ -153,6 +147,7 @@ class OrderFormViewModel {
 		this.state = ko.observable("");
 		this.zip = ko.observable("");
 
+		// Billing Info
 		this.billStreet = ko.observable("");
 		this.billCity = ko.observable("");
 		this.billState = ko.observable("");
@@ -164,7 +159,6 @@ class OrderFormViewModel {
 		this.ccExpiryMos = ["01","02","03","04","05","06","07","08","09","10","11","12"];
 		this.ccExpiryMo = ko.observable(this.ccExpiryMos[0]);
 
-		// Populate Expiry Years
 		this.ccExpiryYrs = [];
 		var year = new Date().getFullYear();
 		for (var i = 0; i < 12; i++) {
@@ -178,27 +172,28 @@ class OrderFormViewModel {
 			var total = parseFloat((self.WASH_COST + (self.addShine() ? self.TIRE_SHINE_COST : 0) + 
 				(self.addWax() ? self.WAX_COST : 0) + 
 				(self.addInterior() ? self.INTERIOR_COST : 0)) *
-				(self.selectedCarSize().multiple));
+				(self.selectedCarSize().multiplier));
 			return total >= 100 ? total.toPrecision(5) : total.toPrecision(4);
 		});
 
 		this.orderSummary = ko.computed(()=>{
-			return $.validator.format("Exterior Hand Wash<br>{0}{1}{2}{3} = {4}x cost multiple.", 
+			return $.validator.format("Exterior Hand Wash<br>{0}{1}{2}{3} = {4}x cost multiplier.", 
 				(self.addShine() ? "Deep Tire Clean & Shine<br>" : ""),
 				(self.addWax() ? "Hand Wax & Buff<br>" : ""),
 				(self.addInterior() ? "Full Interior Cleaning<br>" : ""),
 				self.selectedCarSize().size,
-				self.selectedCarSize().multiple.toString());
+				self.selectedCarSize().multiplier.toString());
 		});
-
-		this._initValidation();
 	}
 
 	OnAfterRender(elements, self){
+		self.$addVehicleForm = $('#add-vehicle-form');
+		self.$orderDetailsForm = $('#order-details-form');
 		$('#datetimepicker').datetimepicker({
 			minDate: new Date(),
 			format: 'MM/DD/YY'
 		}).on('dp.change', self._onDatepickerChange.bind(self));
+		self._initValidation();
 	}
 
 	MakeTempUserSchema(){
@@ -213,9 +208,26 @@ class OrderFormViewModel {
 		}
 	}
 
+	OnAddNewVehicle(){
+		this.showAddVehicleForm(true);
+	}
+
+	OnCancelNewVehicle(){
+		this.showAddVehicleForm(false);
+	}
+
+	OnSaveNewVehicle(){
+		if(this.$addVehicleForm.valid()){
+			const newCar = this._makeCarSchema();
+			this.cars.push(newCar);
+			this.$addVehicleForm.find("input").val("");
+			this.showAddVehicleForm(false);
+		}
+	}
+
 	OnSubmit(){
 		var self = this;
-		if(this.$orderForm.valid())
+		if(this.$orderDetailsForm.valid())
 		{
 			if(!this.LoggedInUser)
 			{
@@ -279,11 +291,8 @@ class OrderFormViewModel {
 	}
 
 	_initValidation(){
-		this.$orderForm.validate({
+		this.$orderDetailsForm.validate({
 			rules:{
-				make: "required",
-				model: "required",
-				color: "required",
 				street: "required",
 				city: "required",
 				state: "required",
@@ -319,6 +328,13 @@ class OrderFormViewModel {
 				email: "Please enter a valid email address.",
 			}
 		});
+		this.$addVehicleForm.validate({
+			rules:{
+				make: "required",
+				model: "required",
+				color: "required"
+			}
+		});
 	};
 
 	_makeCarSchema(){
@@ -326,9 +342,9 @@ class OrderFormViewModel {
 			color: this.color(),
 			make: this.make(),
 			model: this.model(),
-			size: this.selectedCarSize(),
+			size: this.selectedCarSize().size,
 			tag: this.tag(),
-			year: parseInt(this.year())
+			year: parseInt(this.carYear())
 		}
 	}
 
@@ -406,11 +422,4 @@ class LocalStorageHelper{
 			this.storageType.loggedInUser = JSON.stringify(user);
 		}
 	}
-}
-
-class CarSizeMultiple {
-	constructor(size, multiple){
-			this.size = size;
-			this.multiple = multiple;
-	};
 }
