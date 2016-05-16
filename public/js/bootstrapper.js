@@ -34,6 +34,16 @@ class Bootstrapper{
 					});
 				},
 				(callback)=>{
+					$('#location-tmpl')
+					.load('./templates/location-tmpl.html', (res, status, jqHXR)=>{
+						if(status==="error"){
+							callback("Application failed to initialize.");
+						} else {
+							callback();
+						}
+					});
+				},
+				(callback)=>{
 					// Cache Appointment Data
 					var storageHelper = new LocalStorageHelper(sessionStorage);
 					var webSvc = new WebService();

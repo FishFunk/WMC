@@ -1,0 +1,16 @@
+<div id="location-templ" class="col-sm-4">
+	<div class="panel panel-default option-panel location-panel" 
+	data-bind="click: $root.OrderFormViewModel.OnClickLocationPanel.bind($data, $root.OrderFormViewModel), css: {'selected' : $data.selected}">
+		<div class="panel-heading">
+			<span data-bind="text: $data.title"></span>
+			&nbsp;
+			<span class="fa fa-map-marker"></span>
+		</div>
+		<div class="panel-body">
+			<span data-bind="text: $data.street"></span>
+			<span data-bind="text: $data.city"></span>
+			<span data-bind="text: $data.state"></span>
+			<span data-bind="text: $data.zip"></span>
+		</div>
+	</div>
+</div>

@@ -84,11 +84,51 @@
         </div>
       </div>
     </form>
-    <div data-bind="template: { name: 'vehicle-tmpl', foreach: cars}"></div>
   </div>
+  <div class="row" data-bind="template: { name: 'vehicle-tmpl', foreach: cars}"></div>
+  <div class="row">
+    <legend class="col-xs-12">Location
+      <button data-bind="click: OnAddNewLocation, visible: !showAddLocationForm()" class="btn btn-sm btn-success pull-right">Add New&nbsp;
+        <span class="fa fa-plus"></span>
+      </button>
+      <div data-bind="visible: showAddLocationForm" class="pull-right">
+        <button data-bind="click: OnCancelNewLocation" class="btn btn-danger"><span class="fa fa-times"></span></button>
+        <button class="btn btn-success" data-bind="click: OnSaveNewLocation"><span class="fa fa-save"></span></button>
+      </div>
+    </legend>
+    <form id="add-location-form" data-toggle="validator" role="form" data-bind="visible: showAddLocationForm" autocomplete="off">
+      <div class="form-group">
+        <label class="col-sm-1 control-label">Street</label>
+        <div class="col-sm-11">
+          <input data-bind="value: street" name="street" placeholder="Street" class="form-control">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-1 control-label">City</label>
+        <div class="col-sm-11">
+          <input data-bind="value: city" name="city" placeholder="City" class="form-control">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-1 control-label">State</label>
+        <div class="col-sm-3">
+          <input data-bind="value: state" name="state" maxlength="2" placeholder="XX" class="form-control">
+        </div>
+        <label class="col-sm-1 control-label">Zip</label>
+        <div class="col-sm-3">
+          <input data-bind="value: zip" name="zip" maxlength="9" placeholder="Postal Code" class="form-control">
+        </div>
+        <label class="col-sm-1 control-label">Type</label>
+        <div class="col-sm-3">
+          <select class="form-control" data-bind="options: locationTitleOptions, value: title"></select>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="row" data-bind="template: { name: 'location-tmpl', foreach: locations}"></div>
   <form id="order-details-form" data-toggle="validator" role="form" autocomplete="off">
   <div class="row">
-    <h5>Contact Info</h5>
+    <h5>Contact</h5>
     <div class="form-group">
       <label class="col-sm-1 control-label">Email</label>
       <div class="col-sm-5">
@@ -97,31 +137,6 @@
       <label class="col-sm-1 control-label">Phone</label>
       <div class="col-sm-5">
         <input data-bind="value: phone" name="phone" maxlength="12" placeholder="000-000-0000" class="form-control">
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <h5>Vehicle Location</h5>
-    <div class="form-group">
-      <label class="col-sm-1 control-label">Street</label>
-      <div class="col-sm-11">
-        <input data-bind="value: street" name="street" placeholder="Street" class="form-control">
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="col-sm-1 control-label">City</label>
-      <div class="col-sm-11">
-        <input data-bind="value: city" name="city" placeholder="City" class="form-control">
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="col-sm-1 control-label">State</label>
-      <div class="col-sm-5">
-        <input data-bind="value: state" name="state" maxlength="2" placeholder="XX" class="form-control">
-      </div>
-      <label class="col-sm-1 control-label">Zip</label>
-      <div class="col-sm-5">
-        <input data-bind="value: zip" name="zip" maxlength="9" placeholder="Postal Code" class="form-control">
       </div>
     </div>
   </div>

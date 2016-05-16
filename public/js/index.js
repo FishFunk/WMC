@@ -142,6 +142,11 @@ class OrderFormViewModel {
 		this.email = ko.observable("");
 		this.phone = ko.observable("");
 
+		// Location Info
+		this.showAddLocationForm = ko.observable(false);
+		this.locations = ko.observableArray([]);
+		this.locationTitleOptions = ["Home", "Work", "Other"];
+		this.title = ko.observable(this.locationTitleOptions[0]);
 		this.street = ko.observable("");
 		this.city = ko.observable("");
 		this.state = ko.observable("");
@@ -188,6 +193,7 @@ class OrderFormViewModel {
 
 	OnAfterRender(elements, self){
 		self.$addVehicleForm = $('#add-vehicle-form');
+		self.$addLocationForm = $('#add-location-form');
 		self.$orderDetailsForm = $('#order-details-form');
 		$('#datetimepicker').datetimepicker({
 			minDate: new Date(),
@@ -208,11 +214,32 @@ class OrderFormViewModel {
 		}
 	}
 
+	OnAddNewLocation(){
+		this.showAddLocationForm(true);
+	}
+
+	OnCancelNewLocation(){
+		this.$addVehicleForm.find("input").val("");
+		this.$addLocationForm.validate().resetForm();
+		this.showAddLocationForm(false);
+	}
+
+	OnSaveNewLocation(){
+		if(this.$addLocationForm.valid()){
+			const loc = this._makeLocationSchema();
+			this.locations.push(loc);
+			this.$addLocationForm.find("input").val("");
+			this.showAddLocationForm(false);
+		}
+	}
+
 	OnAddNewVehicle(){
 		this.showAddVehicleForm(true);
 	}
 
 	OnCancelNewVehicle(){
+		this.$addVehicleForm.find("input").val("");
+		this.$addVehicleForm.validate().resetForm();
 		this.showAddVehicleForm(false);
 	}
 
@@ -223,6 +250,17 @@ class OrderFormViewModel {
 			this.$addVehicleForm.find("input").val("");
 			this.showAddVehicleForm(false);
 		}
+	}
+
+	OnClickVehiclePanel(self, vehicleData){
+		vehicleData.selected(!vehicleData.selected());
+	}
+
+	OnClickLocationPanel(self, locationData){
+		_.each(self.locations(), (loc) =>{
+			loc.selected(false);
+		});
+		locationData.selected(true);
 	}
 
 	OnSubmit(){
@@ -264,6 +302,7 @@ class OrderFormViewModel {
 	};
 
 	OnFormCancel(){
+		this.$orderDetailsForm.validate().resetForm();
 		this.$orderFormModal.modal('hide');
 		window.location = "#page-top";			
 	};
@@ -293,10 +332,6 @@ class OrderFormViewModel {
 	_initValidation(){
 		this.$orderDetailsForm.validate({
 			rules:{
-				street: "required",
-				city: "required",
-				state: "required",
-				zip: "required",
 				email:{
 					required: true,
 					email: true
@@ -335,6 +370,14 @@ class OrderFormViewModel {
 				color: "required"
 			}
 		});
+		this.$addLocationForm.validate({
+			rules:{
+				street: "required",
+				city: "required",
+				state: "required",
+				zip: "required"
+			}
+		});
 	};
 
 	_makeCarSchema(){
@@ -344,7 +387,8 @@ class OrderFormViewModel {
 			model: this.model(),
 			size: this.selectedCarSize().size,
 			tag: this.tag(),
-			year: parseInt(this.carYear())
+			year: parseInt(this.carYear()),
+			selected: ko.observable(false)
 		}
 	}
 
@@ -366,8 +410,9 @@ class OrderFormViewModel {
 			city: this.city(),
 			state: this.state(),
 			street: this.street(),
-			//title: this.title(), // TODO
-			zip: this.zip()
+			title: this.title(),
+			zip: this.zip(),
+			selected: ko.observable(false)
 		}
 	}
 

@@ -145,3 +145,15 @@ select.error, textarea.error, input.error {
 	margin: 0 auto;
 }
 
+.option-panel:hover{
+	border: 2px solid;
+	border-color: black;
+	font-weight: bold;
+}
+
+.option-panel.selected{
+	border: 2px solid;
+	border-color: green;
+	font-weight: bold;
+}
+
