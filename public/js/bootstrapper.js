@@ -48,7 +48,7 @@ class Bootstrapper{
 					var storageHelper = new LocalStorageHelper(sessionStorage);
 					var webSvc = new WebService();
 					var orderFormVm = new OrderFormViewModel(storageHelper, webSvc);
-					var logInVm = new LogInViewModel();
+					var logInVm = new LogInViewModel(storageHelper, webSvc);
 					
 					var mainVm = new MainViewModel(storageHelper, logInVm, orderFormVm);
 

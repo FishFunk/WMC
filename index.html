@@ -239,13 +239,27 @@
 </footer>
 
 <div id="login-modal" class="modal fade" role="dialog" data-bind="with: LogInViewModel">
-    <div class="container modal-content jumbotron">
+    <div class="container modal-content">
+        <form id="login-form" class="row">
+            <div class="form-group">
+                <div class="col-xs-10 col-xs-offset-1">
+                    <input data-bind="value: email" class="form-control" type="email" name="email" placeholder="johnny.appleseed@yahoo.com">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-10 col-xs-offset-1">
+                    <input data-bind="value: pwd" class="form-control" type="password" name="pwd" placeholder="***********">
+                </div>
+            </div>
+        </form>
         <div class="row">
-            <p>With an account you don't have to re-enter your vehicle and address info. We'll never save your billing information though!</p>
             <button type="button" class="btn btn-lg btn-primary" data-bind="click: OnLogIn">Log In</button>
+        </div>
+        <div class="row">
             <hr>
             <div class="btn-group">
-                <button type="button" class="btn btn-sm btn-link" data-bind="click: OnCreateNewAccount">Create New Account</button>
+                <button type="button" class="btn btn-sm btn-link" data-bind="click: OnCreateNewAccount">Create Account</button>
+                <button type="button" class="btn btn-sm btn-link">Forgot Password</button>
                 <button type="button" class="btn btn-sm btn-link" data-bind="click: OnContinueAsGuest">Continue As Guest</button>
             </div>
         </div>

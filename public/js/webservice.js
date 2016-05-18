@@ -13,7 +13,11 @@ class WebService {
 	}
 
 	GetUserByEmail(email){
-		return this._executeAjaxCall('GET', "/api/getUserByEmail", {email: email});
+		return this._executeAjaxCall('POST', "/api/getUserByEmail", {email: email});
+	}
+
+	GetUserByEmailAndPwd(email, pwd){
+		return this._executeAjaxCall('POST', "/api/getUserByEmailAndPwd", {email: email, pwd: pwd});
 	}
 
 	// 'data' is an optional param
@@ -26,7 +30,7 @@ class WebService {
 			error: this._onError.bind(this),
 			success: this._onSuccess.bind(this),
 			timeout: 10000,
-			data: data ? JSON.stringify(data) : undefined
+			data: data
 		});
 		return this.deferred.promise();
 	}
@@ -34,7 +38,8 @@ class WebService {
 	_onSuccess(res, textStatus, jqXHR){
 		console.info(res, textStatus, jqXHR);
 		if(this.deferred){
-			this.deferred.resolve(res.data);
+			var result = res ? res.data : null;
+			this.deferred.resolve(result);
 		}
 	}
 

@@ -119,6 +119,20 @@ select.error, textarea.error, input.error {
     text-align: center;
 }
 
+#login-modal .container{
+	padding-top:30px;
+	width:350px;
+	min-height:260px;
+}
+
+#login-modal input{
+	margin-bottom: 5px;
+}
+
+#login-modal .btn-lg{
+	margin-top: 5px;
+}
+
 #verify-zip{
 	max-width: 150px;
 	margin:auto;

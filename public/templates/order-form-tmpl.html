@@ -128,11 +128,11 @@
   <div class="row" data-bind="template: { name: 'location-tmpl', foreach: locations}"></div>
   <form id="order-details-form" data-toggle="validator" role="form" autocomplete="off">
   <div class="row">
-    <h5>Contact</h5>
+    <legend>Contact</legend>
     <div class="form-group">
       <label class="col-sm-1 control-label">Email</label>
       <div class="col-sm-5">
-        <input type="value: email" name="email" maxlength="45" placeholder="johnny@appleseed.com" class="form-control">
+        <input data-bind="value: email" name="email" type="email" maxlength="45" placeholder="johnny@appleseed.com" class="form-control">
       </div>
       <label class="col-sm-1 control-label">Phone</label>
       <div class="col-sm-5">

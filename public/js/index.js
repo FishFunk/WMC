@@ -34,7 +34,7 @@ class MainViewModel {
 
 		this.verifyZip = ko.observable("");
 
-		if(this.storageHelper.LoggedInUser){
+		if(this.storageHelper.ZipCode){
 			this.zipVerified = ko.observable(true);
 		} else {
 			this.zipVerified = ko.observable(false);
@@ -61,6 +61,7 @@ class MainViewModel {
 		var zip = this.verifyZip().trim();
 		if(_.contains(Constants.ZIP_WHITE_LIST, zip)){
 			this.zipVerified(true);
+			this.storageHelper.ZipCode = zip;
 		} else {
 			bootbox.alert(
 				s.sprintf("Sorry about this but we don't service your area yet! \
@@ -72,15 +73,20 @@ class MainViewModel {
 }
 
 class LogInViewModel {
-	constructor(){
+	constructor(storageHelper, webSvc){
+		this.storageHelper = storageHelper;
+		this.webSvc = webSvc;
+
 		this.$loginModal = $("#login-modal");
 		this.$orderFormModal = $("#order-form-modal");
+		this.$loginForm = $("#login-form");
+		this.email = ko.observable("VBF@YPP.com");
+		this.pwd = ko.observable("TKVSVKCCFF");
+		this._initValidation();
 	}
 
 	OnContinueAsGuest(){
-		this.$loginModal.removeClass('fade');
-		this.$loginModal.modal('hide');
-		this.$orderFormModal.modal('show');
+		this._toggleModals();
 	}
 
 
@@ -88,6 +94,56 @@ class LogInViewModel {
 	}
 
 	OnLogIn(){
+		var self = this;
+		if(this.$loginForm.valid()){
+			this.webSvc.GetUserByEmailAndPwd(this.email(), this.pwd())
+				.then((user)=>{
+					if(user){
+						self.storageHelper.LoggedInUser = user;
+						self._resetForm();
+						self._toggleModals();
+					} else {
+						bootbox.alert("Hmmm, we didn't find an account matching those credentials. \
+							Please verify your info and try again or click the 'Forgot Password' link.");
+						self._resetForm();
+						self.$loginForm.valid();
+					}
+				})
+				.fail(err =>{
+					self._resetForm();
+					bootbox.alert("Uh oh... something went wrong!");
+				});
+		}
+	}
+
+	_resetForm(){
+		this.$loginForm.find("input").val("");
+		this.$loginForm.validate().resetForm();
+	}
+
+	_toggleModals(){
+		this.$loginModal.removeClass('fade');
+		this.$loginModal.modal('hide');
+		this.$orderFormModal.modal('show');
+	}
+
+	_initValidation(){
+		this.$loginForm.validate({
+			rules:{
+				email:{
+					required: true,
+					email: true
+				},
+				pwd: "required",
+			},
+			messages:{
+				email: "Please enter a valid email address.",
+				pwd: "Password required."
+			},
+			errorPlacement: (error, element)=>{
+				return true;
+			}
+		});
 	}
 }
 
@@ -99,6 +155,8 @@ class OrderFormViewModel {
 		this.$orderFormModal = $('#order-form-modal');
 
 		this.storageHelper = storageHelper;
+
+		var usr = storageHelper.LoggedInUser;
 
 		this.TIRE_SHINE_COST = Constants.TIRE_SHINE_DETAILS.price;
 		this.INTERIOR_COST = Constants.INTERIOR_DETAILS.price;
@@ -124,7 +182,7 @@ class OrderFormViewModel {
 
 		// Car Info
 		this.showAddVehicleForm = ko.observable(false);
-		this.cars = ko.observableArray([]);
+		this.cars = ko.observableArray(usr ? usr.cars : []);
 		this.make = ko.observable("");
 		this.model = ko.observable("");
 		this.color = ko.observable("");
@@ -139,18 +197,18 @@ class OrderFormViewModel {
 		this.carYear = ko.observable(this.carYears[1]);
 
 		// Contact Info
-		this.email = ko.observable("");
-		this.phone = ko.observable("");
+		this.email = ko.observable(usr ? usr.email : "");
+		this.phone = ko.observable(usr ? usr.phone : "");
 
 		// Location Info
 		this.showAddLocationForm = ko.observable(false);
-		this.locations = ko.observableArray([]);
+		this.locations = ko.observableArray(usr ? usr.locations : []);
 		this.locationTitleOptions = ["Home", "Work", "Other"];
 		this.title = ko.observable(this.locationTitleOptions[0]);
 		this.street = ko.observable("");
 		this.city = ko.observable("");
 		this.state = ko.observable("");
-		this.zip = ko.observable("");
+		this.zip = ko.observable(this.storageHelper.ZipCode);
 
 		// Billing Info
 		this.billStreet = ko.observable("");
@@ -189,31 +247,6 @@ class OrderFormViewModel {
 				self.selectedCarSize().size,
 				self.selectedCarSize().multiplier.toString());
 		});
-
-
-		// TEMPORARY FOR TESTING
-		for(var i = 0; i < 5; i++){
-			this.locations.push({
-				city: "ANNANDALE",
-				state: "VA",
-				street: "5013 KINGSTON DRIVE",
-				title: "HOME",
-				zip: "22020",
-				selected: ko.observable(false)
-			});
-		}
-
-		for(var i = 0; i < 3; i++){
-			this.cars.push({
-				color: "WHITE",
-				make: "VOLKSWAGEN",
-				model: "GTI",
-				size: "Compact (2-4 door)",
-				tag: "VBZ-1234",
-				year: 2016,
-				selected: ko.observable(false)
-			});
-		}
 	}
 
 	OnAfterRender(elements, self){
@@ -409,7 +442,7 @@ class OrderFormViewModel {
 				}
 			},
 			messages:{
-				email: "Please enter a valid email address.",
+				email: "Please enter a valid email address."
 			}
 		});
 		this.$addVehicleForm.validate({
@@ -486,6 +519,20 @@ class LocalStorageHelper{
 			console.info("No local storage available.");
 		} else {
 			this.storageType = storageType;
+		}
+	}
+
+	get ZipCode(){
+		if(this.storageType && this.storageType.zip){
+			return this.storageType.zip;
+		} else {
+			return "";
+		}
+	}
+
+	set ZipCode(zip){
+		if(this.storageType){
+			this.storageType.zip = zip;
 		}
 	}
 

@@ -124,6 +124,9 @@ module.exports.getUserByEmailAndPwd = (req, res)=>{
 			}
 		});
 	} else {
+		console.log(req.body);
+		console.log(req.body.email);
+		console.log(req.body.pwd);
 		sendJsonResponse(res, badRequestCode, "Missing data in request");
 	}
 };
