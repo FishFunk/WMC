@@ -1,10 +1,11 @@
-<div id="vehicle-templ" class="col-sm-4">
-	<div class="panel panel-default option-panel vehicle-panel" 
+<div id="vehicle-templ" class="col-sm-6">
+	<div class="panel panel-default option-panel" 
 	data-bind="click: $root.OrderFormViewModel.OnClickVehiclePanel.bind($data, $root.OrderFormViewModel), css: {'selected' : $data.selected}">
-		<div class="panel-heading">
-			<span data-bind="text: $data.make"></span>
-			&nbsp;
-			<span class="fa fa-car"></span>
+		<div class="panel-heading clearfix">
+			<h3 class="panel-title pull-left" data-bind="text: $data.make"></h3>&nbsp;
+			<i class="fa fa-check fa-inverse" data-bind="visible: $data.selected"></i>
+			<button data-bind="click: $root.OrderFormViewModel.OnDeleteVehiclePanel.bind($data, $root.OrderFormViewModel)"
+			class="btn btn-xs btn-link pull-right"><i class="fa fa-trash fa-inverse"></i></button>
 		</div>
 		<div class="panel-body">
 			<span data-bind="text: $data.model"></span>

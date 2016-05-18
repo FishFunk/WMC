@@ -146,14 +146,23 @@ select.error, textarea.error, input.error {
 }
 
 .option-panel:hover{
-	border: 2px solid;
-	border-color: black;
-	font-weight: bold;
+	border: 1px solid green;
 }
 
 .option-panel.selected{
-	border: 2px solid;
-	border-color: green;
-	font-weight: bold;
+	border: 1px solid green;
 }
 
+.panel-heading h3 {
+    line-height: normal;
+    padding-top: 8px;
+}
+
+.panel-heading i {
+	padding-top: 8px;
+	color: green;
+}
+
+.panel-heading button > i {
+	color:red;
+}

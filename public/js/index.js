@@ -47,7 +47,7 @@ class MainViewModel {
 	        scrollTop: $($anchor.attr('href')).offset().top
 	    }, 1500, 'easeInOutExpo');
 	    event.preventDefault();
-    };
+    }
 
 	OnShowOrderForm(){
 		if(this.storageHelper.LoggedInUser){
@@ -55,7 +55,7 @@ class MainViewModel {
 		} else {
 			this.$loginModal.modal();
 		}
-	};
+	}
 
 	OnVerifyZip(){
 		var zip = this.verifyZip().trim();
@@ -68,7 +68,7 @@ class MainViewModel {
 			Feel free to <a href=%s>contact us</a> to expedite the process. <BR><BR> Sincerely, <BR> - The WMC Team", 
 			"javascript:$('.modal').modal('hide');$('#contact-nav').click();"));
 		}
-	};
+	}
 }
 
 class LogInViewModel {
@@ -81,14 +81,14 @@ class LogInViewModel {
 		this.$loginModal.removeClass('fade');
 		this.$loginModal.modal('hide');
 		this.$orderFormModal.modal('show');
-	};
+	}
 
 
 	OnCreateNewAccount(){
-	};
+	}
 
 	OnLogIn(){
-	};
+	}
 }
 
 class OrderFormViewModel {
@@ -189,6 +189,31 @@ class OrderFormViewModel {
 				self.selectedCarSize().size,
 				self.selectedCarSize().multiplier.toString());
 		});
+
+
+		// TEMPORARY FOR TESTING
+		for(var i = 0; i < 5; i++){
+			this.locations.push({
+				city: "ANNANDALE",
+				state: "VA",
+				street: "5013 KINGSTON DRIVE",
+				title: "HOME",
+				zip: "22020",
+				selected: ko.observable(false)
+			});
+		}
+
+		for(var i = 0; i < 3; i++){
+			this.cars.push({
+				color: "WHITE",
+				make: "VOLKSWAGEN",
+				model: "GTI",
+				size: "Compact (2-4 door)",
+				tag: "VBZ-1234",
+				year: 2016,
+				selected: ko.observable(false)
+			});
+		}
 	}
 
 	OnAfterRender(elements, self){
@@ -226,7 +251,9 @@ class OrderFormViewModel {
 
 	OnSaveNewLocation(){
 		if(this.$addLocationForm.valid()){
-			const loc = this._makeLocationSchema();
+			var loc = this._makeLocationSchema();
+			_.each(this.locations(), (l) => l.selected(false));
+			loc.selected(true);
 			this.locations.push(loc);
 			this.$addLocationForm.find("input").val("");
 			this.showAddLocationForm(false);
@@ -246,6 +273,7 @@ class OrderFormViewModel {
 	OnSaveNewVehicle(){
 		if(this.$addVehicleForm.valid()){
 			const newCar = this._makeCarSchema();
+			newCar.selected(true);
 			this.cars.push(newCar);
 			this.$addVehicleForm.find("input").val("");
 			this.showAddVehicleForm(false);
@@ -256,6 +284,10 @@ class OrderFormViewModel {
 		vehicleData.selected(!vehicleData.selected());
 	}
 
+	OnDeleteVehiclePanel(self, vehicleData){
+		self.cars(_.reject(self.cars(), (car)=> _.isEqual(car, vehicleData)));
+	}
+
 	OnClickLocationPanel(self, locationData){
 		_.each(self.locations(), (loc) =>{
 			loc.selected(false);
@@ -263,8 +295,25 @@ class OrderFormViewModel {
 		locationData.selected(true);
 	}
 
+	OnDeleteLocationPanel(self, locationData){
+		self.locations(_.reject(self.locations(), (loc)=> _.isEqual(loc, locationData)));
+	}
+
 	OnSubmit(){
 		var self = this;
+		
+		var selectedCars = _.filter(this.cars(), (car)=> car.selected());
+		if(selectedCars.length === 0){
+			bootbox.alert("Please add and select at least one vehicle.");
+			return;
+		}
+
+		var selectedLocation = _.find(this.locations(), (loc) => loc.selected());
+		if(!selectedLocation){
+			bootbox.alert("Please add and select a location.");
+			return;
+		}
+
 		if(this.$orderDetailsForm.valid())
 		{
 			if(!this.LoggedInUser)
@@ -299,13 +348,13 @@ class OrderFormViewModel {
 				// Update existing user
 			}
 		}
-	};
+	}
 
 	OnFormCancel(){
 		this.$orderDetailsForm.validate().resetForm();
 		this.$orderFormModal.modal('hide');
-		window.location = "#page-top";			
-	};
+		window.location = "#page-top";
+	}
 
 	_onDatepickerChange(event){
 		var date = moment(event.date).format("MM/DD/YYYY");
@@ -378,7 +427,7 @@ class OrderFormViewModel {
 				zip: "required"
 			}
 		});
-	};
+	}
 
 	_makeCarSchema(){
 		return {
