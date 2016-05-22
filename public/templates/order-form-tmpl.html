@@ -128,102 +128,52 @@
   </div>
   <div class="row" data-bind="template: { name: 'location-tmpl', foreach: locations}"></div>
   <form id="order-details-form" data-toggle="validator" role="form" autocomplete="off">
-  <div class="row">
-    <legend>Contact</legend>
-    <div class="form-group">
-      <label class="col-sm-1 control-label">Email</label>
-      <div class="col-sm-5">
-        <input data-bind="value: email" name="email" type="email" maxlength="45" placeholder="johnny@appleseed.com" class="form-control">
+    <div class="row">
+      <legend>Contact</legend>
+      <div class="form-group">
+        <label class="col-sm-1 control-label">First Name</label>
+        <div class="col-sm-5">
+          <input data-bind="value: first" name="first" maxlength="30" class="form-control">
+        </div>
+        <label class="col-sm-1 control-label">Last Name</label>
+        <div class="col-sm-5">
+          <input data-bind="value: last" name="last" maxlength="30" class="form-control">
+        </div>
       </div>
-      <label class="col-sm-1 control-label">Phone</label>
-      <div class="col-sm-5">
-        <input id="phone" data-bind="value: phone" name="phone" class="form-control">
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <legend>Billing Address</legend>
-    <div class="checkbox">
-      <label>
-        <input id="billingCheckbox" type="checkbox" class="checkbox" data-bind="checked: showBillingAddress">Same as above</label>
-      </div>
-      <fieldset data-bind="visible: !showBillingAddress()">
-        <div class="form-group">
-          <label class="col-sm-4 control-label">Street</label>
-          <div class="col-sm-6">
-            <input data-bind="value: billStreet" name="billstreet" placeholder="Street" class="form-control">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-4 control-label">City</label>
-          <div class="col-sm-6">
-            <input data-bind="value: billCity" name="billcity" placeholder="City" class="form-control">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-4 control-label">State</label>
-          <div class="col-sm-6">
-            <input data-bind="value: billState" name="billstate" maxlength="2" placeholder="XX" class="form-control">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-4 control-label">Zip</label>
-          <div class="col-sm-6">
-            <input data-bind="value: billZip" name="billzip" maxlength="9" placeholder="Zip" class="form-control">
-          </div>
-        </div>
-      </fieldset>
     </div>
     <div class="row">
-      <legend>Payment</legend>
       <div class="form-group">
-        <label class="col-sm-4 control-label">Card Holder's Name</label>
-        <div class="col-sm-6">
-          <input data-bind="value: ccName" name="ccname" maxlength="70" placeholder="Card Holder Name" class="form-control">
+        <label class="col-sm-1 control-label">Email</label>
+        <div class="col-sm-5">
+          <input data-bind="value: email" name="email" type="email" maxlength="45" placeholder="johnny@appleseed.com" class="form-control">
         </div>
-      </div>
-      <div class="form-group">
-        <label class="col-sm-4 control-label">Card Number</label>
-        <div class="col-sm-6">
-          <input data-bind="value: ccNumber" name="ccnumber" maxlength="19" placeholder="Card Number" class="form-control">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="col-sm-4 control-label">Card Expiry Date</label>
-        <div class="col-sm-6">
-          <div class="form-inline">
-            <select data-bind="options: ccExpiryMos, value: ccExpiryMo" data-stripe="exp-month" class="card-expiry-month stripe-sensitive form-control"></select>
-            &nbsp;&nbsp;
-            <select data-bind="options: ccExpiryYrs, value: ccExpiryYr" data-stripe="exp-year" class="stripe-sensitive form-control"></select>
-          </div>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="col-sm-4 control-label">CVV/CVV2</label>
-        <div class="col-sm-3">
-          <input data-bind="value: cvv" name="cvv" placeholder="CVV" maxlength="4" class="form-control">
+        <label class="col-sm-1 control-label">Phone</label>
+        <div class="col-sm-5">
+          <input id="phone" data-bind="value: phone" name="phone" class="form-control">
         </div>
       </div>
     </div>
+  </form>
 
-    <!-- Important notice -->
+  <!-- Important notice -->
+  <div class="row">
     <div class="panel panel-success">
       <div class="panel-heading">
         <h3 class="panel-title">Please Review Your Order!</h3>
       </div>
       <div class="panel-body">
         <p data-bind="html: orderSummary"></p>
-        <p>Your card will be charged $<strong data-bind="text: orderTotal"></strong> after submit.</p>
+        <p>Total: $<strong data-bind="text: orderTotal"></strong>.</p>
       </div>
     </div>
-  </form>
+  </div>
 
   <!-- Submit -->
   <div class="control-group">
     <div class="controls">
       <center>
         <button data-bind="click: OnFormCancel" class="btn btn-secondary">Cancel</button>
-        <button class="btn btn-success" data-bind="click: OnSubmit">Confirm</button>
+        <button class="btn btn-success" data-bind="click: OnSubmit">Finish & Pay</button>
       </center>
     </div>
   </div>

@@ -24,6 +24,15 @@ class WebService {
 		return this._executeAjaxCall('PUT', "/api/updateUser", user);
 	}
 
+	ExecuteCharge(stripeToken, price, lastName){
+		return this._executeAjaxCall('POST', "/api/executeCharge", {
+				stripeToken: stripeToken.id,
+				price: price,
+				lastName: lastName,
+				email: stripeToken.email
+			});
+	}
+
 	// 'data' is an optional param
 	_executeAjaxCall(type, ext, data){
 		this.deferred = $.Deferred();

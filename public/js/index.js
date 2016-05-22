@@ -151,6 +151,19 @@ class OrderFormViewModel {
 	constructor(storageHelper, webSvc){
 		var self = this;
 
+		// Configure Stripe
+		this.stripeHandler = StripeCheckout.configure({
+		    key: 'pk_test_luqEThs0vblV173fgAHgPZBG',
+		    image: '/img/wmc_logo.jpg',
+		    locale: 'auto',
+		    token: this._completeOrder.bind(this)
+		});
+
+		// Close Checkout on page navigation:
+		$(window).on('popstate', function(){
+			self.stripeHandler.close();
+		});
+
 		this.webSvc = webSvc;
 		this.$orderFormModal = $('#order-form-modal');
 
@@ -202,6 +215,8 @@ class OrderFormViewModel {
 		this.carYear = ko.observable(this.carYears[1]);
 
 		// Contact Info
+		this.first = ko.observable("");
+		this.last = ko.observable("");
 		this.email = ko.observable("");
 		this.phone = ko.observable("");
 
@@ -214,27 +229,6 @@ class OrderFormViewModel {
 		this.city = ko.observable("");
 		this.state = ko.observable("");
 		this.zip = ko.observable(this.storageHelper.ZipCode);
-
-		// Billing Info
-		this.billStreet = ko.observable("");
-		this.billCity = ko.observable("");
-		this.billState = ko.observable("");
-		this.billZip = ko.observable("");
-
-		this.ccName = ko.observable("");
-		this.ccNumber = ko.observable("");
-		
-		this.ccExpiryMos = ["01","02","03","04","05","06","07","08","09","10","11","12"];
-		this.ccExpiryMo = ko.observable(this.ccExpiryMos[0]);
-
-		this.ccExpiryYrs = [];
-		var year = new Date().getFullYear();
-		for (var i = 0; i < 12; i++) {
-		    this.ccExpiryYrs.push((i + year).toString());
-		}
-		this.ccExpiryYr = ko.observable(this.ccExpiryYrs[0]);
-
-		this.cvv = ko.observable("");
 
 		this.orderTotal = ko.computed(()=>{
 			var total = parseFloat((self.WASH_COST + (self.addShine() ? self.TIRE_SHINE_COST : 0) + 
@@ -343,6 +337,8 @@ class OrderFormViewModel {
 
 		if(this.$orderDetailsForm.valid())
 		{
+			this._openCheckout();
+
 			if(!this.storageHelper.LoggedInUser)
 			{
 				this.webSvc.GetUserByEmail(this.email())
@@ -355,17 +351,13 @@ class OrderFormViewModel {
 							var tmpUser = self._makeTempUserSchema();
 							self.storageHelper.LoggedInUser = tmpUser;
 							self.webSvc.CreateUser(tmpUser)
-								.then(()=>{
-									bootbox.alert(Constants.ORDER_SUCCESS_MSG);
-									self.OnFormCancel();
-								})
 								.fail((err)=>{
-									bootbox.alert(Constants.ORDER_FAILURE_MSG);
+									console.log(err);
 								});
 						}
 					})
 					.fail((err)=>{
-						bootbox.alert(Constants.ORDER_FAILURE_MSG);
+						console.log(err);
 					});
 			}
 			else
@@ -377,9 +369,56 @@ class OrderFormViewModel {
 	}
 
 	OnFormCancel(){
-		this.$orderDetailsForm.validate().resetForm();
-		this.$orderFormModal.modal('hide');
-		window.location = "#page-top";
+		try{
+			this.$orderFormModal.modal('hide');
+			window.location = "#page-top";
+
+			// Manually clear observables
+			this.addShine(false);
+			this.addWax(false);
+			this.addInterior(false);
+			this.showBillingAddress(false);
+			this.description("");
+			this.showAddVehicleForm(false);
+			this.showAddLocationForm(false);
+			// this.date(moment().format("MM/DD/YY"));
+			// $('#datetimepicker').data("DateTimePicker").date(this.date());
+			// $('#datetimepicker > input').val(this.date());
+			$('#datetimepicker').data("DateTimePicker").date(new Date());
+			this.selectedCarSize(this.carSizes[0]);
+			this.selectedTimeRange(this.timeRangeOptions[0]);
+			this.carYear(this.carYears[1]);
+
+			// Reste Forms
+			this.$orderDetailsForm.validate().resetForm();
+		} catch (ex){
+			console.log("Failed to reset fields OnFormCancel()");
+			console.log(ex);
+		}
+	}
+
+	_openCheckout(){
+		this.stripeHandler.open({
+			key: "pk_test_luqEThs0vblV173fgAHgPZBG",
+			name: 'WMC',
+			description: '2 widgets',
+			amount: this.orderTotal() * 100,
+			zipCode: true,
+			email: this.email()
+	    });
+	}
+
+	_completeOrder(token){
+		var self = this;
+      	this.webSvc.ExecuteCharge(token, this.orderTotal() * 100, this.last())
+	      	.then(()=>{
+				bootbox.alert(Constants.ORDER_SUCCESS_MSG);
+				self.OnFormCancel();
+	      	})
+	      	.fail((err)=>{
+				bootbox.alert(Constants.ORDER_FAILURE_MSG);
+				console.log(err);
+	      	});
 	}
 
 	_updateUserData(){
@@ -396,15 +435,12 @@ class OrderFormViewModel {
 		currentUsr.cars = this.cars();
 		currentUsr.phone = this.phone();
 		currentUsr.locations = this.locations();
-		currentUsr.fullName = this.ccName();
+		currentUsr.firstName = this.first();
+		currentUsr.lastName = this.last();
 
 		this.webSvc.UpdateUser(currentUsr)
-			.then(()=>{
-				bootbox.alert(Constants.ORDER_SUCCESS_MSG);
-				self.OnFormCancel();
-			})
-			.fail(error =>{
-				bootbox.alert(Constants.ORDER_FAILURE_MSG);
+			.fail((err) =>{
+				console.log(err);
 			});
 	}
 
@@ -420,6 +456,9 @@ class OrderFormViewModel {
 			this.cars(cars);
 			this.email(usr.email || "");
 			this.phone(usr.phone || "");
+			this.first(usr.firstName || "");
+			this.last(usr.lastName || "");
+
 			$('#phone').trigger('input');
 		}
 	}
@@ -449,32 +488,13 @@ class OrderFormViewModel {
 	_initValidation(){
 		this.$orderDetailsForm.validate({
 			rules:{
+				first: "required",
+				last: "required",
 				email:{
 					required: true,
 					email: true
 				},
-				phone: "required",
-				ccname: "required",
-				ccnumber: {
-					required: true,
-					maxlength: 19
-				},
-				cvv: {
-					required: true,
-					maxlength: 4
-				},
-				billstreet: {
-					required: "#billingCheckbox:unchecked"
-				},
-				billcity: {
-					required: "#billingCheckbox:unchecked"
-				},
-				billstate: {
-					required: "#billingCheckbox:unchecked"
-				},
-				billzip: {
-					required: "#billingCheckbox:unchecked"
-				}
+				phone: "required"
 			},
 			messages:{
 				email: "Please enter a valid email address."
@@ -503,7 +523,8 @@ class OrderFormViewModel {
 			cars: this.cars(),
 			email: this.email(),
 			phone: this.phone(),
-			fullName: this.ccName(),
+			firstName: this.first(),
+			lastName: this.last(),
 			pwd: Utils.GenerateUUID(),
 			locations: this.locations()
 		}
@@ -529,7 +550,8 @@ class OrderFormViewModel {
 			price: this.orderTotal(),
 			services: this._buildServicesArray(),
 			timeEstimate: null, // TODO
-			timeRange: this.selectedTimeRange().key,
+			timeRange: this.selectedTimeRange().range,
+			timeRangeEnum: this.selectedTimeRange().key,
 			description: this.description()
 		}
 	}

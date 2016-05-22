@@ -26,8 +26,8 @@ module.exports.updateUser = (req, res)=>{
 			appointments: req.body.appointments,
 			cars: req.body.cars,
 			phone: req.body.phone,
-			fullName: req.body.fullName,
-			//pwd: req.body.pwd,
+			firstName: req.body.firstName,
+			lastName: req.body.lastName,
 			locations: req.body.locations,
 			lastLogin: new Date()
 		}, (err, usr)=>{

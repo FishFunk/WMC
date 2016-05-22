@@ -34,7 +34,8 @@ var userSchema = new mongoose.Schema({
 	cars: [carSchema],
 	email: {type: String, required: true},
 	phone: {type: String, required: true},
-	fullName: String,
+	firstName: String,
+	lastName: String,
 	pwd: String,
 	locations: [locationSchema],
 	lastLogin: Date
