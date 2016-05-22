@@ -1,4 +1,6 @@
-const DEFAULT_JOB_TIME_MINS = 120,
+const ORDER_SUCCESS_MSG = "Thank you! Your order has been placed. Please check your email for confirmation.",
+      ORDER_FAILURE_MSG = "We're really sorry about this... Looks like there was a problem submitting your order.",
+      DEFAULT_JOB_TIME_MINS = 120,
       MAX_JOB_TIME_PER_DAY_MINS = 720,
       WASH_DETAILS = {
         time: 30,
@@ -129,5 +131,13 @@ class Constants {
 
   static get CAR_SIZES(){
     return CAR_SIZES;
+  }
+
+  static get ORDER_SUCCESS_MSG(){
+    return ORDER_SUCCESS_MSG;
+  }
+
+  static get ORDER_FAILURE_MSG(){
+    return ORDER_FAILURE_MSG;
   }
 }

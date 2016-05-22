@@ -20,17 +20,22 @@ class WebService {
 		return this._executeAjaxCall('POST', "/api/getUserByEmailAndPwd", {email: email, pwd: pwd});
 	}
 
+	UpdateUser(user){
+		return this._executeAjaxCall('PUT', "/api/updateUser", user);
+	}
+
 	// 'data' is an optional param
 	_executeAjaxCall(type, ext, data){
 		this.deferred = $.Deferred();
 		$.ajax({
 			url: this.baseUrl + ext,
 			type: type,
-			dataType: 'JSON',
+			contentType: "application/json; charset=UTF-8",
+			dataType: 'json',
 			error: this._onError.bind(this),
 			success: this._onSuccess.bind(this),
 			timeout: 10000,
-			data: data
+			data: JSON.stringify(data)
 		});
 		return this.deferred.promise();
 	}

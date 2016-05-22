@@ -19,15 +19,15 @@ const noContentSuccessCode = 204;
 // addData();
 
 module.exports.updateUser = (req, res)=>{
-	if(req.body)
+	if(req.body && req.body.email)
 	{
-		Usr.update({email: req.email},
+		Usr.update({email: req.body.email},
 		{
 			appointments: req.body.appointments,
 			cars: req.body.cars,
 			phone: req.body.phone,
 			fullName: req.body.fullName,
-			pwd: req.body.pwd,
+			//pwd: req.body.pwd,
 			locations: req.body.locations,
 			lastLogin: new Date()
 		}, (err, usr)=>{
@@ -124,13 +124,20 @@ module.exports.getUserByEmailAndPwd = (req, res)=>{
 			}
 		});
 	} else {
-		console.log(req.body);
-		console.log(req.body.email);
-		console.log(req.body.pwd);
 		sendJsonResponse(res, badRequestCode, "Missing data in request");
 	}
 };
 
+var tryParse = function(data){
+	var obj = null;
+	try{
+		obj = JSON.parse(data);
+	} catch (ex){
+		console.log(ex);
+	}
+
+	return obj;
+}
 
 var sendJsonResponse = (res, status, msg, data)=>{
 	res.setHeader('Content-Type', 'application/json');

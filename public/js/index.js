@@ -154,6 +154,10 @@ class OrderFormViewModel {
 		this.webSvc = webSvc;
 		this.$orderFormModal = $('#order-form-modal');
 
+		this.$orderFormModal.on('show.bs.modal', ()=>{
+			self._prePopulateUserData();
+		});
+
 		this.storageHelper = storageHelper;
 
 		var usr = storageHelper.LoggedInUser;
@@ -177,12 +181,13 @@ class OrderFormViewModel {
 			Constants.EVENING_TIME_RANGE,
 			Constants.NIGHT_TIME_RANGE
 		];
+		this.selectedTimeRange = ko.observable(this.timeRangeOptions[0]);
 
 		this.date = ko.observable(moment().format("MM/DD/YY"));
 
 		// Car Info
 		this.showAddVehicleForm = ko.observable(false);
-		this.cars = ko.observableArray(usr ? usr.cars : []);
+		this.cars = ko.observableArray([]);
 		this.make = ko.observable("");
 		this.model = ko.observable("");
 		this.color = ko.observable("");
@@ -197,12 +202,12 @@ class OrderFormViewModel {
 		this.carYear = ko.observable(this.carYears[1]);
 
 		// Contact Info
-		this.email = ko.observable(usr ? usr.email : "");
-		this.phone = ko.observable(usr ? usr.phone : "");
+		this.email = ko.observable("");
+		this.phone = ko.observable("");
 
 		// Location Info
 		this.showAddLocationForm = ko.observable(false);
-		this.locations = ko.observableArray(usr ? usr.locations : []);
+		this.locations = ko.observableArray([]);
 		this.locationTitleOptions = ["Home", "Work", "Other"];
 		this.title = ko.observable(this.locationTitleOptions[0]);
 		this.street = ko.observable("");
@@ -253,23 +258,12 @@ class OrderFormViewModel {
 		self.$addVehicleForm = $('#add-vehicle-form');
 		self.$addLocationForm = $('#add-location-form');
 		self.$orderDetailsForm = $('#order-details-form');
+		$('#phone').mask('(999) 999-9999? ext:99999', {placeholder: " "});
 		$('#datetimepicker').datetimepicker({
 			minDate: new Date(),
 			format: 'MM/DD/YY'
 		}).on('dp.change', self._onDatepickerChange.bind(self));
 		self._initValidation();
-	}
-
-	MakeTempUserSchema(){
-		return {
-			appointments: [this._makeAppointmentSchema()],
-			cars: [this._makeCarSchema()],
-			email: this.email(),
-			phone: this.phone(),
-			fullName: this.fullName(),
-			pwd: Utils.GenerateUUID(),
-			locations: [_this._makeLocationSchema()]
-		}
 	}
 
 	OnAddNewLocation(){
@@ -349,36 +343,35 @@ class OrderFormViewModel {
 
 		if(this.$orderDetailsForm.valid())
 		{
-			if(!this.LoggedInUser)
+			if(!this.storageHelper.LoggedInUser)
 			{
 				this.webSvc.GetUserByEmail(this.email())
 					.then((usr)=>{
-						var tmpUser = self.MakeTempUserSchema();
 						if(usr){
-							// email already exists - update current??
-							// join temporary and existing data...
 							self.storageHelper.LoggedInUser = usr;
+							self._updateUserData();
 						} else {
 							// create new temp user
-							var tmpUser = self.MakeTempUserSchema();
-							tmpUser.IsGuest = true;
+							var tmpUser = self._makeTempUserSchema();
 							self.storageHelper.LoggedInUser = tmpUser;
 							self.webSvc.CreateUser(tmpUser)
 								.then(()=>{
-									bootbox.alert("Thank you! Your order has been placed.");
+									bootbox.alert(Constants.ORDER_SUCCESS_MSG);
+									self.OnFormCancel();
 								})
 								.fail((err)=>{
-									bootbox.alert("There was a problem submitting your order.");
+									bootbox.alert(Constants.ORDER_FAILURE_MSG);
 								});
 						}
 					})
 					.fail((err)=>{
-						bootbox.alert("There was a problem submitting your order.");
+						bootbox.alert(Constants.ORDER_FAILURE_MSG);
 					});
 			}
 			else
 			{
 				// Update existing user
+				this._updateUserData();
 			}
 		}
 	}
@@ -387,6 +380,48 @@ class OrderFormViewModel {
 		this.$orderDetailsForm.validate().resetForm();
 		this.$orderFormModal.modal('hide');
 		window.location = "#page-top";
+	}
+
+	_updateUserData(){
+		var self = this;
+		var currentUsr = this.storageHelper.LoggedInUser;
+		var newAppt = this._makeAppointmentSchema();
+
+		if(currentUsr.appointments){
+			currentUsr.appointments.push(newAppt);
+		} else {
+			currentUsr.appointments = [newAppt];
+		}
+
+		currentUsr.cars = this.cars();
+		currentUsr.phone = this.phone();
+		currentUsr.locations = this.locations();
+		currentUsr.fullName = this.ccName();
+
+		this.webSvc.UpdateUser(currentUsr)
+			.then(()=>{
+				bootbox.alert(Constants.ORDER_SUCCESS_MSG);
+				self.OnFormCancel();
+			})
+			.fail(error =>{
+				bootbox.alert(Constants.ORDER_FAILURE_MSG);
+			});
+	}
+
+	_prePopulateUserData(){
+		var usr = this.storageHelper.LoggedInUser;
+		if(usr){
+			var locations = usr.locations || [];
+			var cars = usr.cars || [];
+			_.each(locations, (loc)=> loc.selected = ko.observable(false));
+			_.each(cars, (car)=> car.selected = ko.observable(false));
+
+			this.locations(locations);
+			this.cars(cars);
+			this.email(usr.email || "");
+			this.phone(usr.phone || "");
+			$('#phone').trigger('input');
+		}
 	}
 
 	_onDatepickerChange(event){
@@ -462,6 +497,18 @@ class OrderFormViewModel {
 		});
 	}
 
+	_makeTempUserSchema(){
+		return {
+			appointments: [this._makeAppointmentSchema()],
+			cars: this.cars(),
+			email: this.email(),
+			phone: this.phone(),
+			fullName: this.ccName(),
+			pwd: Utils.GenerateUUID(),
+			locations: this.locations()
+		}
+	}
+
 	_makeCarSchema(){
 		return {
 			color: this.color(),
@@ -482,7 +529,7 @@ class OrderFormViewModel {
 			price: this.orderTotal(),
 			services: this._buildServicesArray(),
 			timeEstimate: null, // TODO
-			timeRange: this.selectedTimeRange(),
+			timeRange: this.selectedTimeRange().key,
 			description: this.description()
 		}
 	}
