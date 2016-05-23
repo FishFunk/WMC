@@ -32,7 +32,7 @@ class MainViewModel {
 		this.$loginModal = $("#login-modal");
 		this.$orderFormModal = $("#order-form-modal");
 
-		this.verifyZip = ko.observable("");
+		this.zip = ko.observable("");
 
 		if(this.storageHelper.ZipCode){
 			this.zipVerified = ko.observable(true);
@@ -58,16 +58,11 @@ class MainViewModel {
 	}
 
 	OnVerifyZip(){
-		var zip = this.verifyZip().trim();
-		if(_.contains(Constants.ZIP_WHITE_LIST, zip)){
+		if(Utils.VerifyZip(this.zip())){
 			this.zipVerified(true);
 			this.storageHelper.ZipCode = zip;
 		} else {
-			bootbox.alert(
-				s.sprintf("Sorry about this but we don't service your area yet! \
-			We're still young and growing so check back soon. \
-			Feel free to <a href=%s>contact us</a> to expedite the process. <BR><BR> Sincerely, <BR> - The WMC Team", 
-			"javascript:$('.modal').modal('hide');$('#contact-nav').click();"));
+			bootbox.alert(Constants.BAD_ZIP_MSG);
 		}
 	}
 }
@@ -332,6 +327,11 @@ class OrderFormViewModel {
 		var selectedLocation = _.find(this.locations(), (loc) => loc.selected());
 		if(!selectedLocation){
 			bootbox.alert("Please add and select a location.");
+			return;
+		}
+
+		if(!Utils.VerifyZip(this.zip())){
+			bootbox.alert(Constants.BAD_ZIP_MSG);
 			return;
 		}
 

@@ -32,15 +32,12 @@
     <div class="form-group col-sm-4">
       <label class="control-label" for="select">Time Range</label>
       <select data-bind="options: timeRangeOptions, optionsText: 'range', value: selectedTimeRange, attr: {disabled: $data.disabled}" class="form-control"></select>
-<!--       <select class="form-control" data-bind="foreach: timeRangeOptions">
-        <option data-bind="attr:{ disabled: $data.disabled, value: $data.key }, text: $data.range"></option>
-      </select> -->
     </div>
   </div>
   <div class="row">
     <div class="form-group col-xs-12">
       <label class="control-label">Description</label>
-      <textarea data-bind="value: description" maxlength="100" class="form-control" placeholder="Anything else we should know? What condition is your vehicle in? Will it be parked in the street, driveway, or garage? Special requests?"></textarea>
+      <textarea data-bind="value: description" maxlength="250" class="form-control" placeholder="Anything else we should know? What condition is your vehicle in? Will it be parked in the street, driveway, or garage? Special requests?"></textarea>
     </div>
   </div>
   <div class="row">

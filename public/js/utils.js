@@ -27,6 +27,10 @@ class Utils{
 		return datesToDisable;
 	};
 
+	static VerifyZip(zip){
+		return _.contains(Constants.ZIP_WHITE_LIST, zip.trim());
+	}
+
 	static GenerateUUID(){
 	    var d = new Date().getTime();
 	    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {

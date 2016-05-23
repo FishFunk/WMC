@@ -25,6 +25,7 @@ h1,h2,h3,h4,h5,h6{font-family:Montserrat,"Helvetica Neue",Helvetica,Arial,sans-s
 .ghost-btn{
 	background-color: transparent;
 	border-color: white;
+	color: white;
 }
 
 .navbar-default{background-color:#222;}
@@ -179,4 +180,10 @@ select.error, textarea.error, input.error {
 
 .panel-heading button > i {
 	color:red;
+}
+
+#contact-container{
+	width:100%;
+	background-color: rgba(0,0,0,0.4);
+	padding: 10px;
 }
