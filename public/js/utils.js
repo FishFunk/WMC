@@ -31,6 +31,12 @@ class Utils{
 		return _.contains(Constants.ZIP_WHITE_LIST, zip.trim());
 	}
 
+	static IsStrEqual(str1, str2){
+		var left = str1.trim().toUpperCase();
+		var right = str2.trim().toUpperCase();
+		return left === right;
+	}
+
 	static GenerateUUID(){
 	    var d = new Date().getTime();
 	    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {

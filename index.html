@@ -53,13 +53,13 @@
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav navbar-right">
                         <li>
-                            <a href="#how-it-works" data-bind="click: OnPageScroll">How It Works</a>
+                            <a class="nav-link" href="#how-it-works" data-bind="click: OnPageScroll">How It Works</a>
                         </li>
                         <li>
-                            <a href="#services" data-bind="click: OnPageScroll">Services</a>
+                            <a class="nav-link" href="#services" data-bind="click: OnPageScroll">Services</a>
                         </li>
                         <li>
-                            <a id="contact-nav" href="#contact" data-bind="click: OnPageScroll">Contact</a>
+                            <a class="nav-link" href="#" data-bind="click: OnShowContactModal">Contact</a>
                         </li>
                     </ul>
                 </div>
@@ -74,7 +74,7 @@
                 <div class="intro-text">
                     <div class="intro-lead-in">Welcome To <strong>Wash My Car!</strong></div>
                     <div class="intro-heading">VA's Most Reliable Mobile Detailing Service</div>
-                    <a class="btn btn-xl ghost-btn" data-bind="click: OnShowOrderForm" href="#">Schedule Now!</a>
+                    <button class="btn btn-xl ghost-btn" data-bind="click: OnShowOrderForm">Schedule Now!</button>
                     <div data-bind="visible: zipVerified">
                       <h4>Yes! We happily serve your area.</h4>
                     </div>
@@ -107,7 +107,7 @@
                             <i class="fa fa-calendar fa-stack-1x fa-inverse"></i>
                         </span>
                         <h4 class="service-heading">Schedule</h4>
-                        <p class="text-muted pinch">Call us at <a>000.000.0000</a> or send an email to <a>contact@washmycarva.com</a> to schedule your appointment.<strong> Keep in mind we generally can't work in nasty weather!</strong></p>
+                        <p class="text-muted pinch">Simply make your appointment online with our simple checkout process <a href="#page-top" data-bind="click: OnShowOrderForm">HERE</a>.</p>
                     </div>
                     <div class="col-md-4">
                         <span class="fa-stack fa-4x">
@@ -115,7 +115,7 @@
                             <i class="fa fa-map-marker fa-stack-1x fa-inverse"></i>
                         </span>
                         <h4 class="service-heading">Location</h4>
-                        <p class="text-muted pinch">We bring the service to you! At work, home, or wherever is convenient to you. </p>
+                        <p class="text-muted pinch">We bring our service to you! At work, home, or wherever is convenient to you. If we are unable to perform our services (severe weather or otherwise) we will contact you to reschedule.</p>
                     </div>
                     <div class="col-md-4">
                         <span class="fa-stack fa-4x">
@@ -168,50 +168,27 @@
     <section id="contact">
         <div id="contact-container" class="container">
             <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2 class="section-heading">Contact Us</h2>
+                <div class="col-xs-12 text-center">
+                    <h4 class="section-heading">We look forward to making your car look brand new!</h4>
                 </div>
             </div>
-            <div class="row text-center hidden-xs">
-                <div class="col-sm-6">
-                	<a 
-                	href="mailto:contact@washmycarva.com" 
-                	class="btn btn-xl ghost-btn">
-                  <i class="fa fa-envelope-o fa-2x"></i>
-                  <br>
-                  contact@washmycarva.com</a>
-              </div>
-              <div class="col-sm-6">
-               <a href="tel:+17033549638" class="btn btn-xl ghost-btn">
-                  <i class="fa fa-phone fa-2x"></i>
-                  <br>
-                  000.000.0000</a>
-              </div>
-          </div>
-          <div class="row text-center visible-xs-block">
-            <div class="col-xs-6">
-               <a 
-               href="mailto:contact@washmycarva.com" 
-               class="btn btn-xs ghost-btn">
-               <i class="fa fa-envelope-o fa-2x"></i>
-               <br>
-               contact@washmycarva.com</a>
-           </div>
-           <div class="col-xs-6">
-               <a href="tel:+17033549638" class="btn btn-xs ghost-btn">
-                  <i class="fa fa-phone fa-2x"></i>
-                  <br>
-                  000.000.0000</a>
-              </div>
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <button class="btn btn-xl ghost-btn" data-bind="click: OnShowOrderForm">Schedule Now!</button>
+                </div>
+            </div>
           </div>
       </div>
   </section>
 
   <footer>
     <div class="container">
-        <a href="#page-top" data-bind="click: OnPageScroll">
-            <img id="wmc-footer-logo" src="img/wmc_logo.png">  	
-        </a>
+        <div class="row">
+            <a href="#page-top" data-bind="click: OnPageScroll">
+                <img id="wmc-footer-logo" src="img/wmc_logo.png">  	
+            </a>
+        </div>
+        <hr>
         <div class="row">
             <div class="col-sm-4">
                 <ul class="list-inline social-buttons">
@@ -224,43 +201,114 @@
                 </ul>
             </div>
             <div class="col-sm-4">
-                <span class="copyright">Copyright &copy; Wash My Car LLC, 2016</span>
+                <span class="copyright">&copy; Wash My Car LLC, 2016</span>
             </div>
             <div class="col-sm-4">
                 <ul class="list-inline quicklinks">
-                    <li><a href="#">Privacy Policy</a>
-                    </li>
-                    <li><a href="#">Terms of Use</a>
-                    </li>
+                    <li><a href="#">Legal Stuff</a></li>
+                    <li><a href="#">Jobs</a></li>
+                    <li><a href="#" data-bind="click: OnShowContactModal">Contact Us</a></li>
                 </ul>
             </div>
         </div>
     </div>
 </footer>
 
-<div id="login-modal" class="modal fade" role="dialog" data-bind="with: LogInViewModel">
-    <div class="container modal-content">
-        <form id="login-form" class="row">
-            <div class="form-group">
-                <div class="col-xs-10 col-xs-offset-1">
-                    <input data-bind="value: email" class="form-control" type="email" name="email" placeholder="johnny.appleseed@yahoo.com">
+<div id="contact-modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title text-center">Call or Email Us - We're Listening!</h4>
+      </div>
+      <div class="modal-body">
+        <p>Our #1 goal at WMC is to ensure our customers are satisfied. We greatly appreciate you taking the time to contact us with any questions or comments.</p><br>
+        <i class="fa fa-heart"></i><br>
+        <span> - The WMC team</span>
+      </div>
+      <div class="modal-footer">
+            <div class="row text-center">
+                <div class="col-xs-6">
+                    <a href="mailto:contact@washmycarva.com" class="btn btn-sm ghost-btn black">
+                    <i class="fa fa-envelope-o fa-2x"></i>
+                    <br> contact@washmycarva.com</a>
                 </div>
+                  <div class="col-xs-6">
+                   <a href="tel:+17033549638" class="btn btn-sm ghost-btn black">
+                      <i class="fa fa-phone fa-2x"></i>
+                      <br>
+                      000.000.0000</a>
+                  </div>
             </div>
-            <div class="form-group">
-                <div class="col-xs-10 col-xs-offset-1">
-                    <input data-bind="value: pwd" class="form-control" type="password" name="pwd" placeholder="***********">
-                </div>
-            </div>
-        </form>
-        <div class="row">
-            <button type="button" class="btn btn-lg btn-primary" data-bind="click: OnLogIn">Log In</button>
         </div>
-        <div class="row">
-            <hr>
-            <div class="btn-group">
-                <button type="button" class="btn btn-sm btn-link" data-bind="click: OnCreateNewAccount">Create Account</button>
-                <button type="button" class="btn btn-sm btn-link">Forgot Password</button>
-                <button type="button" class="btn btn-sm btn-link" data-bind="click: OnContinueAsGuest">Continue As Guest</button>
+    </div>
+  </div>
+</div>
+
+
+<div id="login-modal" class="modal fade" role="dialog" data-bind="with: LogInViewModel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <img id="wmc-mini-logo" src="img/wmc_logo.png"></img>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div data-bind="visible: ShowCreateAcct">
+                    <form id="create-acct-form" class="row">
+                        <div class="form-group">
+                            <div class="col-xs-8 col-xs-offset-2">
+                                <input data-bind="value: email" class="form-control" type="email" name="email" placeholder="johnny.appleseed@yahoo.com">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-8 col-xs-offset-2">
+                                <input data-bind="value: verifyEmail" class="form-control" type="email" name="verifyEmail" placeholder="Verify Email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-8 col-xs-offset-2">
+                                <input data-bind="value: pwd" class="form-control" type="password" name="pwd" placeholder="***********">
+                            </div>
+                        </div>
+                        <div class="form-group" data-bind="visible: ShowCreateAcct">
+                            <div class="col-xs-8 col-xs-offset-2">
+                                <input id="verifyPwd" data-bind="value: verifyPwd" class="form-control" type="password" name="verifyPwd" placeholder="Verify Password">
+                            </div>
+                        </div>            
+                    </form>
+                    <div class="row text-center">
+                        <button type="button" class="btn btn-lg btn-default" data-bind="click: OnCancelCreateAcct">Cancel</button>
+                        <button type="button" class="btn btn-lg btn-success" data-bind="click: OnCreateAcct">Create</button>
+                    </div>
+                </div>
+                <div data-bind="visible: ShowLogin">
+                    <form id="login-form" class="row">
+                        <div class="form-group">
+                            <div class="col-xs-8 col-xs-offset-2">
+                                <input data-bind="value: email" class="form-control" type="email" name="email" placeholder="johnny.appleseed@yahoo.com">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-8 col-xs-offset-2">
+                                <input data-bind="value: pwd" class="form-control" type="password" name="pwd" placeholder="***********">
+                            </div>
+                        </div>
+                    </form>
+                    <br>
+                    <div class="row text-center">
+                        <button type="button" class="btn btn-lg btn-primary" data-bind="click: OnLogIn">Log In</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row text-center">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-link" data-bind="click: OnShowCreateAcct">Create Account</button>
+                        <button type="button" class="btn btn-sm btn-link">Forgot Password</button>
+                        <button type="button" class="btn btn-sm btn-link" data-bind="click: OnContinueAsGuest">Continue As Guest</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -299,9 +347,13 @@
 <script src="js/constants.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/bootstrapper.js"></script>
+<script src="js/localStorageHelper.js"></script>
 <script src="js/webService.js"></script>
-<script src="js/index.js"></script>
+<script src="js/vms/loginViewModel.js"></script>
+<script src="js/vms/orderFormViewModel.js"></script>
+<script src="js/vms/mainViewModel.js"></script>
 
+<script src="js/documentReady.js"></script>
 
 <!-- TEMPLATES -->
 <script type="text/html" id="guest-order-form-tmpl"></script>

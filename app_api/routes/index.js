@@ -4,7 +4,7 @@ var ctrlUsers = require('../controllers/users');
 var ctrlMoney = require('../controllers/money');
 
 // API Routes
-router.post('/createUser', ctrlUsers.createUser);
+router.post('/createNewUser', ctrlUsers.createNewUser);
 router.post('/getUserByEmail', ctrlUsers.getUserByEmail);
 router.post('/getUserByEmailAndPwd', ctrlUsers.getUserByEmailAndPwd);
 

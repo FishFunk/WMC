@@ -1,6 +1,7 @@
 const ORDER_SUCCESS_MSG = "Thank you! Your order has been placed. Please check your email for confirmation.",
       ORDER_FAILURE_MSG = "We're really sorry about this... Looks like there was a problem submitting your order.",
       BAD_ZIP_MSG = s.sprintf("Sorry about this but we don't service your area yet! We're still young and growing so check back soon. Feel free to <a href=%s>contact us</a> to expedite the process. <BR><BR> Sincerely, <BR> - The WMC Team", "javascript:$('.modal').modal('hide');$('#contact-nav').click();"),
+      ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
       DEFAULT_JOB_TIME_MINS = 120,
       MAX_JOB_TIME_PER_DAY_MINS = 720,
       WASH_DETAILS = {
@@ -144,5 +145,9 @@ class Constants {
 
   static get BAD_ZIP_MSG(){
     return BAD_ZIP_MSG;
+  }
+
+  static get ASYNC_INTERUPTION_MARKER(){
+    return ASYNC_INTERUPTION_MARKER;
   }
 }

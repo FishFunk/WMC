@@ -33,7 +33,7 @@ var userSchema = new mongoose.Schema({
 	appointments: [appointmentSchema],
 	cars: [carSchema],
 	email: {type: String, required: true},
-	phone: {type: String, required: true},
+	phone: String,
 	firstName: String,
 	lastName: String,
 	pwd: String,

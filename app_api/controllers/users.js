@@ -65,17 +65,18 @@ module.exports.getFutureApptDatesAndTimes = (req, res)=>{
 	});
 };
 
-module.exports.createUser = (req, res)=>{
-	if(req.body)
+module.exports.createNewUser = (req, res)=>{
+	if(req.body && req.body.email)
 	{
 		Usr.create({
-			appointments: req.body.appointments,
-			cars: req.body.cars,
-			email: req.body.email,
-			phone: req.body.phone,
-			fullName: req.body.fullName,
+			appointments: [],
+			cars: [],
+			email: req.body.email.toLowerCase(),
+			phone: "",
+			firstName: "",
+			lastName: "",
 			pwd: req.body.pwd,
-			locations: req.body.locations,
+			locations: [],
 			lastLogin: new Date()
 		}, (err, usr)=>{
 			if(err){
@@ -85,21 +86,18 @@ module.exports.createUser = (req, res)=>{
 			}
 		});
 	} else {
-		sendJsonResponse(res, badRequestCode, "No request body");
+		sendJsonResponse(res, badRequestCode, "No email in request body");
 	}
 };
 
 module.exports.getUserByEmail = (req, res)=>{
 	if(req.body && req.body.email)
 	{
-		Usr.findOne({email: req.body.email}, (err, usr)=>{
-			if(!usr)
-			{
-				sendJsonResponse(res, noContentSuccessCode, "User email not found");
-			}
-			else if (err)
-			{
+		Usr.findOne({email: req.body.email.toLowerCase()}, (err, usr)=>{
+			if (err){
 				sendJsonResponse(res, internalErrorCode, err, "DB Failure - getUserByEmail");
+			} else if(!usr){
+				sendJsonResponse(res, noContentSuccessCode, "User email not found");
 			} else {
 				sendJsonResponse(res, readSuccessCode, "Success", usr);
 			}
@@ -112,13 +110,11 @@ module.exports.getUserByEmail = (req, res)=>{
 module.exports.getUserByEmailAndPwd = (req, res)=>{
 	if(req.body && req.body.email && req.body.pwd)
 	{
-		Usr.findOne({email: req.body.email, pwd: req.body.pwd}, (err, usr)=>{
-			if(!usr){
-				sendJsonResponse(res, noContentSuccessCode, "No matching usr and pwd");
-			}
-
+		Usr.findOne({email: req.body.email.toLowerCase(), pwd: req.body.pwd}, (err, usr)=>{
 			if(err){
 				sendJsonResponse(res, internalErrorCode, "DB Error - getUserByEmailAndPwd", err);
+			} else if(!usr){
+				sendJsonResponse(res, noContentSuccessCode, "No matching usr and pwd");
 			} else {
 				sendJsonResponse(res, readSuccessCode, "Success", usr);
 			}

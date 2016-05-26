@@ -9,7 +9,7 @@ class WebService {
 	}
 
 	CreateUser(user){
-		return this._executeAjaxCall('PUT', "/api/createUser", user);
+		return this._executeAjaxCall('POST', "/api/createNewUser", user);
 	}
 
 	GetUserByEmail(email){
