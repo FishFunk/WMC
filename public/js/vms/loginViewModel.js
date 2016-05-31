@@ -7,9 +7,12 @@ class LogInViewModel {
 		this.$orderFormModal = $("#order-form-modal");
 		this.$loginForm = $("#login-form");
 		this.$createAcctForm = $("#create-acct-form");
+		this.$forgotPwdForm = $("forgot-pwd-form");
 
 		this.ShowLogin = ko.observable(true);
 		this.ShowCreateAcct = ko.observable(false);
+		this.ShowForgotPwd = ko.observable(false);
+
 		this.email = ko.observable("VBF@YPP.com");
 		this.pwd = ko.observable("TKVSVKCCFF");
 
@@ -30,11 +33,13 @@ class LogInViewModel {
 
 	OnShowCreateAcct(){
 		this._resetForms();
+		this.ShowForgotPwd(false);
 		this.ShowLogin(false);
 		this.ShowCreateAcct(true);
 	}
 
 	OnCancelCreateAcct(){
+		this.ShowForgotPwd(false);
 		this.ShowCreateAcct(false);
 		this.ShowLogin(true);
 		this._resetForms();
@@ -79,6 +84,27 @@ class LogInViewModel {
 					self._resetForms();
 					bootbox.alert("Uh oh... something went wrong!");
 				});
+		}
+	}
+
+	OnShowForgotPwd(){
+		this._resetForms();
+		this.ShowLogin(false);
+		this.ShowCreateAcct(false);
+		this.ShowForgotPwd(true);
+	}
+
+	OnCancelForgotPwd(){
+		if(this.$forgotPwdForm.valid()){
+			this.ShowCreateAcct(false);
+			this.ShowForgotPwd(false);
+			this.ShowLogin(true);
+		}
+	}
+
+	OnSubmitForgotPwd(){
+		if(this.$forgotPwdForm.valid()){
+			// Call forgot email service
 		}
 	}
 

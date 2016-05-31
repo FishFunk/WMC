@@ -254,6 +254,24 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
+                <div data-bind="visible: ShowForgotPwd">
+                    <form id="forgot-pwd-form" class="row">
+                        <div class="form-group">
+                            <div class="col-xs-8 col-xs-offset-2">
+                                <input data-bind="value: email" class="form-control" type="email" name="email" placeholder="johnny.appleseed@yahoo.com">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-8 col-xs-offset-2">
+                                <input data-bind="value: verifyEmail" class="form-control" type="email" name="verifyEmail" placeholder="Verify Email">
+                            </div>
+                        </div>         
+                    </form>
+                    <div class="row text-center">
+                        <button type="button" class="btn btn-lg btn-default" data-bind="click: OnCancelForgotPwd">Nevermind</button>
+                        <button type="button" class="btn btn-lg btn-success" data-bind="click: OnSubmitForgotPwd">OK</button>
+                    </div>                   
+                </div>
                 <div data-bind="visible: ShowCreateAcct">
                     <form id="create-acct-form" class="row">
                         <div class="form-group">
@@ -305,7 +323,7 @@
                 <div class="row text-center">
                     <div class="btn-group">
                         <button type="button" class="btn btn-sm btn-link" data-bind="click: OnShowCreateAcct">Create Account</button>
-                        <button type="button" class="btn btn-sm btn-link">Forgot Password</button>
+                        <button type="button" class="btn btn-sm btn-link" data-bind="click: OnShowForgotPwd">Forgot Password</button>
                         <button type="button" class="btn btn-sm btn-link" data-bind="click: OnContinueAsGuest">Continue As Guest</button>
                     </div>
                 </div>
