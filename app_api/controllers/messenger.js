@@ -3,9 +3,10 @@ var Usr = mongoose.model('User');
 var SparkPost = require('sparkpost');
 var sp;
 
-
 if(process.env === 'production'){
 	sp = new SparkPost(process.env.SPARKPOST_API_KEY);
+} else {
+	sp = new SparkPost('DEBUG_KEY');
 }
 
 const badRequestCode = 400;
@@ -27,7 +28,7 @@ module.exports.forgotPassword = (req, res)=>{
 }
 
 module.exports.sendConfirmationEmail = (req, res)=>{
-	if(req.body && req.body.user)
+	if(req.body && req.body.email && req.body.appointments)
 	{
 		var userEmail = req.body.email
 		var appts = req.body.appointments;
@@ -51,16 +52,17 @@ module.exports.sendConfirmationEmail = (req, res)=>{
 		      {address: 'fishfry62@gmail.com'}
 		    ]
 		  }
-		}, function(err, res) {
+		}, function(err, data) {
 		  if (err) {
 		    sendJsonResponse(res, internalErrorCode, 'Failed to send confirmation email(s).', err);
+		    console.log(err);
 		  } else {
 		    sendJsonResponse(res, noContentSuccessCode, 'Confirmation email(s) sent!');
 		  }
 		});
 
 	} else {
-		sendJsonResponse(res, badRequestCode, "No request body");
+		sendJsonResponse(res, badRequestCode, "Bad request body");
 	}
 };
 

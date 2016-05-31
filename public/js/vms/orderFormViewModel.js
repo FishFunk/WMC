@@ -186,7 +186,7 @@ class OrderFormViewModel {
 			return;
 		}
 
-		if(!Utils.VerifyZip(this.zip())){
+		if(!Utils.VerifyZip(selectedLocation.zip)){
 			bootbox.alert(Constants.BAD_ZIP_MSG);
 			return;
 		}
@@ -194,33 +194,6 @@ class OrderFormViewModel {
 		if(this.$orderDetailsForm.valid())
 		{
 			this._openCheckout();
-
-			if(!this.storageHelper.LoggedInUser)
-			{
-				this.webSvc.GetUserByEmail(this.email())
-					.then((usr)=>{
-						if(usr){
-							self.storageHelper.LoggedInUser = usr;
-							self._updateUserData();
-						} else {
-							// create new temp user
-							var tmpUser = self._makeTempUserSchema();
-							self.storageHelper.LoggedInUser = tmpUser;
-							self.webSvc.CreateUser(tmpUser)
-								.fail((err)=>{
-									console.log(err);
-								});
-						}
-					})
-					.fail((err)=>{
-						console.log(err);
-					});
-			}
-			else
-			{
-				// Update existing user
-				this._updateUserData();
-			}
 		}
 	}
 
@@ -237,9 +210,6 @@ class OrderFormViewModel {
 			this.description("");
 			this.showAddVehicleForm(false);
 			this.showAddLocationForm(false);
-			// this.date(moment().format("MM/DD/YY"));
-			// $('#datetimepicker').data("DateTimePicker").date(this.date());
-			// $('#datetimepicker > input').val(this.date());
 			$('#datetimepicker').data("DateTimePicker").date(new Date());
 			this.selectedCarSize(this.carSizes[0]);
 			this.selectedTimeRange(this.timeRangeOptions[0]);
@@ -265,20 +235,76 @@ class OrderFormViewModel {
 	}
 
 	_completeOrder(token){
-		var self = this;
-      	this.webSvc.ExecuteCharge(token, this.orderTotal() * 100, this.last())
-	      	.then(()=>{
-				bootbox.alert(Constants.ORDER_SUCCESS_MSG);
-				self.OnFormCancel();
-	      	})
-	      	.fail((err)=>{
-				bootbox.alert(Constants.ORDER_FAILURE_MSG);
-				console.log(err);
-	      	});
+		try
+		{
+			var self = this;
+			async.series([
+					// TODO: Is this the best order?
+					this._verifyUser.bind(this),
+					this._executeCharge.bind(this, token),
+					this._updateUserData.bind(this),
+					this._sendEmailConfirmation.bind(this)
+				],
+				possibleError=>{
+					if(possibleError){
+						self._onOrderFailure(possibleError);		
+					} else {
+						self._onOrderSuccess();
+					}
+		      	});
+		} catch (ex) {
+			this._onOrderFailure(ex);	
+		}
 	}
 
-	_updateUserData(){
+	_onOrderFailure(error){
+		bootbox.alert(Constants.ORDER_FAILURE_MSG);
+		console.log(error);			
+	}
+
+	_onOrderSuccess(){
+		bootbox.alert(Constants.ORDER_SUCCESS_MSG);
+		this.OnFormCancel();		
+	}
+
+	_sendEmailConfirmation(callback){
+		this.webSvc.SendConfirmationEmail(
+			this.storageHelper.LoggedInUser.email, 
+			this.storageHelper.LoggedInUser.appointments)
+			.then(()=> callback())
+			.fail(err => callback(err));
+	}
+
+	_verifyUser(callback){
 		var self = this;
+		if(this.storageHelper.LoggedInUser){
+			callback();
+		} else {
+			this.webSvc.GetUserByEmail(this.email())
+				.then((usr)=>{
+					if(usr){
+						self.storageHelper.LoggedInUser = usr;
+						callback();
+					} else {
+						// create new temp user
+						var tmpUser = self._makeTempUserSchema();
+						self.storageHelper.LoggedInUser = usr;
+						self.webSvc.CreateUser(tmpUser)
+							.then(()=>callback())
+							.fail((err)=>callback(err));
+					}
+				})
+				.fail((err)=>callback(err));			
+		}
+	}
+
+	_executeCharge(token, callback){
+      	this.webSvc.ExecuteCharge(token, this.orderTotal() * 100, this.last())
+	      	.then(()=>callback())
+	      	.fail((err)=>callback(err));
+	}
+
+	_updateUserData(callback){
 		var currentUsr = this.storageHelper.LoggedInUser;
 		var newAppt = this._makeAppointmentSchema();
 
@@ -295,9 +321,8 @@ class OrderFormViewModel {
 		currentUsr.lastName = this.last();
 
 		this.webSvc.UpdateUser(currentUsr)
-			.fail((err) =>{
-				console.log(err);
-			});
+			.then(()=>callback())
+			.fail((err) =>callback(err));
 	}
 
 	_prePopulateUserData(){
