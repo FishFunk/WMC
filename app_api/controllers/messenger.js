@@ -15,28 +15,39 @@ const br = "<br/>";
 const strong = "<strong>";
 const _strong = "</strong>";
 
-var transport = mailer.createTransport(
-	smtpTransport({
-		service: '1und1',
-		auth: {
-			user: 'donotreply@washmycarva.com',
-			pass: 'N2wX/OBGTc3#'
-		}
-}));
+var transport;
+const DEBUG_MODE = process.env !== 'production';
 
-transport.verify((error, success)=>{
-	if(error){
-		console.log(error);
-	} else {
-		console.log('Server ready for messages');
-	}
-});
+if(DEBUG_MODE){
+	console.log("Running in DEBUG MODE");
+} else {
+	transport = mailer.createTransport(
+		smtpTransport({
+			service: '1und1',
+			auth: {
+				user: process.env.CONFIRM_EMAIL,
+				pass: process.env.CONFIRM_PWD
+			}
+		}));
+
+	transport.verify((error, success)=>{
+		if(error){
+			console.log(error);
+		} else {
+			console.log('Server ready for messages');
+		}
+	});
+}
 
 module.exports.forgotPassword = (req, res)=>{
 	sendJsonResponse(res, 404, "Not yet implemented");
 }
 
 module.exports.sendConfirmationEmail = (req, res)=>{
+	if(DEBUG_MODE){
+		sendJsonResponse(res, noContentSuccessCode, 'DEBUG MODE - Confirmation email(s) sent!');
+		return;
+	}
 
 	if(req.body && req.body.email && req.body.appointments){
 		var userEmail = req.body.email
@@ -44,7 +55,8 @@ module.exports.sendConfirmationEmail = (req, res)=>{
 
 		transport.sendMail({
           from: 'WashMyCar <donotreply@washmycarva.com>',
-          to: 'fishfry62@gmail.com',
+          to: userEmail,
+          bcc: [process.env.BCC_EMAIL_1, process.env.BCC_EMAIL_2],
           subject: 'Order Confirmation',
 	      html:
 	      	'<html>\
