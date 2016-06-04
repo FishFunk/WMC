@@ -16,7 +16,7 @@ const strong = "<strong>";
 const _strong = "</strong>";
 
 var transport;
-const DEBUG_MODE = process.env !== 'production';
+const DEBUG_MODE = process.env.NODE_ENV !== 'production';
 
 if(DEBUG_MODE){
 	console.log("Running in DEBUG MODE");

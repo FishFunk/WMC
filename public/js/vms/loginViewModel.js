@@ -13,8 +13,8 @@ class LogInViewModel {
 		this.ShowCreateAcct = ko.observable(false);
 		this.ShowForgotPwd = ko.observable(false);
 
-		this.email = ko.observable("VBF@YPP.com");
-		this.pwd = ko.observable("TKVSVKCCFF");
+		this.email = ko.observable();
+		this.pwd = ko.observable();
 
 		this.firstName = ko.observable("");
 		this.lastName = ko.observable("");

@@ -31,6 +31,9 @@ class OrderFormViewModel {
 		this.WAX_COST = Constants.WAX_DETAILS.price;
 		this.WASH_COST = Constants.WASH_DETAILS.price;
 
+		/**** Observables ****/
+		this.disableEmailInput = ko.observable(false);
+
 		// Order Details
 		this.addShine = ko.observable(false);
 		this.addWax = ko.observable(false);
@@ -339,6 +342,10 @@ class OrderFormViewModel {
 			this.phone(usr.phone || "");
 			this.first(usr.firstName || "");
 			this.last(usr.lastName || "");
+
+			if(usr.email){
+				this.disableEmailInput(true);
+			}
 
 			$('#phone').trigger('input');
 		}
