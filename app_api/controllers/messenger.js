@@ -1,13 +1,5 @@
-var mongoose = require('mongoose');
-var Usr = mongoose.model('User');
-var SparkPost = require('sparkpost');
-var sp;
-
-if(process.env === 'production'){
-	sp = new SparkPost(process.env.SPARKPOST_API_KEY);
-} else {
-	sp = new SparkPost('DEBUG_KEY');
-}
+var mailer = require('nodemailer');
+var smtpTransport = require('nodemailer-smtp-transport');
 
 const badRequestCode = 400;
 const internalErrorCode = 500;
@@ -23,44 +15,53 @@ const br = "<br/>";
 const strong = "<strong>";
 const _strong = "</strong>";
 
+var transport = mailer.createTransport(
+	smtpTransport({
+		service: '1und1',
+		auth: {
+			user: 'donotreply@washmycarva.com',
+			pass: 'N2wX/OBGTc3#'
+		}
+}));
+
+transport.verify((error, success)=>{
+	if(error){
+		console.log(error);
+	} else {
+		console.log('Server ready for messages');
+	}
+});
+
 module.exports.forgotPassword = (req, res)=>{
 	sendJsonResponse(res, 404, "Not yet implemented");
 }
 
 module.exports.sendConfirmationEmail = (req, res)=>{
-	if(req.body && req.body.email && req.body.appointments)
-	{
+
+	if(req.body && req.body.email && req.body.appointments){
 		var userEmail = req.body.email
 		var appts = req.body.appointments;
 
-		sp.transmissions.send({
-		  transmissionBody: {
-		    content: {
-		      from: 'donotreply@washmycarva.com',
-		      subject: 'Your WMC Confirmation!',
-		      html:
-		      	'<html>\
-		      		<body>\
-		      		<p>Thanks for your WMC order! We hope you enjoy your soon-to-be sparkling clean vehicle!</p>\
-		      		<h4>Your Appointment Details</h4>'
-		      		+ formatAppts(req.body.appointments) +
-		      		'</body>\
-		      	</html>'
-		    },
-		    recipients: [
-		      {address: userEmail},
-		      {address: 'fishfry62@gmail.com'}
-		    ]
-		  }
-		}, function(err, data) {
+		transport.sendMail({
+          from: 'WashMyCar <donotreply@washmycarva.com>',
+          to: 'fishfry62@gmail.com',
+          subject: 'Order Confirmation',
+	      html:
+	      	'<html>\
+	      		<body>\
+	      		<p>Thanks for your WMC order! We hope you enjoy your soon-to-be sparkling clean vehicle!</p>\
+	      		<h4>Your Appointment Details</h4>'
+	      		+ formatAppts(req.body.appointments) +
+	      		'</body>\
+	      	</html>'
+        }, function(err, responseStatus) {
 		  if (err) {
 		    sendJsonResponse(res, internalErrorCode, 'Failed to send confirmation email(s).', err);
 		    console.log(err);
 		  } else {
 		    sendJsonResponse(res, noContentSuccessCode, 'Confirmation email(s) sent!');
 		  }
-		});
-
+        });
 	} else {
 		sendJsonResponse(res, badRequestCode, "Bad request body");
 	}
@@ -81,12 +82,7 @@ var formatAppts = (appts)=>{
 	    _ul + '<hr>'
 	});
 
-	var emailHtml = '\
-	    <p>Thanks for your WMC order! We hope you enjoy your soon-to-be sparkling clean vehicle!</p>\
-	    <h4>Your Appointment Details</h4>' +
-	    apptHtml
-
-	return emailHtml;
+	return apptHtml;
 }
 
 var formatServices = (services)=>{

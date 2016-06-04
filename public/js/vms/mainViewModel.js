@@ -47,7 +47,7 @@ class MainViewModel {
 	OnVerifyZip(){
 		if(Utils.VerifyZip(this.zip())){
 			this.zipVerified(true);
-			this.storageHelper.ZipCode = zip;
+			this.storageHelper.ZipCode = this.zip();
 		} else {
 			bootbox.alert(Constants.BAD_ZIP_MSG);
 		}
