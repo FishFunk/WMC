@@ -28,6 +28,10 @@ class WebService {
 		return this._executeAjaxCall('PUT', "/api/updateUser", user);
 	}
 
+	ForgotPassword(email){
+		return this._executeAjaxCall('POST', "/api/forgotPassword", {email: email});
+	}
+
 	ExecuteCharge(stripeToken, price, lastName){
 		return this._executeAjaxCall('POST', "/api/executeCharge", {
 				stripeToken: stripeToken.id,

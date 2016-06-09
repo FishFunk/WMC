@@ -7,7 +7,7 @@ class LogInViewModel {
 		this.$orderFormModal = $("#order-form-modal");
 		this.$loginForm = $("#login-form");
 		this.$createAcctForm = $("#create-acct-form");
-		this.$forgotPwdForm = $("forgot-pwd-form");
+		this.$forgotPwdForm = $("#forgot-pwd-form");
 
 		this.ShowLogin = ko.observable(true);
 		this.ShowCreateAcct = ko.observable(false);
@@ -39,10 +39,10 @@ class LogInViewModel {
 	}
 
 	OnCancelCreateAcct(){
+		this._resetForms();
 		this.ShowForgotPwd(false);
 		this.ShowCreateAcct(false);
 		this.ShowLogin(true);
-		this._resetForms();
 	}
 
 	OnCreateAcct(){
@@ -95,16 +95,26 @@ class LogInViewModel {
 	}
 
 	OnCancelForgotPwd(){
-		if(this.$forgotPwdForm.valid()){
-			this.ShowCreateAcct(false);
-			this.ShowForgotPwd(false);
-			this.ShowLogin(true);
-		}
+		this._resetForms();
+		this.ShowCreateAcct(false);
+		this.ShowForgotPwd(false);
+		this.ShowLogin(true);
 	}
 
 	OnSubmitForgotPwd(){
 		if(this.$forgotPwdForm.valid()){
-			// Call forgot email service
+			var self = this;
+			this.webSvc.ForgotPassword(this.email())
+				.then(()=>{
+					bootbox.alert("Nice! Check your email ;)");
+					self._resetForms();
+					self.OnCancelForgotPwd();
+				})
+				.fail(err => {
+					bootbox.alert("Uh oh, there was a problem...");
+					console.log(err)
+					self._resetForms();
+				});
 		}
 	}
 
@@ -143,6 +153,8 @@ class LogInViewModel {
 		this.$loginForm.validate().resetForm();
 		this.$createAcctForm.find("input").val("");
 		this.$createAcctForm.validate().resetForm();
+		this.$forgotPwdForm.find("input").val("");
+		this.$forgotPwdForm.validate().resetForm();
 	}
 
 	_toggleModals(){
@@ -199,6 +211,22 @@ class LogInViewModel {
 			messages:{
 				email: "Please enter a valid email address.",
 				pwd: "Password required."
+			}
+		});
+
+		this.$forgotPwdForm.validate({
+			rules: {
+				email: {
+					required: true,
+					email: true
+				},
+				verifyEmail: {
+					required: true,
+					emailEqual: true
+				}
+			},
+			messages:{
+				email: "Please enter a valid email address."
 			}
 		});
 	}

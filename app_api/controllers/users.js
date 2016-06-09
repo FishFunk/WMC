@@ -21,7 +21,7 @@ const noContentSuccessCode = 204;
 module.exports.updateUser = (req, res)=>{
 	if(req.body && req.body.email)
 	{
-		Usr.update({email: req.body.email},
+		Usr.update({email: req.body.email.toLowerCase()},
 		{
 			appointments: req.body.appointments,
 			cars: req.body.cars,

@@ -16,5 +16,6 @@ router.put('/updateUser', ctrlUsers.updateUser);
 router.post('/executeCharge', ctrlMoney.executeCharge);
 
 router.post('/sendConfirmationEmail', ctrlMsgs.sendConfirmationEmail);
+router.post('/forgotPassword', ctrlMsgs.forgotPassword);
 
 module.exports = router;
