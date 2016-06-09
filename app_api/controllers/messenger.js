@@ -66,7 +66,7 @@ module.exports.forgotPassword = (req, res)=>{
 	      			<body>\
 					<div style="padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto;">\
 				    	<div style="text-align: center;">\
-				    	<img src="../../public/img/wmc_logo.jpg" style="width:150px;">\
+				    	<img src="https://mysterious-journey-72211.herokuapp.com/img/wmc_logo.jpg" style="width:150px;">\
 				    	</div>\
 					    <hr>\
 					    <p>Forgot your password, eh? Don\'t worry it happens to the best of us! The good news is we\'ve got you covered. Below are your WMC credentials.</p>\
@@ -113,7 +113,7 @@ module.exports.sendConfirmationEmail = (req, res)=>{
 	      		<body>\
 				<div style="padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto;">\
 				    <div style="text-align: center;">\
-				    <img src="../../public/img/wmc_logo.jpg" style="width:150px;">\
+				    <img src="https://mysterious-journey-72211.herokuapp.com/img/wmc_logo.jpg" style="width:150px;">\
 				    </div>\
 				    <hr>\
 	      			<p>Thanks for your WMC order! We hope you enjoy your soon-to-be sparkling clean vehicle!</p>\
