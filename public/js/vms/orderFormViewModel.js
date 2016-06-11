@@ -356,20 +356,20 @@ class OrderFormViewModel {
 		this.date(date);
 		var appointments = this.storageHelper.AppointmentsByDate[date];
 		if(appointments){
-			const maxMinutesPerInterval = 180;
-			var morningAppts = _.filter(appointments, (appt) => appt.key === Constants.MORNING_TIME_RANGE.key);
-			var afternoonAppts = _.filter(appointments, (appt) => appt.key === Constants.AFTERNOON_TIME_RANGE.key);
-			var eveningAppts = _.filter(appointments, (appt) => appt.key === Constants.EVENING_TIME_RANGE.key);
-			var nightAppts = _.filter(appointments, (appt) => appt.key === Constants.NIGHT_TIME_RANGE.key);
+			const maxMinutesPerInterval = Constants.MAX_JOB_TIME_PER_INTERVAL;
+			var morningAppts = _.filter(appointments, (appt) => appt.timeRangeKey === Constants.MORNING_TIME_RANGE.key);
+			var afternoonAppts = _.filter(appointments, (appt) => appt.timeRangeKey === Constants.AFTERNOON_TIME_RANGE.key);
+			var eveningAppts = _.filter(appointments, (appt) => appt.timeRangeKey === Constants.EVENING_TIME_RANGE.key);
+			var nightAppts = _.filter(appointments, (appt) => appt.timeRangeKey === Constants.NIGHT_TIME_RANGE.key);
 
 			Constants.MORNING_TIME_RANGE.disabled(
-				_.reduce(morningAppts, (memo, appt) => {return memo + appt.timeEstimate}, 0) > maxMinutesPerInterval);
+				_.reduce(morningAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval);
 			Constants.AFTERNOON_TIME_RANGE.disabled(
-				_.reduce(afternoonAppts, (memo, appt) => {return memo + appt.timeEstimate}, 0) > maxMinutesPerInterval);
+				_.reduce(afternoonAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval);
 			Constants.EVENING_TIME_RANGE.disabled(
-				_.reduce(eveningAppts, (memo, appt) => {return memo + appt.timeEstimate}, 0) > maxMinutesPerInterval);
+				_.reduce(eveningAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval);
 			Constants.NIGHT_TIME_RANGE.disabled(
-				_.reduce(nightAppts, (memo, appt) => {return memo + appt.timeEstimate}, 0) > maxMinutesPerInterval);
+				_.reduce(nightAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval);
 		}
 	}
 
@@ -437,7 +437,7 @@ class OrderFormViewModel {
 			location: this._makeLocationSchema(),
 			price: this.orderTotal(),
 			services: this._buildServicesArray(),
-			timeEstimate: null, // TODO
+			timeEstimate: this._getTimeEstimate(),
 			timeRange: this.selectedTimeRange().range,
 			timeRangeEnum: this.selectedTimeRange().key,
 			description: this.description()
@@ -455,16 +455,30 @@ class OrderFormViewModel {
 		}
 	}
 
-	_buildServicesArray(){
-		var services = ["Hand wash"];
+	_getTimeEstimate(){
+		var totalTime = Constants.WASH_DETAILS.time;
 		if(this.addShine()){
-			services.push("Tire shine");
+			totalTime += Constants.TIRE_SHINE_DETAILS.time;
 		}
 		if(this.addWax()){
-			services.push("Wax & Buff");
+			totalTime += Constants.WAX_DETAILS.time;
 		}
 		if(this.addInterior()){
-			services.push("Interior");
+			totalTime += Constants.INTERIOR_DETAILS.time;
+		}
+		return totalTime;
+	}
+
+	_buildServicesArray(){
+		var services = [Constants.WASH_DETAILS.title];
+		if(this.addShine()){
+			services.push(Constants.TIRE_SHINE_DETAILS.title);
+		}
+		if(this.addWax()){
+			services.push(Constants.WAX_DETAILS.title);
+		}
+		if(this.addInterior()){
+			services.push(Constants.INTERIOR_DETAILS.title);
 		}
 		return services;
 	}

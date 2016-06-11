@@ -81,12 +81,12 @@
                     <br><br><br><br><br><br>
                     <div data-bind="visible: !zipVerified()">
                       <h4>Make sure we service your area</h4>
-                      <div id="verify-zip" class="input-group">
+                      <form id="verify-zip" class="input-group" data-bind="submit: OnVerifyZip">
                         <input type="text" class="form-control" placeholder="Zipcode" data-bind="value: zip" maxlength="5">
                         <span class="input-group-btn">
-                          <button class="btn btn-default" type="button" data-bind="click: OnVerifyZip">OK</button>
+                          <button class="btn btn-default" type="submit">OK</button>
                         </span>
-                      </div>
+                      </form>
                     </div>
                 </div>
             </div>
@@ -255,68 +255,74 @@
             </div>
             <div class="modal-body">
                 <div data-bind="visible: ShowForgotPwd">
-                    <form id="forgot-pwd-form" class="row">
-                        <div class="form-group">
-                            <div class="col-xs-8 col-xs-offset-2">
-                                <input data-bind="value: email" class="form-control" type="email" name="email" placeholder="johnny.appleseed@yahoo.com">
+                    <form id="forgot-pwd-form" data-bind="submit: OnSubmitForgotPwd">
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-xs-8 col-xs-offset-2">
+                                    <input data-bind="value: email" class="form-control" type="email" name="email" placeholder="johnny.appleseed@yahoo.com">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-8 col-xs-offset-2">
+                                    <input data-bind="value: verifyEmail" class="form-control" type="email" name="verifyEmail" placeholder="Verify Email">
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-xs-8 col-xs-offset-2">
-                                <input data-bind="value: verifyEmail" class="form-control" type="email" name="verifyEmail" placeholder="Verify Email">
-                            </div>
-                        </div>         
-                    </form>
-                    <div class="row text-center">
-                        <button type="button" class="btn btn-lg btn-default" data-bind="click: OnCancelForgotPwd">Nevermind</button>
-                        <button type="button" class="btn btn-lg btn-success" data-bind="click: OnSubmitForgotPwd">OK</button>
-                    </div>                   
+                        <div class="row text-center">
+                            <button type="button" class="btn btn-lg btn-default" data-bind="click: OnCancelForgotPwd">Nevermind</button>
+                            <button type="submit" class="btn btn-lg btn-success">OK</button>
+                        </div>      
+                    </form>               
                 </div>
                 <div data-bind="visible: ShowCreateAcct">
-                    <form id="create-acct-form" class="row">
-                        <div class="form-group">
-                            <div class="col-xs-8 col-xs-offset-2">
-                                <input data-bind="value: email" class="form-control" type="email" name="email" placeholder="johnny.appleseed@yahoo.com">
+                    <form id="create-acct-form" data-bind="submit: OnCreateAcct">
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-xs-8 col-xs-offset-2">
+                                    <input data-bind="value: email" class="form-control" type="email" name="email" placeholder="johnny.appleseed@yahoo.com">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-8 col-xs-offset-2">
+                                    <input data-bind="value: verifyEmail" class="form-control" type="email" name="verifyEmail" placeholder="Verify Email">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-8 col-xs-offset-2">
+                                    <input data-bind="value: pwd" class="form-control" type="password" name="pwd" placeholder="***********">
+                                </div>
+                            </div>
+                            <div class="form-group" data-bind="visible: ShowCreateAcct">
+                                <div class="col-xs-8 col-xs-offset-2">
+                                    <input id="verifyPwd" data-bind="value: verifyPwd" class="form-control" type="password" name="verifyPwd" placeholder="Verify Password">
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-xs-8 col-xs-offset-2">
-                                <input data-bind="value: verifyEmail" class="form-control" type="email" name="verifyEmail" placeholder="Verify Email">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-xs-8 col-xs-offset-2">
-                                <input data-bind="value: pwd" class="form-control" type="password" name="pwd" placeholder="***********">
-                            </div>
-                        </div>
-                        <div class="form-group" data-bind="visible: ShowCreateAcct">
-                            <div class="col-xs-8 col-xs-offset-2">
-                                <input id="verifyPwd" data-bind="value: verifyPwd" class="form-control" type="password" name="verifyPwd" placeholder="Verify Password">
-                            </div>
-                        </div>            
+                        <div class="row text-center">
+                            <button type="button" class="btn btn-lg btn-default" data-bind="click: OnCancelCreateAcct">Cancel</button>
+                            <button type="submit" class="btn btn-lg btn-success">Create</button>
+                        </div>        
                     </form>
-                    <div class="row text-center">
-                        <button type="button" class="btn btn-lg btn-default" data-bind="click: OnCancelCreateAcct">Cancel</button>
-                        <button type="button" class="btn btn-lg btn-success" data-bind="click: OnCreateAcct">Create</button>
-                    </div>
                 </div>
                 <div data-bind="visible: ShowLogin">
-                    <form id="login-form" class="row">
-                        <div class="form-group">
-                            <div class="col-xs-8 col-xs-offset-2">
-                                <input data-bind="value: email" class="form-control" type="email" name="email" placeholder="johnny.appleseed@yahoo.com">
+                    <form id="login-form" data-bind="submit: OnLogIn">
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-xs-8 col-xs-offset-2">
+                                    <input data-bind="value: email" class="form-control" type="email" name="email" placeholder="johnny.appleseed@yahoo.com">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-8 col-xs-offset-2">
+                                    <input data-bind="value: pwd" class="form-control" type="password" name="pwd" placeholder="***********">
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-xs-8 col-xs-offset-2">
-                                <input data-bind="value: pwd" class="form-control" type="password" name="pwd" placeholder="***********">
-                            </div>
+                        <br>
+                        <div class="row text-center">
+                            <button type="submit" class="btn btn-lg btn-primary">Log In</button>
                         </div>
                     </form>
-                    <br>
-                    <div class="row text-center">
-                        <button type="button" class="btn btn-lg btn-primary" data-bind="click: OnLogIn">Log In</button>
-                    </div>
                 </div>
             </div>
             <div class="modal-footer">

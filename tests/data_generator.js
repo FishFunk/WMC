@@ -1,7 +1,3 @@
-"use strict";
-
-var _ = require('underscore');
-
 class DataGenerator{
 	MakeUser(){
 		var appts = [this.MakePassedAppointment(), this.MakeFutureAppointment()];
@@ -128,5 +124,3 @@ class DataGenerator{
 		return _.random(1980, 2016);
 	};
 }
-
-module.exports = new DataGenerator();

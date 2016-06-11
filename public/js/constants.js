@@ -4,19 +4,24 @@ const ORDER_SUCCESS_MSG = "Thank you! Your order has been placed. Please check y
       ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
       DEFAULT_JOB_TIME_MINS = 120,
       MAX_JOB_TIME_PER_DAY_MINS = 720,
+      MAX_JOB_TIME_PER_INTERVAL = 180,
       WASH_DETAILS = {
+        title: "Hand wash",
         time: 30,
         price: 29
       },
       TIRE_SHINE_DETAILS = {
+        title: "Tire shine",
         time: 30,
         price: 25
       },
       INTERIOR_DETAILS = {
+        title: "Interior cleaning",
         time: 50,
         price: 75
       },
       WAX_DETAILS = {
+        title: "Hand wax & buff",
         time: 50,
         price: 50
       },
@@ -149,5 +154,9 @@ class Constants {
 
   static get ASYNC_INTERUPTION_MARKER(){
     return ASYNC_INTERUPTION_MARKER;
+  }
+
+  static get MAX_JOB_TIME_PER_INTERVAL(){
+    return MAX_JOB_TIME_PER_INTERVAL;
   }
 }

@@ -21,7 +21,7 @@ const noContentSuccessCode = 204;
 module.exports.updateUser = (req, res)=>{
 	if(req.body && req.body.email)
 	{
-		Usr.update({email: req.body.email.toLowerCase()},
+		Usr.update({email: req.body.email.trim().toLowerCase()},
 		{
 			appointments: req.body.appointments,
 			cars: req.body.cars,
@@ -71,7 +71,7 @@ module.exports.createNewUser = (req, res)=>{
 		Usr.create({
 			appointments: [],
 			cars: [],
-			email: req.body.email.toLowerCase(),
+			email: req.body.email.trim().toLowerCase(),
 			phone: "",
 			firstName: "",
 			lastName: "",
@@ -93,7 +93,7 @@ module.exports.createNewUser = (req, res)=>{
 module.exports.getUserByEmail = (req, res)=>{
 	if(req.body && req.body.email)
 	{
-		Usr.findOne({email: req.body.email.toLowerCase()}, (err, usr)=>{
+		Usr.findOne({email: req.body.email.trim().toLowerCase()}, (err, usr)=>{
 			if (err){
 				sendJsonResponse(res, internalErrorCode, err, "DB Failure - getUserByEmail");
 			} else if(!usr){
@@ -110,7 +110,7 @@ module.exports.getUserByEmail = (req, res)=>{
 module.exports.getUserByEmailAndPwd = (req, res)=>{
 	if(req.body && req.body.email && req.body.pwd)
 	{
-		Usr.findOne({email: req.body.email.toLowerCase(), pwd: req.body.pwd}, (err, usr)=>{
+		Usr.findOne({email: req.body.email.trim().toLowerCase(), pwd: req.body.pwd}, (err, usr)=>{
 			if(err){
 				sendJsonResponse(res, internalErrorCode, "DB Error - getUserByEmailAndPwd", err);
 			} else if(!usr){

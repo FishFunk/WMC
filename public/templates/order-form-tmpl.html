@@ -31,7 +31,10 @@
     </div>
     <div class="form-group col-sm-4">
       <label class="control-label" for="select">Time Range</label>
-      <select data-bind="options: timeRangeOptions, optionsText: 'range', value: selectedTimeRange, attr: {disabled: $data.disabled}" class="form-control"></select>
+      <select class="form-control" data-bind="value: selectedTimeRange, foreach: timeRangeOptions">
+        <option data-bind="text: $data.range, value: $data, attr: { disabled: $data.disabled }"></option>
+      </select>
+<!--       <select data-bind="options: timeRangeOptions, optionsText: 'range', value: selectedTimeRange, attr: {disabled: $data.disabled}" class="form-control"></select> -->
     </div>
   </div>
   <div class="row">

@@ -48,7 +48,7 @@ module.exports.forgotPassword = (req, res)=>{
 	}
 	if(req.body && req.body.email)
 	{
-		Usr.findOne({email: req.body.email.toLowerCase()})
+		Usr.findOne({email: req.body.email.trim().toLowerCase()})
 			.select('email pwd')
 			.exec((err, usr)=>{
 			if(err){
@@ -100,7 +100,7 @@ module.exports.sendConfirmationEmail = (req, res)=>{
 	}
 
 	if(req.body && req.body.email && req.body.appointments){
-		var userEmail = req.body.email
+		var userEmail = req.body.email;
 		var appts = req.body.appointments;
 
 		transport.sendMail({
