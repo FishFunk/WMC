@@ -85,20 +85,46 @@ class OrderFormViewModel {
 		this.zip = ko.observable(this.storageHelper.ZipCode);
 
 		this.orderTotal = ko.computed(()=>{
-			var total = parseFloat((self.WASH_COST + (self.addShine() ? self.TIRE_SHINE_COST : 0) + 
-				(self.addWax() ? self.WAX_COST : 0) + 
-				(self.addInterior() ? self.INTERIOR_COST : 0)) *
-				(self.selectedCarSize().multiplier));
+			let total = 0;
+			let serviceCost = parseFloat((self.WASH_COST + 
+					(self.addShine() ? self.TIRE_SHINE_COST : 0) + 
+					(self.addWax() ? self.WAX_COST : 0) + 
+					(self.addInterior() ? self.INTERIOR_COST : 0)));
+
+			self.cars().forEach((car)=>{
+				if(car.selected()){
+					var carSize = _.find(Constants.CAR_SIZES, (obj) => obj.size == car.size || obj.multiplier == car.multiplier);
+					if(carSize){
+						total += serviceCost * carSize.multiplier;
+					}
+				}
+			});
+
+			if(total < 10){
+				return total.toPrecision(3);
+			}
+
 			return total >= 100 ? total.toPrecision(5) : total.toPrecision(4);
 		});
 
 		this.orderSummary = ko.computed(()=>{
-			return $.validator.format("Exterior Hand Wash<br>{0}{1}{2}{3} = {4}x cost multiplier.", 
-				(self.addShine() ? "Deep Tire Clean & Shine<br>" : ""),
-				(self.addWax() ? "Hand Wax & Buff<br>" : ""),
-				(self.addInterior() ? "Full Interior Cleaning<br>" : ""),
-				self.selectedCarSize().size,
-				self.selectedCarSize().multiplier.toString());
+			let summary = "";
+			self.cars().forEach((car)=>{
+				if(car.selected()){
+					var carSize = _.find(Constants.CAR_SIZES, (obj) => obj.size == car.size || obj.multiplier == car.multiplier);
+					summary += $.validator.format("<strong>{5} {6}</strong><br>" +
+						"Exterior Hand Wash<br>{0}{1}{2}{3} = {4}x cost multiplier.<br>", 
+						(self.addShine() ? "Deep Tire Clean & Shine<br>" : ""),
+						(self.addWax() ? "Hand Wax & Buff<br>" : ""),
+						(self.addInterior() ? "Full Interior Cleaning<br>" : ""),
+						carSize.size,
+						carSize.multiplier.toString(),
+						car.make,
+						car.model);
+				}
+			});
+
+			return summary;
 		});
 	}
 

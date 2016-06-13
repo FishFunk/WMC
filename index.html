@@ -258,12 +258,12 @@
                     <form id="forgot-pwd-form" data-bind="submit: OnSubmitForgotPwd">
                         <div class="row">
                             <div class="form-group">
-                                <div class="col-xs-8 col-xs-offset-2">
+                                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                                     <input data-bind="value: email" class="form-control" type="email" name="email" placeholder="johnny.appleseed@yahoo.com">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <div class="col-xs-8 col-xs-offset-2">
+                                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                                     <input data-bind="value: verifyEmail" class="form-control" type="email" name="verifyEmail" placeholder="Verify Email">
                                 </div>
                             </div>
@@ -278,22 +278,22 @@
                     <form id="create-acct-form" data-bind="submit: OnCreateAcct">
                         <div class="row">
                             <div class="form-group">
-                                <div class="col-xs-8 col-xs-offset-2">
+                                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                                     <input data-bind="value: email" class="form-control" type="email" name="email" placeholder="johnny.appleseed@yahoo.com">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <div class="col-xs-8 col-xs-offset-2">
+                                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                                     <input data-bind="value: verifyEmail" class="form-control" type="email" name="verifyEmail" placeholder="Verify Email">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <div class="col-xs-8 col-xs-offset-2">
+                                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                                     <input data-bind="value: pwd" class="form-control" type="password" name="pwd" placeholder="***********">
                                 </div>
                             </div>
                             <div class="form-group" data-bind="visible: ShowCreateAcct">
-                                <div class="col-xs-8 col-xs-offset-2">
+                                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                                     <input id="verifyPwd" data-bind="value: verifyPwd" class="form-control" type="password" name="verifyPwd" placeholder="Verify Password">
                                 </div>
                             </div>
@@ -308,12 +308,12 @@
                     <form id="login-form" data-bind="submit: OnLogIn">
                         <div class="row">
                             <div class="form-group">
-                                <div class="col-xs-8 col-xs-offset-2">
+                                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                                     <input data-bind="value: email" class="form-control" type="email" name="email" placeholder="johnny.appleseed@yahoo.com">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <div class="col-xs-8 col-xs-offset-2">
+                                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
                                     <input data-bind="value: pwd" class="form-control" type="password" name="pwd" placeholder="***********">
                                 </div>
                             </div>
@@ -328,9 +328,9 @@
             <div class="modal-footer">
                 <div class="row text-center">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-sm btn-link" data-bind="click: OnShowCreateAcct">Create Account</button>
-                        <button type="button" class="btn btn-sm btn-link" data-bind="click: OnShowForgotPwd">Forgot Password</button>
-                        <button type="button" class="btn btn-sm btn-link" data-bind="click: OnContinueAsGuest">Continue As Guest</button>
+                        <button type="button" class="btn btn-sm btn-link col-xs-12 col-sm-4" data-bind="click: OnShowCreateAcct">Create Account</button>
+                        <button type="button" class="btn btn-sm btn-link col-xs-12 col-sm-4" data-bind="click: OnShowForgotPwd">Forgot Password</button>
+                        <button type="button" class="btn btn-sm btn-link col-xs-12 col-sm-4" data-bind="click: OnContinueAsGuest">Continue As Guest</button>
                     </div>
                 </div>
             </div>
