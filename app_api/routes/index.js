@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var ctrlAdmin = require('../controllers/admin');
 var ctrlUsers = require('../controllers/users');
 var ctrlMoney = require('../controllers/money');
 var ctrlMsgs = require('../controllers/messenger');
@@ -10,6 +11,7 @@ router.post('/getUserByEmail', ctrlUsers.getUserByEmail);
 router.post('/getUserByEmailAndPwd', ctrlUsers.getUserByEmailAndPwd);
 
 router.get('/getFutureApptDatesAndTimes', ctrlUsers.getFutureApptDatesAndTimes);
+router.get('/getAllAppointments', ctrlUsers.getAllAppointments);
 
 router.put('/updateUser', ctrlUsers.updateUser);
 
@@ -17,5 +19,9 @@ router.post('/executeCharge', ctrlMoney.executeCharge);
 
 router.post('/sendConfirmationEmail', ctrlMsgs.sendConfirmationEmail);
 router.post('/forgotPassword', ctrlMsgs.forgotPassword);
+
+router.delete('/deleteExpiredAppointments', ctrlUsers.deleteExpiredAppointments);
+
+router.post('/verifyAdmin', ctrlAdmin.verifyAdmin);
 
 module.exports = router;

@@ -11,26 +11,27 @@
 
     <title>WMC</title>
 
-    <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css' rel='stylesheet'>
 
     <!-- Custom CSS -->
-    <link href="css/localstyles.css" rel="stylesheet">
+    <link href="css/localstyles.min.css" rel="stylesheet">
 
-    <!-- Custom Fonts -->
-    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css' rel='stylesheet' type='text/css'>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts/FontAwesome.otf" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts/fontawesome-webfont.eot" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts/fontawesome-webfont.svg" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts/fontawesome-webfont.ttf" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts/fontawesome-webfont.woff" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts/fontawesome-webfont.woff2" rel="stylesheet">
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-        <![endif]-->
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet'>
 
     </head>
 
@@ -72,8 +73,8 @@
         <header>
             <div class="container">
                 <div class="intro-text">
-                    <div class="intro-lead-in">Welcome To <strong>Wash My Car!</strong></div>
-                    <div class="intro-heading">VA's Most Reliable Mobile Detailing Service</div>
+                    <div class="intro-lead-in">VA's Most Reliable Mobile Auto Wash & Detail Service</strong></div>
+                    <h3>Save time and keep your car looking great.</h3>
                     <button class="btn btn-xl ghost-btn" data-bind="click: OnShowOrderForm">Schedule Now!</button>
                     <div data-bind="visible: zipVerified">
                       <h4>Yes! We happily serve your area.</h4>
@@ -107,7 +108,7 @@
                             <i class="fa fa-calendar fa-stack-1x fa-inverse"></i>
                         </span>
                         <h4 class="service-heading">Schedule</h4>
-                        <p class="text-muted pinch">Simply make your appointment online with our simple checkout process <a href="#page-top" data-bind="click: OnShowOrderForm">HERE</a>.</p>
+                        <p class="text-muted pinch">Simply make your appointment online with our checkout process <a href="#page-top" data-bind="click: OnShowOrderForm">HERE</a>.</p>
                     </div>
                     <div class="col-md-4">
                         <span class="fa-stack fa-4x">
@@ -115,7 +116,7 @@
                             <i class="fa fa-map-marker fa-stack-1x fa-inverse"></i>
                         </span>
                         <h4 class="service-heading">Location</h4>
-                        <p class="text-muted pinch">We bring our service to you! At work, home, or wherever is convenient to you. If we are unable to perform our services (severe weather or otherwise) we will contact you to reschedule.</p>
+                        <p class="text-muted pinch">We bring our service to you! At work, home, or wherever is convenient for you.</p>
                     </div>
                     <div class="col-md-4">
                         <span class="fa-stack fa-4x">
@@ -123,7 +124,7 @@
                             <i class="fa fa-smile-o fa-stack-1x fa-inverse"></i>
                         </span>
                         <h4 class="service-heading">Smile</h4>
-                        <p class="text-muted pinch">Our professional hand washing techniques are <strong>10x more thorough and effective</strong> than a drive-thru car wash. Top notch quality and convenience starting at <strong>$<span data-bind="text: WASH_COST"></span>!</strong></p>
+                        <p class="text-muted pinch">Our professional hand washing technique is <strong>10x more thorough and effective</strong> than a drive-thru car wash and won't scratch your paint or clear coat. Top notch quality and convenience starting at <strong>$<span data-bind="text: WASH_COST"></span>!</strong></p>
                     </div>
                 </div>
             </div>
@@ -144,21 +145,21 @@
                            <span data-bind="html: TireShinePriceHtml"></span>
                         </div>
                         <h4 class="service-heading">Tire Shine</h4>
-                        <p class="text-muted">Really make your car stand out with this deep clean of your tire, rims, and wheel well plus a hand applied gel coating that will protect your tires from UV rays and make them shine like the day it rolled off the lot.</p>
+                        <p class="text-muted">Really make your car stand out with this deep clean of your tire, rims, and wheel well plus a hand applied gel coating that will protect your tires from harmful UV rays and make them shine like new.</p>
                    </div>
                    <div class="col-md-4">
                     <div class="circle">
                         <span data-bind="html: InteriorPriceHtml"></span>
                     </div>
                     <h4 class="service-heading">Interior</h4>
-                    <p class="text-muted">Not only will your car turn heads on the sidewalk but your passengers will be in awe too. We will vacuum, spot remove stains, clean windows inside and out, and wipe down the interior, dash, door jambs, and trim.</p>
+                    <p class="text-muted">A clean car makes for happy riders. Add this service and we'll vacuum, spot remove stains, clean windows, and wipe down the interior dash, door jambs, and trim!</p>
                 </div>
                 <div class="col-md-4">
                     <div class="circle">
                     	<span data-bind="html: WaxPriceHtml"></span>
                     </div>
                     <h4 class="service-heading">Hand Wax & Buff</h4>
-                    <p class="text-muted">Our most popular selection! With this service we hand wax your vehicle's body which provides an unbeatable shine and protection to your vehicle.</p>
+                    <p class="text-muted">The benefits of a good car wax are enormous! We hand apply top of the line wax to your vehicle's body which provides extra shine and protection from small scratches.</p>
                 </div>
             </div>
         </div>
@@ -234,10 +235,10 @@
                     <br> contact@washmycarva.com</a>
                 </div>
                   <div class="col-xs-6">
-                   <a href="tel:+17033549638" class="btn btn-sm ghost-btn black">
+                   <a href="tel:+17034736358" class="btn btn-sm ghost-btn black">
                       <i class="fa fa-phone fa-2x"></i>
                       <br>
-                      000.000.0000</a>
+                      703.473.6358</a>
                   </div>
             </div>
         </div>

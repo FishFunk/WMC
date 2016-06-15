@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>WMC - Admin</title>
+
+    <!-- Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css' rel='stylesheet'>
+
+    <!-- Custom CSS -->
+    <link href="css/localstyles.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts/FontAwesome.otf" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts/fontawesome-webfont.eot" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts/fontawesome-webfont.svg" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts/fontawesome-webfont.ttf" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts/fontawesome-webfont.woff" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/fonts/fontawesome-webfont.woff2" rel="stylesheet">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet'>
+
+    </head>
+
+    <body id="page-top" class="container">
+        <section style="margin-top: -80px !important;">
+            <div class="row">
+                <div class="col-xs-12 text-center">
+                    <h2>Admin Console</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 text-center">
+                    <button class="btn btn-lg btn-primary" data-bind="click: Load">Refresh</button>
+                    <button class="btn btn-lg ghost-btn black" data-bind="click: DeleteOld">Delete Old</button>
+                </div>
+            </div>
+            <hr>
+            <div data-bind="foreach: days">
+                <div id="day-templ" class="col-sm-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading text-center">
+                            <h2 class="panel-title" data-bind="text: day"></h2>
+                            <h3 class="panel-title" data-bind="text: date"></h3>
+                        </div>
+                        <div class="panel-body" data-bind="foreach: appts">
+                            <label>Cars</label>
+                                <ul data-bind="foreach: $data.cars">
+                                    <li>
+                                        <span data-bind="text: $data.year"></span>&nbsp;
+                                        <span data-bind="text: $data.color"></span>&nbsp;
+                                        <span data-bind="text: $data.make"></span>&nbsp;
+                                        <span data-bind="text: $data.model"></span>&nbsp;
+                                        <span data-bind="text: $data.size"></span>&nbsp;
+                                        <span data-bind="text: $data.tag"></span>&nbsp;
+                                    </li>
+                                </ul>
+                            <label>Address&nbsp;(<span data-bind="text: $data.location.title"></span>)</label>
+                                <br>
+                                <span data-bind="text: $data.location.street"></span><br>
+                                <span data-bind="text: $data.location.city"></span>,&nbsp;
+                                <span data-bind="text: $data.location.state"></span>&nbsp;
+                                <span data-bind="text: $data.location.zip"></span>
+                                <br>
+                            <label>Services:&nbsp;</label><span data-bind="text: $data.services"></span><br>
+                            <label>Time Range:&nbsp;</label><span data-bind="text: $data.timeRange"></span><br>
+                            <label>Desc:&nbsp;</label><span data-bind="text: $data.description"></span><br>
+                            <label>Price:&nbsp;</label>$<span data-bind="text: $data.price"></span>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+<div id="login-modal" class="modal fade" role="dialog" data-bind="with: LoginViewModel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h2>This page is for WMC staff only!</h2>
+            </div>
+            <div class="modal-body">
+                <form id="login-form" data-bind="submit: OnVerify">
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                                    <input class="form-control" data-bind="value: usr" placeholder="admin-user">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                                    <input class="form-control" type="password" data-bind="value: pwd" placeholder="******************">
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row text-center">
+                            <button type="submit" class="btn btn-lg btn-primary">Verify</button>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- spells -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.string/3.3.4/underscore.string.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/async/1.5.2/async.min.js"></script>
+
+<!-- Compiled App Script -->
+<script src="adminConsole.js"></script>
+
+</body>
+
+</html>

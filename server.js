@@ -19,6 +19,10 @@ const port = process.env.PORT || 1337;
     res.sendFile(__dirname + '/index.html')
  });
 
+ app.get("/admin", function(req, res) {
+    res.sendFile(__dirname + '/admin.html')
+ });
+
 app.use(express.static(__dirname + '/public'));
 
 // uncomment after placing your favicon in /public

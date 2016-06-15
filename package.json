@@ -4,7 +4,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "build": "babel app_js --out-file public/script-compiled.js"
+    "build": "babel app_js --out-file public/script-compiled.js; minify public/script-compiled.js; minify public/css/localstyles.css;"
   },
   "dependencies": {
     "body-parser": "~1.13.2",
@@ -22,6 +22,7 @@
   "devDependencies": {
     "babel-cli": "^6.10.1",
     "babel-plugin-transform-es2015-classes": "^6.9.0",
-    "babel-preset-es2015": "^6.9.0"
+    "babel-preset-es2015": "^6.9.0",
+    "minifier": "^0.7.1"
   }
 }

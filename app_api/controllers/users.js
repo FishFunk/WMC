@@ -47,7 +47,7 @@ module.exports.getFutureApptDatesAndTimes = (req, res)=>{
 	   .select('appointments.date appointments.timeEstimate appointments.timeRange')
 	   .exec((err, docs)=>{
 		if(err){
-			sendJsonResponse(res, internalErrorCode, "DB Failure - getAllAppointments", err);
+			sendJsonResponse(res, internalErrorCode, "DB Failure - getFutureAppointments", err);
 		} else {
 			var now = new Date();
 			var futureAppts = [];
@@ -61,6 +61,32 @@ module.exports.getFutureApptDatesAndTimes = (req, res)=>{
 			});
 			
 			sendJsonResponse(res, readSuccessCode, "Success", futureAppts);
+		}
+	});
+};
+
+module.exports.getAllAppointments = (req, res)=>{
+	Usr.find()
+	   .select('appointments')
+	   .exec((err, docs)=>{
+		if(err){
+			sendJsonResponse(res, internalErrorCode, "DB Failure - getAllAppointments", err);
+		} else {
+			var now = new Date();
+			var userAppointmentArrs = _.map(docs, (d)=>{ return d.appointments });
+			sendJsonResponse(res, readSuccessCode, "Success", _.flatten(userAppointmentArrs));
+		}
+	});
+};
+
+module.exports.deleteExpiredAppointments = (req, res)=>{
+	var now = new Date().toISOString();
+	Usr.update({}, { $pull : { 'appointments': { 'date': { $lt: now } } } }, {multi: true},
+		(err, docs)=>{
+		if(err){
+			sendJsonResponse(res, internalErrorCode, "DB Failure - deleteExpiredAppointments", err);
+		} else {
+			sendJsonResponse(res, noContentSuccessCode, "Success");
 		}
 	});
 };

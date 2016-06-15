@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 require('./users');
+require('./admin');
 
 var dbURI = 'mongodb://localhost/WMC';
 
