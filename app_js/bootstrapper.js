@@ -1,6 +1,10 @@
+var spinner = null;
+
 class Bootstrapper{
 	static Run(){
 		var deferred = $.Deferred();
+
+		spinner = new LoadingSpinner();
 		// Closes the Responsive Menu on Menu Item Click
 		$('.navbar-collapse ul li a').click(()=>{
 		    $('.navbar-toggle:visible').click();

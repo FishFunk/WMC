@@ -4,6 +4,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var spinner = null;
+
 var Bootstrapper = function () {
 	function Bootstrapper() {
 		_classCallCheck(this, Bootstrapper);
@@ -13,6 +15,8 @@ var Bootstrapper = function () {
 		key: 'Run',
 		value: function Run() {
 			var deferred = $.Deferred();
+
+			spinner = new LoadingSpinner();
 			// Closes the Responsive Menu on Menu Item Click
 			$('.navbar-collapse ul li a').click(function () {
 				$('.navbar-toggle:visible').click();
@@ -488,6 +492,82 @@ var LocalStorageHelper = function () {
 
 	return LocalStorageHelper;
 }();
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var LoadingSpinner = function () {
+    function LoadingSpinner() {
+        _classCallCheck(this, LoadingSpinner);
+
+        var width = 12;
+        var length = 12;
+        var innerRadius = 30;
+        var totalRadius = width + length + innerRadius;
+
+        this.spinner = null;
+
+        this.options = {
+            lines: 13 // The number of lines to draw
+            , length: length // The length of each line
+            , width: width // The line thickness
+            , radius: innerRadius // The radius of the inner circle
+            , scale: 1 // Scales overall size of the spinner
+            , corners: 1 // Corner roundness (0..1)
+            , color: "#0076A3" // #rgb or #rrggbb or array of colors
+            , opacity: 0.35 // Opacity of the lines
+            , rotate: 0 // The rotation offset
+            , direction: 1 // 1: clockwise, -1: counterclockwise
+            , speed: 0.8 // Rounds per second
+            , trail: 45 // Afterglow percentage
+            , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+            , zIndex: 2e9 // The z-index (defaults to 2000000000)
+            , className: "spinner" // The CSS class to assign to the spinner
+            // Library computes an inline style for top/left where it adds the radius of the spinner to the numeric portion of the following top/left properties and assigns those value as the css top/left attributes.
+            // E.g. top: "50" with radius of 72 becomes top: 122px
+            , top: '-' + totalRadius.toString(),
+            left: '-' + totalRadius.toString(),
+            shadow: true // Whether to render a shadow
+            , hwaccel: true // Whether to use hardware acceleration
+            , position: "relative" // Element positioning
+        };
+
+        this.spinnerOverlay = $("#page-load-spinner");
+        this.spinnerContainer = document.getElementById("spinner-container");
+    }
+
+    _createClass(LoadingSpinner, [{
+        key: "Show",
+        value: function Show() {
+            if ($(this.spinnerOverlay).is(":visible")) {
+                return;
+            }
+
+            this.spinnerOverlay.show();
+
+            if (!this.spinner) {
+                this.spinner = new Spinner(this.options).spin(this.spinnerContainer);
+            } else {
+                this.spinner.spin(this.spinnerContainer);
+            }
+        }
+    }, {
+        key: "Hide",
+        value: function Hide() {
+            this.spinnerOverlay.hide();
+
+            if (!this.spinner) {
+                return;
+            }
+
+            this.spinner.stop();
+        }
+    }]);
+
+    return LoadingSpinner;
+}();
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -617,7 +697,9 @@ var LogInViewModel = function () {
 		value: function OnCreateAcct() {
 			var self = this;
 			if (this.$createAcctForm.valid()) {
+				spinner.Show();
 				async.series([this._checkIfEmailExists.bind(this), this._createNewUser.bind(this)], function (possibleError) {
+					spinner.Hide();
 					if (possibleError === Constants.ASYNC_INTERUPTION_MARKER) {
 						bootbox.alert("That email is already in use! Did you forget your password?");
 					} else if (possibleError) {
@@ -633,6 +715,7 @@ var LogInViewModel = function () {
 		value: function OnLogIn() {
 			var self = this;
 			if (this.$loginForm.valid()) {
+				spinner.Show();
 				this.webSvc.GetUserByEmailAndPwd(this.email(), this.pwd()).then(function (user) {
 					if (user) {
 						self.storageHelper.LoggedInUser = user;
@@ -647,6 +730,8 @@ var LogInViewModel = function () {
 				}).fail(function (err) {
 					self._resetForms();
 					bootbox.alert("Uh oh... something went wrong!");
+				}).always(function () {
+					return spinner.Hide();
 				});
 			}
 		}
@@ -671,6 +756,7 @@ var LogInViewModel = function () {
 		value: function OnSubmitForgotPwd() {
 			if (this.$forgotPwdForm.valid()) {
 				var self = this;
+				spinner.Show();
 				this.webSvc.ForgotPassword(this.email()).then(function () {
 					bootbox.alert("Nice! Check your email ;)");
 					self._resetForms();
@@ -679,6 +765,8 @@ var LogInViewModel = function () {
 					bootbox.alert("Uh oh, there was a problem...");
 					console.log(err);
 					self._resetForms();
+				}).always(function () {
+					return spinner.Hide();
 				});
 			}
 		}
@@ -1160,6 +1248,7 @@ var OrderFormViewModel = function () {
 		value: function _completeOrder(token) {
 			try {
 				var self = this;
+				spinner.Show();
 				async.series([
 				// TODO: Is this the best order?
 				this._verifyUser.bind(this), this._executeCharge.bind(this, token), this._updateUserData.bind(this), this._sendEmailConfirmation.bind(this)], function (possibleError) {
@@ -1176,12 +1265,14 @@ var OrderFormViewModel = function () {
 	}, {
 		key: '_onOrderFailure',
 		value: function _onOrderFailure(error) {
+			spinner.Hide();
 			bootbox.alert(Constants.ORDER_FAILURE_MSG);
 			console.log(error);
 		}
 	}, {
 		key: '_onOrderSuccess',
 		value: function _onOrderSuccess() {
+			spinner.Hide();
 			bootbox.alert(Constants.ORDER_SUCCESS_MSG);
 			this.OnFormCancel();
 		}

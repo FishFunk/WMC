@@ -267,6 +267,7 @@ class OrderFormViewModel {
 		try
 		{
 			var self = this;
+			spinner.Show();
 			async.series([
 					// TODO: Is this the best order?
 					this._verifyUser.bind(this),
@@ -287,11 +288,13 @@ class OrderFormViewModel {
 	}
 
 	_onOrderFailure(error){
+		spinner.Hide();
 		bootbox.alert(Constants.ORDER_FAILURE_MSG);
 		console.log(error);			
 	}
 
 	_onOrderSuccess(){
+		spinner.Hide();
 		bootbox.alert(Constants.ORDER_SUCCESS_MSG);
 		this.OnFormCancel();		
 	}

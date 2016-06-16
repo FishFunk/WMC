@@ -4,7 +4,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "build": "babel app_js --out-file public/script-compiled.js; minify public/script-compiled.js; minify public/css/localstyles.css;"
+    "build": "babel app_js --out-file public/script-compiled.js;babel admin_console_js --out-file public/admin-console-compiled.js;minify public/script-compiled.js;minify public/admin-console-compiled.js;minify public/css/localstyles.css;"
   },
   "dependencies": {
     "body-parser": "~1.13.2",

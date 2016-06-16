@@ -48,11 +48,13 @@ class LogInViewModel {
 	OnCreateAcct(){
 		var self = this;
 		if(this.$createAcctForm.valid()){
+			spinner.Show();
 			async.series([
 					this._checkIfEmailExists.bind(this),
 					this._createNewUser.bind(this)
 				],
 				possibleError=>{
+					spinner.Hide();
 					if(possibleError === Constants.ASYNC_INTERUPTION_MARKER){
 						bootbox.alert("That email is already in use! Did you forget your password?");
 					} else if (possibleError) {
@@ -67,6 +69,7 @@ class LogInViewModel {
 	OnLogIn(){
 		var self = this;
 		if(this.$loginForm.valid()){
+			spinner.Show()
 			this.webSvc.GetUserByEmailAndPwd(this.email(), this.pwd())
 				.then((user)=>{
 					if(user){
@@ -83,7 +86,8 @@ class LogInViewModel {
 				.fail(err =>{
 					self._resetForms();
 					bootbox.alert("Uh oh... something went wrong!");
-				});
+				})
+				.always(()=>spinner.Hide());
 		}
 	}
 
@@ -104,6 +108,7 @@ class LogInViewModel {
 	OnSubmitForgotPwd(){
 		if(this.$forgotPwdForm.valid()){
 			var self = this;
+			spinner.Show();
 			this.webSvc.ForgotPassword(this.email())
 				.then(()=>{
 					bootbox.alert("Nice! Check your email ;)");
@@ -114,7 +119,8 @@ class LogInViewModel {
 					bootbox.alert("Uh oh, there was a problem...");
 					console.log(err)
 					self._resetForms();
-				});
+				})
+				.always(()=>spinner.Hide());
 		}
 	}
 
