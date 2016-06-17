@@ -309,6 +309,7 @@ class OrderFormViewModel {
 
 	_verifyUser(callback){
 		var self = this;
+
 		if(this.storageHelper.LoggedInUser){
 			callback();
 		} else {
@@ -318,15 +319,15 @@ class OrderFormViewModel {
 						self.storageHelper.LoggedInUser = usr;
 						callback();
 					} else {
-						// create new temp user
-						var tmpUser = self._makeTempUserSchema();
-						self.storageHelper.LoggedInUser = usr;
-						self.webSvc.CreateUser(tmpUser)
+						// create new guest user
+						var guestUsr = self._makeGuestUserSchema();
+						self.storageHelper.LoggedInUser = guestUsr;
+						self.webSvc.CreateUser(guestUsr)
 							.then(()=>callback())
 							.fail((err)=>callback(err));
 					}
 				})
-				.fail((err)=>callback(err));			
+				.fail((err)=>callback(err));
 		}
 	}
 
@@ -338,19 +339,18 @@ class OrderFormViewModel {
 
 	_updateUserData(callback){
 		var currentUsr = this.storageHelper.LoggedInUser;
-		var newAppt = this._makeAppointmentSchema();
 
-		if(currentUsr.appointments){
-			currentUsr.appointments.push(newAppt);
-		} else {
-			currentUsr.appointments = [newAppt];
-		}
+		var newAppt = this._makeAppointmentSchema();
+		currentUsr.appointments != null ? 
+				currentUsr.appointments.push(newAppt) : currentUsr.appointments = [newAppt];
 
 		currentUsr.cars = this.cars();
 		currentUsr.phone = this.phone();
 		currentUsr.locations = this.locations();
 		currentUsr.firstName = this.first();
 		currentUsr.lastName = this.last();
+
+		this.storageHelper.LoggedInUser = currentUsr;
 
 		this.webSvc.UpdateUser(currentUsr)
 			.then(()=>callback())
@@ -434,16 +434,10 @@ class OrderFormViewModel {
 		});
 	}
 
-	_makeTempUserSchema(){
+	_makeGuestUserSchema(){
 		return {
-			appointments: [this._makeAppointmentSchema()],
-			cars: this.cars(),
 			email: this.email(),
-			phone: this.phone(),
-			firstName: this.first(),
-			lastName: this.last(),
-			pwd: Utils.GenerateUUID(),
-			locations: this.locations()
+			pwd: Utils.GenerateUUID()
 		}
 	}
 

@@ -1289,6 +1289,7 @@ var OrderFormViewModel = function () {
 		key: '_verifyUser',
 		value: function _verifyUser(callback) {
 			var self = this;
+
 			if (this.storageHelper.LoggedInUser) {
 				callback();
 			} else {
@@ -1297,10 +1298,10 @@ var OrderFormViewModel = function () {
 						self.storageHelper.LoggedInUser = usr;
 						callback();
 					} else {
-						// create new temp user
-						var tmpUser = self._makeTempUserSchema();
-						self.storageHelper.LoggedInUser = usr;
-						self.webSvc.CreateUser(tmpUser).then(function () {
+						// create new guest user
+						var guestUsr = self._makeGuestUserSchema();
+						self.storageHelper.LoggedInUser = guestUsr;
+						self.webSvc.CreateUser(guestUsr).then(function () {
 							return callback();
 						}).fail(function (err) {
 							return callback(err);
@@ -1324,19 +1325,17 @@ var OrderFormViewModel = function () {
 		key: '_updateUserData',
 		value: function _updateUserData(callback) {
 			var currentUsr = this.storageHelper.LoggedInUser;
-			var newAppt = this._makeAppointmentSchema();
 
-			if (currentUsr.appointments) {
-				currentUsr.appointments.push(newAppt);
-			} else {
-				currentUsr.appointments = [newAppt];
-			}
+			var newAppt = this._makeAppointmentSchema();
+			currentUsr.appointments != null ? currentUsr.appointments.push(newAppt) : currentUsr.appointments = [newAppt];
 
 			currentUsr.cars = this.cars();
 			currentUsr.phone = this.phone();
 			currentUsr.locations = this.locations();
 			currentUsr.firstName = this.first();
 			currentUsr.lastName = this.last();
+
+			this.storageHelper.LoggedInUser = currentUsr;
 
 			this.webSvc.UpdateUser(currentUsr).then(function () {
 				return callback();
@@ -1441,17 +1440,11 @@ var OrderFormViewModel = function () {
 			});
 		}
 	}, {
-		key: '_makeTempUserSchema',
-		value: function _makeTempUserSchema() {
+		key: '_makeGuestUserSchema',
+		value: function _makeGuestUserSchema() {
 			return {
-				appointments: [this._makeAppointmentSchema()],
-				cars: this.cars(),
 				email: this.email(),
-				phone: this.phone(),
-				firstName: this.first(),
-				lastName: this.last(),
-				pwd: Utils.GenerateUUID(),
-				locations: this.locations()
+				pwd: Utils.GenerateUUID()
 			};
 		}
 	}, {
