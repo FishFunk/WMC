@@ -4,8 +4,9 @@ class OrderFormViewModel {
 
 		// Configure Stripe
 		this.stripeHandler = StripeCheckout.configure({
-		    key: 'pk_test_luqEThs0vblV173fgAHgPZBG',
-		    image: '/img/wmc_logo.jpg',
+		    key: environment == 'production' ? 
+		    	'pk_live_aULtlGy6YPvc94K5Hjvqwokg' : 'pk_test_luqEThs0vblV173fgAHgPZBG',
+		    image: '/img/square_logo.png',
 		    locale: 'auto',
 		    token: this._completeOrder.bind(this)
 		});

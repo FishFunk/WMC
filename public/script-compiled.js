@@ -5,6 +5,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var spinner = null;
+var environment = "debug";
 
 var Bootstrapper = function () {
 	function Bootstrapper() {
@@ -15,7 +16,7 @@ var Bootstrapper = function () {
 		key: 'Run',
 		value: function Run() {
 			var deferred = $.Deferred();
-
+			var webSvc = null;
 			spinner = new LoadingSpinner();
 			// Closes the Responsive Menu on Menu Item Click
 			$('.navbar-collapse ul li a').click(function () {
@@ -70,9 +71,16 @@ var Bootstrapper = function () {
 					}
 				});
 			}, function (callback) {
+				webSvc = new WebService();
+				webSvc.GetEnvironment().then(function (env) {
+					environment = env;
+					callback();
+				}).fail(function (err) {
+					return callback(err);
+				});
+			}, function (callback) {
 				// Cache Appointment Data
 				var storageHelper = new LocalStorageHelper(sessionStorage);
-				var webSvc = new WebService();
 				var orderFormVm = new OrderFormViewModel(storageHelper, webSvc);
 				var logInVm = new LogInViewModel(storageHelper, webSvc);
 
@@ -231,17 +239,17 @@ var ORDER_SUCCESS_MSG = "Thank you! Your order has been placed. Please check you
     WASH_DETAILS = {
   title: "Hand wash",
   time: 30,
-  price: 29
+  price: 22
 },
     TIRE_SHINE_DETAILS = {
   title: "Tire shine",
   time: 30,
-  price: 25
+  price: 20
 },
     INTERIOR_DETAILS = {
   title: "Interior cleaning",
   time: 50,
-  price: 75
+  price: 60
 },
     WAX_DETAILS = {
   title: "Hand wax & buff",
@@ -276,7 +284,7 @@ var ORDER_SUCCESS_MSG = "Thank you! Your order has been placed. Please check you
   multiplier: 1.2
 }, {
   size: "XXL",
-  multiplier: 1.5
+  multiplier: 1.4
 }],
     ZIP_WHITE_LIST = ["22314", // Alexandria
 "22301", // Del Ray
@@ -973,8 +981,8 @@ var OrderFormViewModel = function () {
 
 		// Configure Stripe
 		this.stripeHandler = StripeCheckout.configure({
-			key: 'pk_test_luqEThs0vblV173fgAHgPZBG',
-			image: '/img/wmc_logo.jpg',
+			key: environment == 'production' ? 'pk_live_aULtlGy6YPvc94K5Hjvqwokg' : 'pk_test_luqEThs0vblV173fgAHgPZBG',
+			image: '/img/square_logo.png',
 			locale: 'auto',
 			token: this._completeOrder.bind(this)
 		});
@@ -1569,6 +1577,11 @@ var WebService = function () {
 		key: 'ForgotPassword',
 		value: function ForgotPassword(email) {
 			return this._executeAjaxCall('POST', "/api/forgotPassword", { email: email });
+		}
+	}, {
+		key: 'GetEnvironment',
+		value: function GetEnvironment() {
+			return this._executeAjaxCall('GET', "/api/getEnvironment");
 		}
 	}, {
 		key: 'ExecuteCharge',

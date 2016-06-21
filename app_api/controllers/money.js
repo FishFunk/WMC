@@ -1,4 +1,10 @@
-var stripe = require("stripe")("sk_test_b82cXGA1mx4nejrVn0AK6sxV");
+var token = "sk_test_b82cXGA1mx4nejrVn0AK6sxV";
+if(process.env.NODE_ENV !== 'production')
+{
+	token = "sk_live_kwp9bgtUP5QdHOiEHq4ChhLG";
+}
+
+var stripe = require("stripe")(token);
 
 const badRequestCode = 400;
 const internalErrorCode = 500;

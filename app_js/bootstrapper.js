@@ -1,9 +1,10 @@
 var spinner = null;
+var environment = "debug";
 
 class Bootstrapper{
 	static Run(){
 		var deferred = $.Deferred();
-
+		var webSvc = null;
 		spinner = new LoadingSpinner();
 		// Closes the Responsive Menu on Menu Item Click
 		$('.navbar-collapse ul li a').click(()=>{
@@ -65,9 +66,18 @@ class Bootstrapper{
 					});
 				},
 				(callback)=>{
+					webSvc = new WebService();
+					webSvc.GetEnvironment()
+						.then((env)=>
+						{
+							environment = env;
+							callback();
+						})
+						.fail(err => callback(err));
+				},
+				(callback)=>{
 					// Cache Appointment Data
 					var storageHelper = new LocalStorageHelper(sessionStorage);
-					var webSvc = new WebService();
 					var orderFormVm = new OrderFormViewModel(storageHelper, webSvc);
 					var logInVm = new LogInViewModel(storageHelper, webSvc);
 					

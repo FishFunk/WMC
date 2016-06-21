@@ -32,6 +32,10 @@ class WebService {
 		return this._executeAjaxCall('POST', "/api/forgotPassword", {email: email});
 	}
 
+	GetEnvironment(){
+		return this._executeAjaxCall('GET', "/api/getEnvironment");
+	}
+
 	ExecuteCharge(stripeToken, price, lastName){
 		return this._executeAjaxCall('POST', "/api/executeCharge", {
 				stripeToken: stripeToken.id,

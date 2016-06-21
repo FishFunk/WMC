@@ -8,17 +8,17 @@ const ORDER_SUCCESS_MSG = "Thank you! Your order has been placed. Please check y
       WASH_DETAILS = {
         title: "Hand wash",
         time: 30,
-        price: 29
+        price: 22
       },
       TIRE_SHINE_DETAILS = {
         title: "Tire shine",
         time: 30,
-        price: 25
+        price: 20
       },
       INTERIOR_DETAILS = {
         title: "Interior cleaning",
         time: 50,
-        price: 75
+        price: 60
       },
       WAX_DETAILS = {
         title: "Hand wax & buff",
@@ -56,7 +56,7 @@ const ORDER_SUCCESS_MSG = "Thank you! Your order has been placed. Please check y
         },
         {
           size: "XXL",
-          multiplier: 1.5
+          multiplier: 1.4
         }
       ],
       ZIP_WHITE_LIST = [

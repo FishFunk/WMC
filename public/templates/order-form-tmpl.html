@@ -34,7 +34,6 @@
       <select class="form-control" data-bind="value: selectedTimeRange, foreach: timeRangeOptions">
         <option data-bind="text: $data.range, value: $data, attr: { disabled: $data.disabled }"></option>
       </select>
-<!--       <select data-bind="options: timeRangeOptions, optionsText: 'range', value: selectedTimeRange, attr: {disabled: $data.disabled}" class="form-control"></select> -->
     </div>
   </div>
   <div class="row">
@@ -44,16 +43,9 @@
     </div>
   </div>
   <div class="row">
-    <legend class="col-xs-12">Vehicles
-      <button data-bind="click: OnAddNewVehicle, visible: !showAddVehicleForm()" class="btn btn-sm btn-success pull-right">Add New&nbsp;
-        <span class="fa fa-plus"></span>
-      </button>
-      <div data-bind="visible: showAddVehicleForm" class="pull-right">
-        <button data-bind="click: OnCancelNewVehicle" class="btn btn-danger"><span class="fa fa-times"></span></button>
-        <button class="btn btn-success" data-bind="click: OnSaveNewVehicle"><span class="fa fa-save"></span></button>
-      </div>
-    </legend>
-    <form id="add-vehicle-form" data-toggle="validator" role="form" data-bind="visible: showAddVehicleForm" autocomplete="off">
+    <legend class="col-xs-12">Vehicles</legend>
+    <div class="row" data-bind="template: { name: 'vehicle-tmpl', foreach: cars}"></div>
+    <form id="add-vehicle-form" data-toggle="validator" role="form" data-bind="visible: showAddVehicleForm, submit: OnSaveNewVehicle" autocomplete="off">
       <div class="form-group">
         <label class="col-sm-1 control-label">Make</label>
         <div class="col-sm-5">
@@ -84,20 +76,21 @@
           <select data-bind="options: carSizes, optionsText: 'size', value: selectedCarSize" class="form-control"></select>
         </div>
       </div>
+      <div class="text-center">
+        <button data-bind="click: OnCancelNewVehicle" class="btn btn-default buffer-top">Cancel&nbsp;<span class="fa fa-times"></span></button>
+        <button class="btn btn-primary buffer-top" type="submit">Save&nbsp;<span class="fa fa-save"></span></button>
+      </div>
     </form>
-  </div>
-  <div class="row" data-bind="template: { name: 'vehicle-tmpl', foreach: cars}"></div>
-  <div class="row">
-    <legend class="col-xs-12">Location
-      <button data-bind="click: OnAddNewLocation, visible: !showAddLocationForm()" class="btn btn-sm btn-success pull-right">Add New&nbsp;
+    <div class="text-center" data-bind="visible: !showAddVehicleForm()">
+      <button data-bind="click: OnAddNewVehicle" class="btn btn-sm btn-primary">Add New&nbsp;
         <span class="fa fa-plus"></span>
       </button>
-      <div data-bind="visible: showAddLocationForm" class="pull-right">
-        <button data-bind="click: OnCancelNewLocation" class="btn btn-danger"><span class="fa fa-times"></span></button>
-        <button class="btn btn-success" data-bind="click: OnSaveNewLocation"><span class="fa fa-save"></span></button>
-      </div>
-    </legend>
-    <form id="add-location-form" data-toggle="validator" role="form" data-bind="visible: showAddLocationForm" autocomplete="off">
+    </div>
+  </div>
+  <div class="row">
+    <legend class="col-xs-12">Location</legend>
+    <div class="row" data-bind="template: { name: 'location-tmpl', foreach: locations}"></div>
+    <form id="add-location-form" data-toggle="validator" role="form" data-bind="visible: showAddLocationForm, submit: OnSaveNewLocation" autocomplete="off">
       <div class="form-group">
         <label class="col-sm-1 control-label">Street</label>
         <div class="col-sm-11">
@@ -124,9 +117,17 @@
           <select class="form-control" data-bind="options: locationTitleOptions, value: title"></select>
         </div>
       </div>
+      <div class="text-center">
+        <button data-bind="click: OnCancelNewLocation" class="btn btn-default buffer-top">Cancel&nbsp;<span class="fa fa-times"></span></button>
+        <button class="btn btn-primary buffer-top" type="submit">Save&nbsp;<span class="fa fa-save"></span></button>
+      </div>
     </form>
   </div>
-  <div class="row" data-bind="template: { name: 'location-tmpl', foreach: locations}"></div>
+  <div class="text-center" data-bind="visible: !showAddLocationForm()">
+    <button data-bind="click: OnAddNewLocation" class="btn btn-sm btn-primary">Add New&nbsp;
+      <span class="fa fa-plus"></span>
+    </button>
+  </div>
   <form id="order-details-form" data-toggle="validator" role="form" autocomplete="off">
     <div class="row">
       <legend>Contact</legend>
@@ -172,8 +173,8 @@
   <div class="control-group">
     <div class="controls">
       <center>
-        <button data-bind="click: OnFormCancel" class="btn btn-secondary">Cancel</button>
-        <button class="btn btn-success" data-bind="click: OnSubmit">Finish & Pay</button>
+        <button data-bind="click: OnFormCancel" class="btn btn-lg btn-default">Cancel</button>
+        <button class="btn btn-lg btn-primary" data-bind="click: OnSubmit">Finish & Pay</button>
       </center>
     </div>
   </div>

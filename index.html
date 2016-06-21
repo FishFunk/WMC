@@ -16,7 +16,7 @@
     <link href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css' rel='stylesheet'>
 
     <!-- Custom CSS -->
-    <link href="css/localstyles.min.css" rel="stylesheet">
+    <link href="css/localstyles.css" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
@@ -75,11 +75,12 @@
                 <div class="intro-text">
                     <div class="intro-lead-in">VA's Most Reliable Mobile Auto Wash & Detail Service</strong></div>
                     <h3>Save time and keep your car looking great.</h3>
+                    <br>
                     <button class="btn btn-xl ghost-btn" data-bind="click: OnShowOrderForm">Schedule Now!</button>
+                    <br><br><br><br><br><br>
                     <div data-bind="visible: zipVerified">
                       <h4>Yes! We happily serve your area.</h4>
                     </div>
-                    <br><br><br><br><br><br>
                     <div data-bind="visible: !zipVerified()">
                       <h4>Make sure we service your area</h4>
                       <form id="verify-zip" class="input-group" data-bind="submit: OnVerifyZip">
@@ -202,7 +203,7 @@
                 </ul>
             </div>
             <div class="col-sm-4">
-                <span class="copyright">&copy; Wash My Car LLC, 2016</span>
+                <span class="copyright">&copy; WashMyCar LLC, 2016</span>
             </div>
             <div class="col-sm-4">
                 <ul class="list-inline quicklinks">
@@ -269,9 +270,10 @@
                                 </div>
                             </div>
                         </div>
+                        <br>
                         <div class="row text-center">
-                            <button type="button" class="btn btn-lg btn-default" data-bind="click: OnCancelForgotPwd">Nevermind</button>
-                            <button type="submit" class="btn btn-lg btn-success">OK</button>
+                            <button type="button" class="btn btn-lg btn-default" data-bind="click: OnCancelForgotPwd">Cancel</button>
+                            <button type="submit" class="btn btn-lg btn-primary">OK</button>
                         </div>      
                     </form>               
                 </div>
@@ -299,9 +301,10 @@
                                 </div>
                             </div>
                         </div>
+                        <br>
                         <div class="row text-center">
                             <button type="button" class="btn btn-lg btn-default" data-bind="click: OnCancelCreateAcct">Cancel</button>
-                            <button type="submit" class="btn btn-lg btn-success">Create</button>
+                            <button type="submit" class="btn btn-lg btn-primary">Create</button>
                         </div>        
                     </form>
                 </div>

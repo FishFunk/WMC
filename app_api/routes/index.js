@@ -24,4 +24,17 @@ router.delete('/deleteExpiredAppointments', ctrlUsers.deleteExpiredAppointments)
 
 router.post('/verifyAdmin', ctrlAdmin.verifyAdmin);
 
+router.get('/getEnvironment', (req, res)=>{
+	sendJsonResponse(res, 200, "Success", process.env.NODE_ENV || "debug");
+});
+
+var sendJsonResponse = (res, status, msg, data)=>{
+	res.setHeader('Content-Type', 'application/json');
+	res.status(status);
+	res.send({
+		msg: msg,
+		data: data
+	});
+};
+
 module.exports = router;
