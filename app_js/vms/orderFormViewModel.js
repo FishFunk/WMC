@@ -271,8 +271,8 @@ class OrderFormViewModel {
 			spinner.Show();
 			async.series([
 					// TODO: Is this the best order?
-					this._verifyUser.bind(this),
 					this._executeCharge.bind(this, token),
+					this._verifyUser.bind(this),
 					this._updateUserData.bind(this),
 					this._sendEmailConfirmation.bind(this)
 				],

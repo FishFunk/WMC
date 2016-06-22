@@ -1,4 +1,5 @@
 var mailer = require('nodemailer');
+const path = require('path');
 var smtpTransport = require('nodemailer-smtp-transport');
 var mongoose = require('mongoose');
 var Usr = mongoose.model('User');
@@ -16,6 +17,13 @@ const _li = "</li>";
 const br = "<br/>";
 const strong = "<strong>";
 const _strong = "</strong>";
+
+const logoUrl = path.join(__dirname, 'public/img', 'wmc_logo.jpg');
+const hrefPhone = "+17034736358";
+const displayPhone = "+703.473.6358";
+const contactEmail = "contact@washmycarva.com";
+const noReplyEmail = "donotreply@washmycarva.com";
+const appUrl = "www.washmycarva.com";
 
 var transport;
 const DEBUG_MODE = process.env.NODE_ENV == null;
@@ -58,7 +66,7 @@ module.exports.forgotPassword = (req, res)=>{
 			}
 			else {
 				transport.sendMail({
-					from: 'WashMyCar <donotreply@washmycarva.com>',
+					from: 'WashMyCar <' + noReplyEmail + '>',
 					to: usr.email,
 					subject: 'Forgot Password',
 					html:
@@ -66,7 +74,7 @@ module.exports.forgotPassword = (req, res)=>{
 	      			<body>\
 					<div style="padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto;">\
 				    	<div style="text-align: center;">\
-				    	<img src="https://mysterious-journey-72211.herokuapp.com/img/wmc_logo.jpg" style="width:150px;">\
+				    	<img src="'+ logoUrl +'" style="width:150px;">\
 				    	</div>\
 					    <hr>\
 					    <p>Forgot your password, eh? Don\'t worry it happens to the best of us! The good news is we\'ve got you covered. Below are your WMC credentials.</p>\
@@ -76,8 +84,8 @@ module.exports.forgotPassword = (req, res)=>{
     					<a href="http://www.washmycarva.com" value="Go to WMC" style="color: rgb(255, 255, 255);background-color: rgb(0, 126, 255);border-color: rgb(0, 100, 255);display: inline-block; padding: 6px 12px; margin-bottom: 0; font-size: 14px; font-weight: normal; line-height: 1.42857143; text-align: center; white-space: nowrap; vertical-align: middle; -ms-touch-action: manipulation; touch-action: manipulation; cursor: pointer; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; background-image: none; border: 1px solid transparent; border-radius: 4px;">Go to WMC</a>\
 					    <hr>\
 					    <p>If you didn\'t request to retrieve your password, please contact us immediately!</p>\
-					    Phone: <a href="tel:+10000000000">000.000.0000</a>\
-					    Email: <a href="mailto:contact@washmycarva.com">contact@washmycarva.com!</a>\
+					    Phone: <a href="tel:' + hrefPhone + '">' + displayPhone + '</a>\
+					    Email: <a href="mailto:'+ contactEmail + '">' + contactEmail + '!</a>\
 					  </div>\
 					</body>\
 					</html>'
@@ -113,7 +121,7 @@ module.exports.sendConfirmationEmail = (req, res)=>{
 	      		<body>\
 				<div style="padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto;">\
 				    <div style="text-align: center;">\
-				    <img src="https://mysterious-journey-72211.herokuapp.com/img/wmc_logo.jpg" style="width:150px;">\
+				    <img src="' + logoUrl + '" style="width:150px;">\
 				    </div>\
 				    <hr>\
 	      			<p>Thanks for your WMC order! We hope you enjoy your soon-to-be sparkling clean vehicle!</p>\
