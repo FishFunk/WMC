@@ -18,10 +18,10 @@ const strong = "<strong>";
 const _strong = "</strong>";
 
 var transport;
-const DEBUG_MODE = process.env.NODE_ENV !== 'production';
+const DEBUG_MODE = process.env.NODE_ENV == null;
 
 if(DEBUG_MODE){
-	console.log("Running in DEBUG MODE");
+	console.log("Messenger controller running in DEBUG MODE");
 } else {
 	transport = mailer.createTransport(
 		smtpTransport({
@@ -43,7 +43,7 @@ if(DEBUG_MODE){
 
 module.exports.forgotPassword = (req, res)=>{
 	if(DEBUG_MODE){
-		sendJsonResponse(res, noContentSuccessCode, 'DEBUG MODE - Password reminder email sent!');
+		sendJsonResponse(res, noContentSuccessCode, 'DEBUG MODE - Password reminder email sent! (not really)');
 		return;
 	}
 	if(req.body && req.body.email)
