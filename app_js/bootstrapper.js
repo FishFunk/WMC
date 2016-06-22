@@ -68,8 +68,7 @@ class Bootstrapper{
 				(callback)=>{
 					webSvc = new WebService();
 					webSvc.GetEnvironment()
-						.then((env)=>
-						{
+						.then((env)=>{
 							environment = env;
 							callback();
 						})

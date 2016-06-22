@@ -1,4 +1,25 @@
+"use strict"
+var _ = require('underscore');
+
+const MORNING_TIME_RANGE = {
+    range: "9:00 - 12:00 PM",
+    key: 1
+},
+AFTERNOON_TIME_RANGE = {
+    range: "12:00 - 3:00 PM",
+    key: 2
+},
+EVENING_TIME_RANGE = {
+    range: "3:00 - 6:00 PM",
+    key: 3
+},
+NIGHT_TIME_RANGE = {
+    range: "6:00 - 9:00 PM",
+    key: 4
+}
+
 class DataGenerator{
+
 	MakeUser(){
 		var appts = [this.MakePassedAppointment(), this.MakeFutureAppointment()];
 		return {
@@ -6,7 +27,8 @@ class DataGenerator{
 			cars: [appts[0].cars[0], appts[1].cars[0]],
 			email: this.MakeRandomEmail(),
 			phone: _.random(1000000000).toString(),
-			fullName: this.MakeRandomWord() + " " + this.MakeRandomWord(),
+			firstName: this.MakeRandomWord(),
+			lastName: this.MakeRandomWord(),
 			pwd: this.MakeRandomWord(10),
 			locations: [this.MakeLocation()],
 			lastLogin: new Date()
@@ -76,10 +98,10 @@ class DataGenerator{
 
 	GetRandomTimeRange(){
 		return _.sample([
-			Constants.MORNING_TIME_RANGE,
-			Constants.AFTERNOON_TIME_RANGE,
-			Constants.EVENING_TIME_RANGE,
-			Constants.NIGHT_TIME_RANGE
+			MORNING_TIME_RANGE,
+			AFTERNOON_TIME_RANGE,
+			EVENING_TIME_RANGE,
+			NIGHT_TIME_RANGE
 		]);
 	};
 
@@ -124,3 +146,5 @@ class DataGenerator{
 		return _.random(1980, 2016);
 	};
 }
+
+module.exports = DataGenerator;

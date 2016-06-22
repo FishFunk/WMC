@@ -17,7 +17,8 @@
     "nodemailer-smtp-transport": "^2.5.0",
     "serve-favicon": "~2.3.0",
     "stripe": "^4.6.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "underscore.string": "^3.3.4"
   },
   "devDependencies": {
     "babel-cli": "^6.10.1",

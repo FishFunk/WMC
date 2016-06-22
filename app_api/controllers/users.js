@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Usr = mongoose.model('User');
 var _ = require('underscore');
-// var generator = require('../../tests/data_generator');
+var DataGenerator = require('../../tests/data_generator');
 
 const badRequestCode = 400;
 const internalErrorCode = 500;
@@ -9,14 +9,15 @@ const createSuccessCode = 201;
 const readSuccessCode = 200;
 const noContentSuccessCode = 204;
 
-// var addData = ()=>{
-// 	for(var i=0; i<50; i++){
-// 		var usr = generator.MakeUser();
-// 		Usr.collection.insert(usr);
-// 	}
-// };
+var addData = ()=>{
+	var generator = new DataGenerator();
+	for(var i=0; i<50; i++){
+		var usr = generator.MakeUser();
+		Usr.collection.insert(usr);
+	}
+};
 
-// addData();
+addData();
 
 module.exports.updateUser = (req, res)=>{
 	if(req.body && req.body.email)

@@ -408,6 +408,8 @@ var Constants = function () {
 
   return Constants;
 }();
+
+module.exports = Constants;
 "use strict";
 
 window.jQuery(document).ready(function ($) {
