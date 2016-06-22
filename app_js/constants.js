@@ -160,5 +160,3 @@ class Constants {
     return MAX_JOB_TIME_PER_INTERVAL;
   }
 }
-
-module.exports = Constants;

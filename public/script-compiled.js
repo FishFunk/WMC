@@ -88,7 +88,7 @@ var Bootstrapper = function () {
 
 				ko.applyBindings(mainVm);
 
-				webSvc.GetAllAppointments().then(function (appointments) {
+				webSvc.GetFutureAppointments().then(function (appointments) {
 					var apptsByDate = _.groupBy(appointments, function (x) {
 						return moment(x.date).format("MM/DD/YYYY");
 					});
@@ -408,8 +408,6 @@ var Constants = function () {
 
   return Constants;
 }();
-
-module.exports = Constants;
 "use strict";
 
 window.jQuery(document).ready(function ($) {
@@ -1546,8 +1544,8 @@ var WebService = function () {
 	}
 
 	_createClass(WebService, [{
-		key: 'GetAllAppointments',
-		value: function GetAllAppointments() {
+		key: 'GetFutureAppointments',
+		value: function GetFutureAppointments() {
 			return this._executeAjaxCall('GET', "/api/getFutureApptDatesAndTimes");
 		}
 	}, {

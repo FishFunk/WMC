@@ -4,7 +4,7 @@ class WebService {
 		this.deferred = null;
 	}
 
-	GetAllAppointments(){
+	GetFutureAppointments(){
 		return this._executeAjaxCall('GET', "/api/getFutureApptDatesAndTimes");
 	}
 

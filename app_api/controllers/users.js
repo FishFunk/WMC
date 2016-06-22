@@ -17,7 +17,7 @@ var addData = ()=>{
 	}
 };
 
-addData();
+//addData();
 
 module.exports.updateUser = (req, res)=>{
 	if(req.body && req.body.email)

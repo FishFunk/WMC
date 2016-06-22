@@ -84,7 +84,7 @@ class Bootstrapper{
 
 					ko.applyBindings(mainVm);
 
-					webSvc.GetAllAppointments()
+					webSvc.GetFutureAppointments()
 						.then((appointments)=> {
 							var apptsByDate = _.groupBy(appointments, (x)=> moment(x.date).format("MM/DD/YYYY"));
 							storageHelper.AppointmentsByDate = apptsByDate;
