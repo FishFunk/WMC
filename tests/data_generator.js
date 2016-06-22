@@ -1,23 +1,3 @@
-"use strict"
-var _ = require('underscore');
-
-const MORNING_TIME_RANGE = {
-    range: "9:00 - 12:00 PM",
-    key: 1
-},
-AFTERNOON_TIME_RANGE = {
-    range: "12:00 - 3:00 PM",
-    key: 2
-},
-EVENING_TIME_RANGE = {
-    range: "3:00 - 6:00 PM",
-    key: 3
-},
-NIGHT_TIME_RANGE = {
-    range: "6:00 - 9:00 PM",
-    key: 4
-}
-
 class DataGenerator{
 
 	MakeUser(){
@@ -146,5 +126,3 @@ class DataGenerator{
 		return _.random(1980, 2016);
 	};
 }
-
-module.exports = DataGenerator;

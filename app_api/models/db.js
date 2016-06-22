@@ -4,7 +4,7 @@ require('./admin');
 
 var dbURI = 'mongodb://localhost/WMC';
 
-if (process.env.NODE_ENV === 'production'){
+if (process.env.NODE_ENV){
 	dbURI = process.env.MONGODB_URI;
 }
 

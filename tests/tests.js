@@ -4,6 +4,14 @@ QUnit.test( "Make User", function( assert ) {
 		// Arrange
 		var generator = new DataGenerator();
 
+		var users = [];
+		for(let i=0; i<25; i++){
+			const usr = generator.MakeUser();
+			users.push(usr);
+		}
+
+		console.log(JSON.stringify(users));
+
 		// Act
 		var usr = generator.MakeUser();
 
