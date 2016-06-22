@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var Usr = mongoose.model('Admin');
+var Admin = mongoose.model('Admin');
 
 const badRequestCode = 400;
 const internalErrorCode = 500;
@@ -10,7 +10,7 @@ const noContentSuccessCode = 204;
 module.exports.verifyAdmin = (req, res)=>{
 	if(req.body && req.body.usr && req.body.pwd)
 	{
-		Usr.findOne({usr: req.body.usr, pwd: req.body.pwd}, 
+		Admin.findOne({usr: req.body.usr, pwd: req.body.pwd}, 
 			(err, admin)=>{
 			if(err){
 				sendJsonResponse(res, internalErrorCode, "DB Failure - verifyAdmin", err);
