@@ -1,6 +1,20 @@
+body.modal-open {
+	overflow-y: hidden;
+}
+
 @font-face {
   font-family: 'BOLDfinger';
   src: url('../fonts/BOLDfinger.ttf');
+}
+
+/*  Mobile Input Font Size  */
+input, textarea, select {
+  font-size: 16px;
+}
+
+/*  Larger Device Input Font Size  */
+@media (min-width: 768px) {
+  font-size: 14px;
 }
 
 .text-muted{color:#777}
@@ -107,13 +121,8 @@ ul.social-buttons li a:hover,ul.social-buttons li a:focus,ul.social-buttons li a
 	overflow-y: scroll;
 }
 
-body.modal-open {
-	overflow-y: hidden;
-}
-
 #order-form-modal{margin-top: 10px;}
-#order-form-modal .container{padding:20px;background-color: white; border-color: black; border-radius: 30px;  width: auto; max-width: 650px;}
-#order-form-modal .row{padding:5px;}
+#order-form-modal .container{padding:15px 20px 15px 20px; border-radius: 15px;  width: auto; max-width: 650px;}
 
 .form-control{
 	margin-bottom:2px;

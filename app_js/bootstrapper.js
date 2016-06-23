@@ -1,3 +1,4 @@
+// global variables
 var spinner = null;
 var environment = "debug";
 
@@ -6,6 +7,7 @@ class Bootstrapper{
 		var deferred = $.Deferred();
 		var webSvc = null;
 		spinner = new LoadingSpinner();
+
 		// Closes the Responsive Menu on Menu Item Click
 		$('.navbar-collapse ul li a').click(()=>{
 		    $('.navbar-toggle:visible').click();
@@ -29,17 +31,46 @@ class Bootstrapper{
 	    // Reposition when a modal is shown
 	    $('.modal').on('show.bs.modal', reposition);
 	    // Reposition when the window is resized
-	    $(window).on('resize', function() {
+	    $(window).on('resize', ()=> {
 	        $('.modal:visible').each(reposition);
 	    });
 
+		// iOS fix for modal bug with virtual keyboard
+		if(navigator.userAgent.match(/iPhone|iPad|iPod/i)){
+		    $('.modal').on('show.bs.modal', ()=> {
+		        // Position modal absolute and bump it down to the scrollPosition
+		        $(this)
+		            .css({
+		                position: 'absolute',
+		                marginTop: $(window).scrollTop() + 'px',
+		                bottom: 'auto'
+		            });
+		        // Position backdrop absolute and make it span the entire page
+		        // after Boostrap positions it but before transitions finish
+		        setTimeout(()=> {
+		            $('.modal-backdrop').css({
+		                position: 'absolute', 
+		                top: 0, 
+		                left: 0,
+		                width: '100%',
+		                height: Math.max(
+		                    document.body.scrollHeight, document.documentElement.scrollHeight,
+		                    document.body.offsetHeight, document.documentElement.offsetHeight,
+		                    document.body.clientHeight, document.documentElement.clientHeight
+		                ) + 'px'
+		            });
+		        }, 0);
+		    });
+		}
+
 		// Load Templates
+		const failureMsg = "Application failed to initialize.";
 		async.series([
 				(callback)=>{
 					$('#order-form-tmpl')
 					.load('./templates/order-form-tmpl.html', (res, status, jqHXR)=>{
 						if(status==="error"){
-							callback("Application failed to initialize.");
+							callback(failureMsg);
 						} else {
 							callback();
 						}
@@ -49,7 +80,7 @@ class Bootstrapper{
 					$('#vehicle-tmpl')
 					.load('./templates/vehicle-tmpl.html', (res, status, jqHXR)=>{
 						if(status==="error"){
-							callback("Application failed to initialize.");
+							callback(failureMsg);
 						} else {
 							callback();
 						}
@@ -59,7 +90,7 @@ class Bootstrapper{
 					$('#location-tmpl')
 					.load('./templates/location-tmpl.html', (res, status, jqHXR)=>{
 						if(status==="error"){
-							callback("Application failed to initialize.");
+							callback(failureMsg);
 						} else {
 							callback();
 						}
@@ -75,7 +106,6 @@ class Bootstrapper{
 						.fail(err => callback(err));
 				},
 				(callback)=>{
-					// Cache Appointment Data
 					var storageHelper = new LocalStorageHelper(sessionStorage);
 					var orderFormVm = new OrderFormViewModel(storageHelper, webSvc);
 					var logInVm = new LogInViewModel(storageHelper, webSvc);
@@ -84,6 +114,7 @@ class Bootstrapper{
 
 					ko.applyBindings(mainVm);
 
+					// Cache Appointment Data
 					webSvc.GetFutureAppointments()
 						.then((appointments)=> {
 							var apptsByDate = _.groupBy(appointments, (x)=> moment(x.date).format("MM/DD/YYYY"));

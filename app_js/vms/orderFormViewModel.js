@@ -136,7 +136,8 @@ class OrderFormViewModel {
 		$('#phone').mask('(999) 999-9999? ext:99999', {placeholder: " "});
 		$('#datetimepicker').datetimepicker({
 			minDate: new Date(),
-			format: 'MM/DD/YY'
+			format: 'MM/DD/YY',
+			ignoreReadonly: true
 		}).on('dp.change', self._onDatepickerChange.bind(self));
 		self._initValidation();
 	}

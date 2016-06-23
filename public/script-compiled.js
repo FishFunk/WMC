@@ -4,6 +4,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+// global variables
 var spinner = null;
 var environment = "debug";
 
@@ -15,9 +16,12 @@ var Bootstrapper = function () {
 	_createClass(Bootstrapper, null, [{
 		key: 'Run',
 		value: function Run() {
+			var _this = this;
+
 			var deferred = $.Deferred();
 			var webSvc = null;
 			spinner = new LoadingSpinner();
+
 			// Closes the Responsive Menu on Menu Item Click
 			$('.navbar-collapse ul li a').click(function () {
 				$('.navbar-toggle:visible').click();
@@ -45,11 +49,35 @@ var Bootstrapper = function () {
 				$('.modal:visible').each(reposition);
 			});
 
+			// iOS fix for modal bug with virtual keyboard
+			if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+				$('.modal').on('show.bs.modal', function () {
+					// Position modal absolute and bump it down to the scrollPosition
+					$(_this).css({
+						position: 'absolute',
+						marginTop: $(window).scrollTop() + 'px',
+						bottom: 'auto'
+					});
+					// Position backdrop absolute and make it span the entire page
+					// after Boostrap positions it but before transitions finish
+					setTimeout(function () {
+						$('.modal-backdrop').css({
+							position: 'absolute',
+							top: 0,
+							left: 0,
+							width: '100%',
+							height: Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, document.body.offsetHeight, document.documentElement.offsetHeight, document.body.clientHeight, document.documentElement.clientHeight) + 'px'
+						});
+					}, 0);
+				});
+			}
+
 			// Load Templates
+			var failureMsg = "Application failed to initialize.";
 			async.series([function (callback) {
 				$('#order-form-tmpl').load('./templates/order-form-tmpl.html', function (res, status, jqHXR) {
 					if (status === "error") {
-						callback("Application failed to initialize.");
+						callback(failureMsg);
 					} else {
 						callback();
 					}
@@ -57,7 +85,7 @@ var Bootstrapper = function () {
 			}, function (callback) {
 				$('#vehicle-tmpl').load('./templates/vehicle-tmpl.html', function (res, status, jqHXR) {
 					if (status === "error") {
-						callback("Application failed to initialize.");
+						callback(failureMsg);
 					} else {
 						callback();
 					}
@@ -65,7 +93,7 @@ var Bootstrapper = function () {
 			}, function (callback) {
 				$('#location-tmpl').load('./templates/location-tmpl.html', function (res, status, jqHXR) {
 					if (status === "error") {
-						callback("Application failed to initialize.");
+						callback(failureMsg);
 					} else {
 						callback();
 					}
@@ -79,7 +107,6 @@ var Bootstrapper = function () {
 					return callback(err);
 				});
 			}, function (callback) {
-				// Cache Appointment Data
 				var storageHelper = new LocalStorageHelper(sessionStorage);
 				var orderFormVm = new OrderFormViewModel(storageHelper, webSvc);
 				var logInVm = new LogInViewModel(storageHelper, webSvc);
@@ -88,6 +115,7 @@ var Bootstrapper = function () {
 
 				ko.applyBindings(mainVm);
 
+				// Cache Appointment Data
 				webSvc.GetFutureAppointments().then(function (appointments) {
 					var apptsByDate = _.groupBy(appointments, function (x) {
 						return moment(x.date).format("MM/DD/YYYY");
@@ -908,6 +936,7 @@ var MainViewModel = function () {
 	function MainViewModel(storageHelper, logInVm, orderFormVm) {
 		_classCallCheck(this, MainViewModel);
 
+		// observables
 		this.WASH_COST = Constants.WASH_DETAILS.price;
 		this.TireShinePriceHtml = "<sup>$</sup>" + Constants.TIRE_SHINE_DETAILS.price;
 		this.InteriorPriceHtml = "<sup>$</sup>" + Constants.INTERIOR_DETAILS.price;
@@ -915,12 +944,9 @@ var MainViewModel = function () {
 
 		this.LogInViewModel = logInVm;
 		this.OrderFormViewModel = orderFormVm;
+		// observables
 
 		this.storageHelper = storageHelper;
-
-		this.$loginModal = $("#login-modal");
-		this.$orderFormModal = $("#order-form-modal");
-
 		this.zip = ko.observable("");
 
 		if (this.storageHelper.ZipCode) {
@@ -938,20 +964,6 @@ var MainViewModel = function () {
 				scrollTop: $($anchor.attr('href')).offset().top
 			}, 1500, 'easeInOutExpo');
 			event.preventDefault();
-		}
-	}, {
-		key: "OnShowOrderForm",
-		value: function OnShowOrderForm() {
-			if (this.storageHelper.LoggedInUser) {
-				this.$orderFormModal.modal();
-			} else {
-				this.$loginModal.modal();
-			}
-		}
-	}, {
-		key: "OnShowContactModal",
-		value: function OnShowContactModal() {
-			$('#contact-modal').modal();
 		}
 	}, {
 		key: "OnVerifyZip",
@@ -1102,7 +1114,8 @@ var OrderFormViewModel = function () {
 			$('#phone').mask('(999) 999-9999? ext:99999', { placeholder: " " });
 			$('#datetimepicker').datetimepicker({
 				minDate: new Date(),
-				format: 'MM/DD/YY'
+				format: 'MM/DD/YY',
+				ignoreReadonly: true
 			}).on('dp.change', self._onDatepickerChange.bind(self));
 			self._initValidation();
 		}
@@ -1259,7 +1272,7 @@ var OrderFormViewModel = function () {
 				spinner.Show();
 				async.series([
 				// TODO: Is this the best order?
-				this._verifyUser.bind(this), this._executeCharge.bind(this, token), this._updateUserData.bind(this), this._sendEmailConfirmation.bind(this)], function (possibleError) {
+				this._executeCharge.bind(this, token), this._verifyUser.bind(this), this._updateUserData.bind(this), this._sendEmailConfirmation.bind(this)], function (possibleError) {
 					if (possibleError) {
 						self._onOrderFailure(possibleError);
 					} else {

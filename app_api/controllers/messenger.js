@@ -18,7 +18,7 @@ const br = "<br/>";
 const strong = "<strong>";
 const _strong = "</strong>";
 
-const logoUrl = path.join(__dirname, 'public/img', 'wmc_logo.jpg');
+const logoUrl = path.join('../../public/img', 'wmc_logo.jpg');
 const hrefPhone = "+17034736358";
 const displayPhone = "+703.473.6358";
 const contactEmail = "contact@washmycarva.com";
