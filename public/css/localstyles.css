@@ -1,6 +1,32 @@
-body.modal-open {
-	overflow: hidden;
-	width: 100%;
+.modal-content {
+    min-height: 100px;
+    max-height: 300px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (min-height: 600px) {
+    .modal-content {
+        max-height: 500px;
+    }
+}
+
+@media (min-height: 800px) {
+    .modal-content {
+        max-height: 700px;
+    }
+}
+
+@media (min-height: 1000px) {
+    .modal-content {
+        max-height: 800px;
+    }
+}
+
+@media (min-height: 1200px) {
+    .modal-content {
+        max-height: 1000px;
+    }
 }
 
 @font-face {

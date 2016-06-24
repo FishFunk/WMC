@@ -22,7 +22,6 @@ class Bootstrapper{
 	        var modal = $(this),
 	            dialog = modal.find('.modal-dialog');
 	        modal.css('display', 'block');
-	        modal.css('-webkit-overflow-scrolling', '');
 	        
 	        // Dividing by two centers the modal exactly, but dividing by three 
 	        // or four works better for larger screens.
