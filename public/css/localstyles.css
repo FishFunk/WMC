@@ -1,32 +1,3 @@
-.modal-content {
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-@media (max-height: 600px) {
-    .modal-content {
-        max-height: 500px;
-    }
-}
-
-@media (max-height: 800px) {
-    .modal-content {
-        max-height: 700px;
-    }
-}
-
-@media (max-height: 1000px) {
-    .modal-content {
-        max-height: 900px;
-    }
-}
-
-@media (max-height: 1200px) {
-    .modal-content {
-        max-height: 1100px;
-    }
-}
-
 @font-face {
   font-family: 'BOLDfinger';
   src: url('../fonts/BOLDfinger.ttf');
