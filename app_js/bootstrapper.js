@@ -26,6 +26,8 @@ class Bootstrapper{
 	        // Dividing by two centers the modal exactly, but dividing by three 
 	        // or four works better for larger screens.
 	        dialog.css("margin-top", Math.max(0, ($(window).height() - dialog.height()) / 2));
+
+	        $('#body').css("height", dialog.height());
 	    }
 	    
 	    // Reposition when a modal is shown
