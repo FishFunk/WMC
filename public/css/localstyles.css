@@ -1,6 +1,5 @@
 .modal-content {
-    min-height: 100px;
-    max-height: 300px;
+    height: auto;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
 }
