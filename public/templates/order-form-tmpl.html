@@ -172,9 +172,13 @@
   <!-- Submit -->
   <div class="control-group">
     <div class="controls">
-      <center>
+      <center class="hidden-xs">
         <button data-bind="click: OnFormCancel" class="btn btn-lg btn-default">Cancel</button>
         <button class="btn btn-lg btn-primary" data-bind="click: OnSubmit">Finish & Pay</button>
+      </center>
+      <center class="hidden-sm hidden-md hidden-lg">
+        <button data-bind="click: OnFormCancel" class="btn btn-md btn-default">Cancel</button>
+        <button class="btn btn-md btn-primary" data-bind="click: OnSubmit">Finish & Pay</button>
       </center>
     </div>
   </div>

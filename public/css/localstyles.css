@@ -1,3 +1,9 @@
+body.modal-open{
+	overflow: hidden;
+	position: fixed;
+	width: 100%;
+}
+
 @font-face {
   font-family: 'BOLDfinger';
   src: url('../fonts/BOLDfinger.ttf');
