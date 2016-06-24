@@ -18,13 +18,13 @@
 
 @media (min-height: 1000px) {
     .modal-content {
-        max-height: 800px;
+        max-height: 900px;
     }
 }
 
 @media (min-height: 1200px) {
     .modal-content {
-        max-height: 1000px;
+        max-height: 1100px;
     }
 }
 
