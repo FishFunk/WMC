@@ -37,7 +37,7 @@ class Bootstrapper{
 
 		// iOS fix for modal bug with virtual keyboard
 		if(navigator.userAgent.match(/iPhone|iPad|iPod/i)){
-		    $('.modal').on('show.bs.modal', ()=> {
+		    $('.modal').on('show.bs.modal', function() {
 		        // Position modal absolute and bump it down to the scrollPosition
 		        $(this)
 		            .css({

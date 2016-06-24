@@ -16,8 +16,6 @@ var Bootstrapper = function () {
 	_createClass(Bootstrapper, null, [{
 		key: 'Run',
 		value: function Run() {
-			var _this = this;
-
 			var deferred = $.Deferred();
 			var webSvc = null;
 			spinner = new LoadingSpinner();
@@ -53,7 +51,7 @@ var Bootstrapper = function () {
 			if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
 				$('.modal').on('show.bs.modal', function () {
 					// Position modal absolute and bump it down to the scrollPosition
-					$(_this).css({
+					$(this).css({
 						position: 'absolute',
 						marginTop: $(window).scrollTop() + 'px',
 						bottom: 'auto'
