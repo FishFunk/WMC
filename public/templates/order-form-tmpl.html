@@ -1,4 +1,4 @@
-<div id="order-form-tmpl" class="container modal-content">
+<div id="order-form-tmpl" class="modal-body">
   <div class="row">
     <legend class="col-xs-12">Order Details</legend>
     <div class="form-group col-sm-12">
@@ -155,17 +155,17 @@
       </div>
     </div>
   </form>
-  <br>
-  <!-- Important notice -->
-  <div class="row">
-    <div class="panel panel-success">
-      <div class="panel-heading">
-        <h3 class="panel-title">Please Review Your Order!</h3>
-      </div>
-      <div class="panel-body">
-        <p data-bind="html: orderSummary"></p>
-        <p>Total: $<strong data-bind="text: orderTotal"></strong>.</p>
-      </div>
+</div> <!--.modal-body-->
+
+<!-- Important notice -->
+<div class="modal-footer">
+  <div id="order-review-panel" class="panel panel-success">
+    <div class="panel-heading">
+      <h3 class="panel-title">Please Review Your Order!</h3>
+    </div>
+    <div class="panel-body">
+      <p data-bind="html: orderSummary"></p>
+      <p>Total: $<strong data-bind="text: orderTotal"></strong>.</p>
     </div>
   </div>
 
@@ -178,4 +178,4 @@
       </center>
     </div>
   </div>
-</div> <!--.container-->
+</div>

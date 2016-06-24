@@ -1,6 +1,5 @@
 body.modal-open {
-	overflow-y: hidden;
-	position: fixed;
+	overflow: hidden;
 	width: 100%;
 }
 
@@ -111,8 +110,8 @@ ul.social-buttons li a:hover,ul.social-buttons li a:focus,ul.social-buttons li a
 }
 
 .pinch{
-	margin-left: 5%;
-	margin-right: 5%;
+	margin-left: 2%;
+	margin-right: 2%;
 }
 
 .buffer-top{
@@ -120,11 +119,8 @@ ul.social-buttons li a:hover,ul.social-buttons li a:focus,ul.social-buttons li a
 }
 
 .modal {
-	overflow-y: scroll !important;
+	overflow: scroll;
 }
-
-#order-form-modal{margin-top: 10px;}
-#order-form-modal .container{padding:15px 20px 15px 20px; border-radius: 15px;  width: auto; max-width: 650px;}
 
 .form-control{
 	margin-bottom:2px;
@@ -197,6 +193,10 @@ select.error, textarea.error, input.error {
 	width:100%;
 	background-color: rgba(0,0,0,0.4);
 	padding: 10px;
+}
+
+#order-review-panel{
+	text-align: left;
 }
 
 /****** Spinner *******/

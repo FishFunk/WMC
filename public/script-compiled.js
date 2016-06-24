@@ -847,6 +847,7 @@ var LogInViewModel = function () {
 		value: function _toggleModals() {
 			this.$loginModal.removeClass('fade');
 			this.$loginModal.modal('hide');
+			this.$loginModal.addClass('fade');
 			this.$orderFormModal.modal('show');
 		}
 	}, {

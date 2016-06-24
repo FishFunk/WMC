@@ -342,8 +342,10 @@
     </div>
 </div>
 
-<div id="order-form-modal" class="modal fade pinch" role="dialog" data-bind="with: OrderFormViewModel">
-  <div data-bind="template: {name: 'order-form-tmpl', afterRender: OnAfterRender }"></div>
+<div id="order-form-modal" class="modal fade pinch" role="dialog" data-bind="with: OrderFormViewModel" tabindex="-1">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" data-bind="template: {name: 'order-form-tmpl', afterRender: OnAfterRender }"></div>
+  </div>
 </div>
 
 <div id="splash">
