@@ -120,7 +120,7 @@ ul.social-buttons li a:hover,ul.social-buttons li a:focus,ul.social-buttons li a
 }
 
 .modal {
-	overflow-y: scroll;
+	overflow-y: scroll !important;
 }
 
 #order-form-modal{margin-top: 10px;}
