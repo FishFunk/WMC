@@ -93,7 +93,7 @@ var Bootstrapper = function () {
 				// Cache Appointment Data
 				webSvc.GetFutureAppointments().then(function (appointments) {
 					var apptsByDate = _.groupBy(appointments, function (x) {
-						return moment(x.date).format("MM/DD/YYYY");
+						return moment(x.date).format(Constants.DATE_FORMAT);
 					});
 					storageHelper.AppointmentsByDate = apptsByDate;
 					callback();
@@ -236,6 +236,7 @@ var ORDER_SUCCESS_MSG = "Thank you! Your order has been placed. Please check you
     ORDER_FAILURE_MSG = "We're really sorry about this... Looks like there was a problem submitting your order. Please contact us for support.",
     BAD_ZIP_MSG = s.sprintf("Sorry about this but we don't service your area yet! We're still young and growing so check back soon. Feel free to <a href=%s>contact us</a> to expedite the process. <BR><BR> Sincerely, <BR> - The WMC Team", "javascript:$('.modal').modal('hide');$('#contact-nav').click();"),
     ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
+    DATE_FORMAT = "MM/DD/YY",
     DEFAULT_JOB_TIME_MINS = 120,
     MAX_JOB_TIME_PER_DAY_MINS = 720,
     MAX_JOB_TIME_PER_INTERVAL = 180,
@@ -406,6 +407,11 @@ var Constants = function () {
     key: "MAX_JOB_TIME_PER_INTERVAL",
     get: function get() {
       return MAX_JOB_TIME_PER_INTERVAL;
+    }
+  }, {
+    key: "DATE_FORMAT",
+    get: function get() {
+      return DATE_FORMAT;
     }
   }]);
 
@@ -1010,7 +1016,7 @@ var OrderFormViewModel = function () {
 		this.timeRangeOptions = [Constants.MORNING_TIME_RANGE, Constants.AFTERNOON_TIME_RANGE, Constants.EVENING_TIME_RANGE, Constants.NIGHT_TIME_RANGE];
 		this.selectedTimeRange = ko.observable(this.timeRangeOptions[0]);
 
-		this.date = ko.observable(moment().format("MM/DD/YY"));
+		this.date = ko.observable(moment().format(Constants.DATE_FORMAT));
 
 		// Car Info
 		this.showAddVehicleForm = ko.observable(false);
@@ -1088,11 +1094,15 @@ var OrderFormViewModel = function () {
 			self.$addLocationForm = $('#add-location-form');
 			self.$orderDetailsForm = $('#order-details-form');
 			$('#phone').mask('(999) 999-9999? ext:99999', { placeholder: " " });
+
+			var today = moment();
 			$('#datetimepicker').datetimepicker({
-				minDate: new Date(),
-				format: 'MM/DD/YY',
+				minDate: today,
+				format: Constants.DATE_FORMAT,
 				ignoreReadonly: true
 			}).on('dp.change', self._onDatepickerChange.bind(self));
+			self._updatePickerAndTimerangeOptions(today.format(Constants.DATE_FORMAT));
+
 			self._initValidation();
 		}
 	}, {
@@ -1173,7 +1183,7 @@ var OrderFormViewModel = function () {
 		}
 	}, {
 		key: 'OnSubmit',
-		value: function OnSubmit() {
+		value: function OnSubmit(payNow) {
 			var self = this;
 
 			var selectedCars = _.filter(this.cars(), function (car) {
@@ -1197,8 +1207,14 @@ var OrderFormViewModel = function () {
 				return;
 			}
 
-			if (this.$orderDetailsForm.valid()) {
+			if (!this.$orderDetailsForm.valid()) {
+				return;
+			}
+
+			if (payNow) {
 				this._openCheckout();
+			} else {
+				this._completeOrder();
 			}
 		}
 	}, {
@@ -1248,7 +1264,10 @@ var OrderFormViewModel = function () {
 				spinner.Show();
 				async.series([
 				// TODO: Is this the best order?
-				this._executeCharge.bind(this, token), this._verifyUser.bind(this), this._updateUserData.bind(this), this._sendEmailConfirmation.bind(this)], function (possibleError) {
+				token ? this._executeCharge.bind(this, token) : function (callback) {
+					// user chose to pay later
+					callback();
+				}, this._verifyUser.bind(this), this._updateUserData.bind(this), this._sendEmailConfirmation.bind(this)], function (possibleError) {
 					if (possibleError) {
 						self._onOrderFailure(possibleError);
 					} else {
@@ -1371,36 +1390,52 @@ var OrderFormViewModel = function () {
 	}, {
 		key: '_onDatepickerChange',
 		value: function _onDatepickerChange(event) {
-			var date = moment(event.date).format("MM/DD/YYYY");
-			this.date(date);
-			var appointments = this.storageHelper.AppointmentsByDate[date];
-			if (appointments) {
-				var maxMinutesPerInterval = Constants.MAX_JOB_TIME_PER_INTERVAL;
-				var morningAppts = _.filter(appointments, function (appt) {
-					return appt.timeRangeKey === Constants.MORNING_TIME_RANGE.key;
-				});
-				var afternoonAppts = _.filter(appointments, function (appt) {
-					return appt.timeRangeKey === Constants.AFTERNOON_TIME_RANGE.key;
-				});
-				var eveningAppts = _.filter(appointments, function (appt) {
-					return appt.timeRangeKey === Constants.EVENING_TIME_RANGE.key;
-				});
-				var nightAppts = _.filter(appointments, function (appt) {
-					return appt.timeRangeKey === Constants.NIGHT_TIME_RANGE.key;
-				});
+			this._updatePickerAndTimerangeOptions(event.date);
+		}
+	}, {
+		key: '_updatePickerAndTimerangeOptions',
+		value: function _updatePickerAndTimerangeOptions(date) {
+			var hourOfDay = moment().hour();
+			var today = moment().format(Constants.DATE_FORMAT);
 
-				Constants.MORNING_TIME_RANGE.disabled(_.reduce(morningAppts, function (total, appt) {
-					return total + appt.timeEstimate;
-				}, 0) > maxMinutesPerInterval);
-				Constants.AFTERNOON_TIME_RANGE.disabled(_.reduce(afternoonAppts, function (total, appt) {
-					return total + appt.timeEstimate;
-				}, 0) > maxMinutesPerInterval);
-				Constants.EVENING_TIME_RANGE.disabled(_.reduce(eveningAppts, function (total, appt) {
-					return total + appt.timeEstimate;
-				}, 0) > maxMinutesPerInterval);
-				Constants.NIGHT_TIME_RANGE.disabled(_.reduce(nightAppts, function (total, appt) {
-					return total + appt.timeEstimate;
-				}, 0) > maxMinutesPerInterval);
+			this.date(date);
+			$('#datetimepicker').data("DateTimePicker").date(date);
+
+			var appointments = this.storageHelper.AppointmentsByDate[date] || [];
+
+			var maxMinutesPerInterval = Constants.MAX_JOB_TIME_PER_INTERVAL;
+			var morningAppts = _.filter(appointments, function (appt) {
+				return appt.timeRangeKey === Constants.MORNING_TIME_RANGE.key;
+			});
+			var afternoonAppts = _.filter(appointments, function (appt) {
+				return appt.timeRangeKey === Constants.AFTERNOON_TIME_RANGE.key;
+			});
+			var eveningAppts = _.filter(appointments, function (appt) {
+				return appt.timeRangeKey === Constants.EVENING_TIME_RANGE.key;
+			});
+			var nightAppts = _.filter(appointments, function (appt) {
+				return appt.timeRangeKey === Constants.NIGHT_TIME_RANGE.key;
+			});
+
+			Constants.MORNING_TIME_RANGE.disabled(_.reduce(morningAppts, function (total, appt) {
+				return total + appt.timeEstimate;
+			}, 0) > maxMinutesPerInterval || date == today && hourOfDay > 11);
+			Constants.AFTERNOON_TIME_RANGE.disabled(_.reduce(afternoonAppts, function (total, appt) {
+				return total + appt.timeEstimate;
+			}, 0) > maxMinutesPerInterval || date == today && hourOfDay > 14);
+			Constants.EVENING_TIME_RANGE.disabled(_.reduce(eveningAppts, function (total, appt) {
+				return total + appt.timeEstimate;
+			}, 0) > maxMinutesPerInterval || date == today && hourOfDay > 17);
+			Constants.NIGHT_TIME_RANGE.disabled(_.reduce(nightAppts, function (total, appt) {
+				return total + appt.timeEstimate;
+			}, 0) > maxMinutesPerInterval || date == today && hourOfDay > 20);
+
+			for (var i = 0; i < this.timeRangeOptions.length; i++) {
+				var option = this.timeRangeOptions[i];
+				if (!option.disabled()) {
+					this.selectedTimeRange(option);
+					break;
+				}
 			}
 		}
 	}, {

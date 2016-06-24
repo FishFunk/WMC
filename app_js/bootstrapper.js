@@ -89,7 +89,7 @@ class Bootstrapper{
 					// Cache Appointment Data
 					webSvc.GetFutureAppointments()
 						.then((appointments)=> {
-							var apptsByDate = _.groupBy(appointments, (x)=> moment(x.date).format("MM/DD/YYYY"));
+							var apptsByDate = _.groupBy(appointments, (x)=> moment(x.date).format(Constants.DATE_FORMAT));
 							storageHelper.AppointmentsByDate = apptsByDate;
 							callback();
 						})

@@ -2,6 +2,7 @@ const ORDER_SUCCESS_MSG = "Thank you! Your order has been placed. Please check y
       ORDER_FAILURE_MSG = "We're really sorry about this... Looks like there was a problem submitting your order. Please contact us for support.",
       BAD_ZIP_MSG = s.sprintf("Sorry about this but we don't service your area yet! We're still young and growing so check back soon. Feel free to <a href=%s>contact us</a> to expedite the process. <BR><BR> Sincerely, <BR> - The WMC Team", "javascript:$('.modal').modal('hide');$('#contact-nav').click();"),
       ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
+      DATE_FORMAT = "MM/DD/YY",
       DEFAULT_JOB_TIME_MINS = 120,
       MAX_JOB_TIME_PER_DAY_MINS = 720,
       MAX_JOB_TIME_PER_INTERVAL = 180,
@@ -158,5 +159,9 @@ class Constants {
 
   static get MAX_JOB_TIME_PER_INTERVAL(){
     return MAX_JOB_TIME_PER_INTERVAL;
+  }
+
+  static get DATE_FORMAT(){
+    return DATE_FORMAT;
   }
 }

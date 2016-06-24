@@ -44,7 +44,7 @@
   </div>
   <div class="row">
     <legend class="col-xs-12">Vehicles</legend>
-    <div class="row" data-bind="template: { name: 'vehicle-tmpl', foreach: cars}"></div>
+    <div data-bind="template: { name: 'vehicle-tmpl', foreach: cars}"></div>
     <form id="add-vehicle-form" data-toggle="validator" role="form" data-bind="visible: showAddVehicleForm, submit: OnSaveNewVehicle" autocomplete="off">
       <div class="form-group">
         <label class="col-sm-1 control-label">Make</label>
@@ -89,7 +89,7 @@
   </div>
   <div class="row">
     <legend class="col-xs-12">Location</legend>
-    <div class="row" data-bind="template: { name: 'location-tmpl', foreach: locations}"></div>
+    <div data-bind="template: { name: 'location-tmpl', foreach: locations}"></div>
     <form id="add-location-form" data-toggle="validator" role="form" data-bind="visible: showAddLocationForm, submit: OnSaveNewLocation" autocomplete="off">
       <div class="form-group">
         <label class="col-sm-1 control-label">Street</label>
@@ -174,11 +174,13 @@
     <div class="controls">
       <center class="hidden-xs">
         <button data-bind="click: OnFormCancel" class="btn btn-lg btn-default">Cancel</button>
-        <button class="btn btn-lg btn-primary" data-bind="click: OnSubmit">Finish & Pay</button>
+        <button class="btn btn-lg btn-primary" data-bind="click: OnSubmit.bind($data,true)">Pay Now</button>
+        <button class="btn btn-lg btn-primary" data-bind="click: OnSubmit.bind($data,false)">Pay Later</button>
       </center>
       <center class="hidden-sm hidden-md hidden-lg">
         <button data-bind="click: OnFormCancel" class="btn btn-md btn-default">Cancel</button>
-        <button class="btn btn-md btn-primary" data-bind="click: OnSubmit">Finish & Pay</button>
+        <button class="btn btn-md btn-primary" data-bind="click: OnSubmit.bind($data,true)">Pay Now</button>
+        <button class="btn btn-lg btn-primary" data-bind="click: OnSubmit.bind($data,false)">Pay Later</button>
       </center>
     </div>
   </div>

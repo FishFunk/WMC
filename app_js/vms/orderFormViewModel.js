@@ -51,7 +51,7 @@ class OrderFormViewModel {
 		];
 		this.selectedTimeRange = ko.observable(this.timeRangeOptions[0]);
 
-		this.date = ko.observable(moment().format("MM/DD/YY"));
+		this.date = ko.observable(moment().format(Constants.DATE_FORMAT));
 
 		// Car Info
 		this.showAddVehicleForm = ko.observable(false);
@@ -134,11 +134,15 @@ class OrderFormViewModel {
 		self.$addLocationForm = $('#add-location-form');
 		self.$orderDetailsForm = $('#order-details-form');
 		$('#phone').mask('(999) 999-9999? ext:99999', {placeholder: " "});
+
+		const today = moment();
 		$('#datetimepicker').datetimepicker({
-			minDate: new Date(),
-			format: 'MM/DD/YY',
+			minDate: today,
+			format: Constants.DATE_FORMAT,
 			ignoreReadonly: true
 		}).on('dp.change', self._onDatepickerChange.bind(self));
+		self._updatePickerAndTimerangeOptions(today.format(Constants.DATE_FORMAT));
+
 		self._initValidation();
 	}
 
@@ -202,7 +206,7 @@ class OrderFormViewModel {
 		self.locations(_.reject(self.locations(), (loc)=> _.isEqual(loc, locationData)));
 	}
 
-	OnSubmit(){
+	OnSubmit(payNow){
 		var self = this;
 		
 		var selectedCars = _.filter(this.cars(), (car)=> car.selected());
@@ -222,9 +226,14 @@ class OrderFormViewModel {
 			return;
 		}
 
-		if(this.$orderDetailsForm.valid())
-		{
+		if(!this.$orderDetailsForm.valid()){
+			return;
+		}
+
+		if(payNow){
 			this._openCheckout();
+		} else {
+			this._completeOrder();
 		}
 	}
 
@@ -272,7 +281,12 @@ class OrderFormViewModel {
 			spinner.Show();
 			async.series([
 					// TODO: Is this the best order?
-					this._executeCharge.bind(this, token),
+					token ? 
+						this._executeCharge.bind(this, token) : 
+						callback=>{
+							// user chose to pay later
+							callback();
+						},
 					this._verifyUser.bind(this),
 					this._updateUserData.bind(this),
 					this._sendEmailConfirmation.bind(this)
@@ -383,24 +397,43 @@ class OrderFormViewModel {
 	}
 
 	_onDatepickerChange(event){
-		var date = moment(event.date).format("MM/DD/YYYY");
-		this.date(date);
-		var appointments = this.storageHelper.AppointmentsByDate[date];
-		if(appointments){
-			const maxMinutesPerInterval = Constants.MAX_JOB_TIME_PER_INTERVAL;
-			var morningAppts = _.filter(appointments, (appt) => appt.timeRangeKey === Constants.MORNING_TIME_RANGE.key);
-			var afternoonAppts = _.filter(appointments, (appt) => appt.timeRangeKey === Constants.AFTERNOON_TIME_RANGE.key);
-			var eveningAppts = _.filter(appointments, (appt) => appt.timeRangeKey === Constants.EVENING_TIME_RANGE.key);
-			var nightAppts = _.filter(appointments, (appt) => appt.timeRangeKey === Constants.NIGHT_TIME_RANGE.key);
+		this._updatePickerAndTimerangeOptions(event.date);
+	}
 
-			Constants.MORNING_TIME_RANGE.disabled(
-				_.reduce(morningAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval);
-			Constants.AFTERNOON_TIME_RANGE.disabled(
-				_.reduce(afternoonAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval);
-			Constants.EVENING_TIME_RANGE.disabled(
-				_.reduce(eveningAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval);
-			Constants.NIGHT_TIME_RANGE.disabled(
-				_.reduce(nightAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval);
+	_updatePickerAndTimerangeOptions(date){
+		var hourOfDay = moment().hour();
+		var today = moment().format(Constants.DATE_FORMAT);
+
+		this.date(date);
+		$('#datetimepicker').data("DateTimePicker").date(date);
+
+		var appointments = this.storageHelper.AppointmentsByDate[date] || [];
+
+		const maxMinutesPerInterval = Constants.MAX_JOB_TIME_PER_INTERVAL;
+		var morningAppts = _.filter(appointments, (appt) => appt.timeRangeKey === Constants.MORNING_TIME_RANGE.key);
+		var afternoonAppts = _.filter(appointments, (appt) => appt.timeRangeKey === Constants.AFTERNOON_TIME_RANGE.key);
+		var eveningAppts = _.filter(appointments, (appt) => appt.timeRangeKey === Constants.EVENING_TIME_RANGE.key);
+		var nightAppts = _.filter(appointments, (appt) => appt.timeRangeKey === Constants.NIGHT_TIME_RANGE.key);
+
+		Constants.MORNING_TIME_RANGE.disabled(
+			(_.reduce(morningAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval) ||
+			(date == today && hourOfDay > 11));
+		Constants.AFTERNOON_TIME_RANGE.disabled(
+			(_.reduce(afternoonAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval) ||
+			(date == today && hourOfDay > 14));
+		Constants.EVENING_TIME_RANGE.disabled(
+			(_.reduce(eveningAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval) ||
+			(date == today && hourOfDay > 17));
+		Constants.NIGHT_TIME_RANGE.disabled(
+			(_.reduce(nightAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval) ||
+			(date == today && hourOfDay > 20));
+
+		for(let i = 0; i < this.timeRangeOptions.length; i++){
+			const option = this.timeRangeOptions[i];
+			if(!option.disabled()){
+				this.selectedTimeRange(option);
+				break;
+			}
 		}
 	}
 
