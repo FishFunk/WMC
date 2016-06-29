@@ -1,47 +1,53 @@
-<div id="order-form-tmpl" class="modal-body">
+<div class="modal-body">
   <div class="row">
     <legend class="col-xs-12">Order Details</legend>
     <div class="form-group col-sm-12">
       <label class="control-label" for="checkbox">Service Options</label>
       <div class="form-inline">
         <div class="checkbox">
-          <label><input type="checkbox" disabled checked>&nbsp;Exterior Hand Wash&nbsp;(<strong>$<span data-bind="text: WASH_COST"></span></strong>)</label>
+          <label><input type="checkbox" disabled checked>&nbsp;Exterior Hand Wash</label>&nbsp;(<strong>$<span data-bind="text: WASH_COST"></span></strong>)
         </div>
         <div class="checkbox">
-          <label><input type="checkbox" data-bind="checked: addShine">&nbsp;Deep Tire Clean & Shine&nbsp;(<strong>$<span data-bind="text: TIRE_SHINE_COST"></span></strong>)</label>
+          <label><input type="checkbox" data-bind="checked: addShine">&nbsp;Deep Tire Clean & Shine&nbsp;</label>(<strong>$<span data-bind="text: TIRE_SHINE_COST"></span></strong>)
         </div>
         <div class="checkbox">
-          <label><input type="checkbox" data-bind="checked: addWax">&nbsp;Hand Wax & Buff&nbsp;(<strong>$<span data-bind="text: WAX_COST"></span></strong>)</label>
+          <label><input type="checkbox" data-bind="checked: addWax">&nbsp;Hand Wax & Buff</label>&nbsp;(<strong>$<span data-bind="text: WAX_COST"></span></strong>)
         </div>
         <div class="checkbox">
-          <label><input type="checkbox" data-bind="checked: addInterior">&nbsp;Full Interior&nbsp;(<strong>$<span data-bind="text: INTERIOR_COST"></span></strong>)</label>
+          <label><input type="checkbox" data-bind="checked: addInterior">&nbsp;Full Interior</label>&nbsp;(<strong>$<span data-bind="text: INTERIOR_COST"></span></strong>)
+        </div>
+        <div data-bind="visible: addInterior" class="alert alert-info alert-dismissible" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <strong>Heads Up!</strong> Interior work requires you to be present so we can enter your vehicle.
         </div>
       </div>
     </div>
   </div>
   <div class="row">
-    <div class="form-group col-sm-4">
-      <label class="control-label">Date</label>
-      <div class='input-group date' id='datetimepicker'>
-        <input type='text' class="form-control" readonly/>
-        <span class="input-group-addon">
-          <span class="glyphicon glyphicon-calendar"></span>
-        </span>
+    <form id="order-details-form" data-toggle="validator" role="form" autocomplete="off">
+      <div class="form-group col-sm-4">
+        <label class="control-label">Date</label>
+        <div class='input-group date' id='datetimepicker'>
+          <input name="date" type='text' class="form-control"/>
+          <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+          </span>
+        </div>
+      </div>
+      <div class="form-group col-sm-4">
+        <label class="control-label" for="select">Time Range</label>
+        <select class="form-control" data-bind="value: selectedTimeRange, foreach: timeRangeOptions">
+          <option data-bind="text: $data.range, value: $data, attr: { disabled: $data.disabled }"></option>
+        </select>
       </div>
     </div>
-    <div class="form-group col-sm-4">
-      <label class="control-label" for="select">Time Range</label>
-      <select class="form-control" data-bind="value: selectedTimeRange, foreach: timeRangeOptions">
-        <option data-bind="text: $data.range, value: $data, attr: { disabled: $data.disabled }"></option>
-      </select>
+    <div class="row">
+      <div class="form-group col-xs-12">
+        <label class="control-label">Description</label>
+        <textarea data-bind="value: description" maxlength="250" class="form-control" placeholder="Special requests, location details, access codes, etc."></textarea>
+      </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="form-group col-xs-12">
-      <label class="control-label">Description</label>
-      <textarea data-bind="value: description" maxlength="250" class="form-control" placeholder="Anything else we should know? What condition is your vehicle in? Will it be parked in the street, driveway, or garage? Special requests?"></textarea>
-    </div>
-  </div>
+  </form>
   <div class="row">
     <legend class="col-xs-12">Vehicles</legend>
     <div data-bind="template: { name: 'vehicle-tmpl', foreach: cars}"></div>
@@ -128,7 +134,7 @@
       <span class="fa fa-plus"></span>
     </button>
   </div>
-  <form id="order-details-form" data-toggle="validator" role="form" autocomplete="off">
+  <form id="contact-details-form" data-toggle="validator" role="form" autocomplete="off">
     <div class="row">
       <legend class="col-xs-12">Contact</legend>
       <div class="form-group">
@@ -172,15 +178,18 @@
   <!-- Submit -->
   <div class="control-group">
     <div class="controls">
+      <center id="incomplete-form-alert" class="alert alert-danger fade in" role="alert" hidden>
+        <strong>Whoops!</strong>&nbsp;<span data-bind="text: incompleteFormMsg"></span>
+      </center>
       <center class="hidden-xs">
         <button data-bind="click: OnFormCancel" class="btn btn-lg btn-default">Cancel</button>
         <button class="btn btn-lg btn-primary" data-bind="click: OnSubmit.bind($data,true)">Pay Now</button>
-        <button class="btn btn-lg btn-primary" data-bind="click: OnSubmit.bind($data,false)">Pay Later</button>
+        <button class="btn btn-lg btn-secondary" data-bind="click: OnSubmit.bind($data,false)">Pay Later</button>
       </center>
       <center class="hidden-sm hidden-md hidden-lg">
         <button data-bind="click: OnFormCancel" class="btn btn-md btn-default">Cancel</button>
         <button class="btn btn-md btn-primary" data-bind="click: OnSubmit.bind($data,true)">Pay Now</button>
-        <button class="btn btn-lg btn-primary" data-bind="click: OnSubmit.bind($data,false)">Pay Later</button>
+        <button class="btn btn-md btn-secondary" data-bind="click: OnSubmit.bind($data,false)">Pay Later</button>
       </center>
     </div>
   </div>

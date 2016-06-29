@@ -31,7 +31,7 @@ class Bootstrapper{
 	    // Reposition when a modal is shown
 	    $('.modal').on('show.bs.modal', reposition);
 	    // Reposition when the window is resized
-	    $(window).on('resize', ()=> {
+	    $(window).on('resize', function(){
 	        $('.modal:visible').each(reposition);
 	    });
 

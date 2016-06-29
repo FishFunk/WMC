@@ -34,6 +34,7 @@ class OrderFormViewModel {
 
 		/**** Observables ****/
 		this.disableEmailInput = ko.observable(false);
+		this.incompleteFormMsg = ko.observable("");
 
 		// Order Details
 		this.addShine = ko.observable(false);
@@ -51,7 +52,7 @@ class OrderFormViewModel {
 		];
 		this.selectedTimeRange = ko.observable(this.timeRangeOptions[0]);
 
-		this.date = ko.observable(moment().format(Constants.DATE_FORMAT));
+		this.date = ko.observable("");
 
 		// Car Info
 		this.showAddVehicleForm = ko.observable(false);
@@ -132,16 +133,18 @@ class OrderFormViewModel {
 	OnAfterRender(elements, self){
 		self.$addVehicleForm = $('#add-vehicle-form');
 		self.$addLocationForm = $('#add-location-form');
+		self.$contactDetailsForm = $('#contact-details-form');
 		self.$orderDetailsForm = $('#order-details-form');
+
 		$('#phone').mask('(999) 999-9999? ext:99999', {placeholder: " "});
 
-		const today = moment();
 		$('#datetimepicker').datetimepicker({
-			minDate: today,
+			minDate: moment().subtract(1, 'days'),
+			maxDate: moment().add(60, 'days'),
 			format: Constants.DATE_FORMAT,
-			ignoreReadonly: true
+			allowInputToggle: true,
+			focusOnShow: false
 		}).on('dp.change', self._onDatepickerChange.bind(self));
-		self._updatePickerAndTimerangeOptions(today.format(Constants.DATE_FORMAT));
 
 		self._initValidation();
 	}
@@ -208,25 +211,47 @@ class OrderFormViewModel {
 
 	OnSubmit(payNow){
 		var self = this;
+
+		if(!this.$orderDetailsForm.valid()){
+			this.incompleteFormMsg('Please select a date of service.');
+			$('#incomplete-form-alert').show();
+			return;
+		}
+
+		if(!this.cars() || this.cars().length === 0){
+			this.incompleteFormMsg('Please add at least one vehicle.');
+			$('#incomplete-form-alert').show();
+			return;
+		}
 		
 		var selectedCars = _.filter(this.cars(), (car)=> car.selected());
 		if(selectedCars.length === 0){
-			bootbox.alert("Please add and select at least one vehicle.");
+			this.incompleteFormMsg('Please select at least one vehicle to service.');
+			$('#incomplete-form-alert').show();
+			return;
+		}
+
+		if(!this.locations() || this.locations().length === 0){
+			this.incompleteFormMsg('Please add a location.');
 			return;
 		}
 
 		var selectedLocation = _.find(this.locations(), (loc) => loc.selected());
 		if(!selectedLocation){
-			bootbox.alert("Please add and select a location.");
+			this.incompleteFormMsg('Please select your desired location.');
+			$('#incomplete-form-alert').show();
 			return;
 		}
 
 		if(!Utils.VerifyZip(selectedLocation.zip)){
-			bootbox.alert(Constants.BAD_ZIP_MSG);
+			this.incompleteFormMsg(Constants.BAD_ZIP_MSG);
+			$('#incomplete-form-alert').show();
 			return;
 		}
 
-		if(!this.$orderDetailsForm.valid()){
+		if(!this.$contactDetailsForm.valid()){
+			this.incompleteFormMsg('Please complete the contact information.');
+			$('#incomplete-form-alert').show();
 			return;
 		}
 
@@ -250,13 +275,15 @@ class OrderFormViewModel {
 			this.description("");
 			this.showAddVehicleForm(false);
 			this.showAddLocationForm(false);
-			$('#datetimepicker').data("DateTimePicker").date(new Date());
 			this.selectedCarSize(this.carSizes[0]);
 			this.selectedTimeRange(this.timeRangeOptions[0]);
 			this.carYear(this.carYears[1]);
 
-			// Reste Forms
+			// Reset Forms
 			this.$orderDetailsForm.validate().resetForm();
+			this.$contactDetailsForm.validate().resetForm();
+
+			$('#incomplete-form-alert').hide();
 		} catch (ex){
 			console.log("Failed to reset fields OnFormCancel()");
 			console.log(ex);
@@ -397,17 +424,17 @@ class OrderFormViewModel {
 	}
 
 	_onDatepickerChange(event){
-		this._updatePickerAndTimerangeOptions(event.date);
+		if(event){
+			this._updatePickerAndTimerangeOptions(event.date);
+		}
 	}
 
-	_updatePickerAndTimerangeOptions(date){
+	_updatePickerAndTimerangeOptions(momentObj){
 		var hourOfDay = moment().hour();
 		var today = moment().format(Constants.DATE_FORMAT);
+		var selectedDate = momentObj.format(Constants.DATE_FORMAT);
 
-		this.date(date);
-		$('#datetimepicker').data("DateTimePicker").date(date);
-
-		var appointments = this.storageHelper.AppointmentsByDate[date] || [];
+		var appointments = this.storageHelper.AppointmentsByDate[selectedDate] || [];
 
 		const maxMinutesPerInterval = Constants.MAX_JOB_TIME_PER_INTERVAL;
 		var morningAppts = _.filter(appointments, (appt) => appt.timeRangeKey === Constants.MORNING_TIME_RANGE.key);
@@ -417,16 +444,16 @@ class OrderFormViewModel {
 
 		Constants.MORNING_TIME_RANGE.disabled(
 			(_.reduce(morningAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval) ||
-			(date == today && hourOfDay > 11));
+			(selectedDate == today && hourOfDay > 11));
 		Constants.AFTERNOON_TIME_RANGE.disabled(
 			(_.reduce(afternoonAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval) ||
-			(date == today && hourOfDay > 14));
+			(selectedDate == today && hourOfDay > 14));
 		Constants.EVENING_TIME_RANGE.disabled(
 			(_.reduce(eveningAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval) ||
-			(date == today && hourOfDay > 17));
+			(selectedDate == today && hourOfDay > 17));
 		Constants.NIGHT_TIME_RANGE.disabled(
 			(_.reduce(nightAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval) ||
-			(date == today && hourOfDay > 20));
+			(selectedDate == today && hourOfDay > 20));
 
 		for(let i = 0; i < this.timeRangeOptions.length; i++){
 			const option = this.timeRangeOptions[i];
@@ -440,8 +467,16 @@ class OrderFormViewModel {
 	_initValidation(){
 		this.$orderDetailsForm.validate({
 			rules:{
+				date: "required"
+			},
+			errorPlacement: function(){}
+		});
+
+		this.$contactDetailsForm.validate({
+			rules:{
 				first: "required",
 				last: "required",
+				date: "required",
 				email:{
 					required: true,
 					email: true

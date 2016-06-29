@@ -234,7 +234,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var ORDER_SUCCESS_MSG = "Thank you! Your order has been placed. Please check your email for confirmation.",
     ORDER_FAILURE_MSG = "We're really sorry about this... Looks like there was a problem submitting your order. Please contact us for support.",
-    BAD_ZIP_MSG = s.sprintf("Sorry about this but we don't service your area yet! We're still young and growing so check back soon. Feel free to <a href=%s>contact us</a> to expedite the process. <BR><BR> Sincerely, <BR> - The WMC Team", "javascript:$('.modal').modal('hide');$('#contact-nav').click();"),
+    BAD_ZIP_MSG = s.sprintf("Sorry about this but we don't service your area yet! We're still young and growing so check back soon. Feel free to <a href=%s>contact us</a> so we know where to target next. <BR><BR> Sincerely, <BR> - The WMC Team", "javascript:$('.modal').removeClass('fade');$('.modal').modal('hide');$('#contact-modal').modal('show');$('.modal').addClass('fade');"),
     ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
     DATE_FORMAT = "MM/DD/YY",
     DEFAULT_JOB_TIME_MINS = 120,
@@ -243,7 +243,7 @@ var ORDER_SUCCESS_MSG = "Thank you! Your order has been placed. Please check you
     WASH_DETAILS = {
   title: "Hand wash",
   time: 30,
-  price: 22
+  price: 19
 },
     TIRE_SHINE_DETAILS = {
   title: "Tire shine",
@@ -253,12 +253,12 @@ var ORDER_SUCCESS_MSG = "Thank you! Your order has been placed. Please check you
     INTERIOR_DETAILS = {
   title: "Interior cleaning",
   time: 50,
-  price: 60
+  price: 40
 },
     WAX_DETAILS = {
   title: "Hand wax & buff",
   time: 50,
-  price: 50
+  price: 30
 },
     MORNING_TIME_RANGE = {
   range: "9:00 - 12:00 PM",
@@ -1004,6 +1004,7 @@ var OrderFormViewModel = function () {
 
 		/**** Observables ****/
 		this.disableEmailInput = ko.observable(false);
+		this.incompleteFormMsg = ko.observable("");
 
 		// Order Details
 		this.addShine = ko.observable(false);
@@ -1016,7 +1017,7 @@ var OrderFormViewModel = function () {
 		this.timeRangeOptions = [Constants.MORNING_TIME_RANGE, Constants.AFTERNOON_TIME_RANGE, Constants.EVENING_TIME_RANGE, Constants.NIGHT_TIME_RANGE];
 		this.selectedTimeRange = ko.observable(this.timeRangeOptions[0]);
 
-		this.date = ko.observable(moment().format(Constants.DATE_FORMAT));
+		this.date = ko.observable("");
 
 		// Car Info
 		this.showAddVehicleForm = ko.observable(false);
@@ -1092,16 +1093,18 @@ var OrderFormViewModel = function () {
 		value: function OnAfterRender(elements, self) {
 			self.$addVehicleForm = $('#add-vehicle-form');
 			self.$addLocationForm = $('#add-location-form');
+			self.$contactDetailsForm = $('#contact-details-form');
 			self.$orderDetailsForm = $('#order-details-form');
+
 			$('#phone').mask('(999) 999-9999? ext:99999', { placeholder: " " });
 
-			var today = moment();
 			$('#datetimepicker').datetimepicker({
-				minDate: today,
+				minDate: moment().subtract(1, 'days'),
+				maxDate: moment().add(60, 'days'),
 				format: Constants.DATE_FORMAT,
-				ignoreReadonly: true
+				allowInputToggle: true,
+				focusOnShow: false
 			}).on('dp.change', self._onDatepickerChange.bind(self));
-			self._updatePickerAndTimerangeOptions(today.format(Constants.DATE_FORMAT));
 
 			self._initValidation();
 		}
@@ -1186,11 +1189,29 @@ var OrderFormViewModel = function () {
 		value: function OnSubmit(payNow) {
 			var self = this;
 
+			if (!this.$orderDetailsForm.valid()) {
+				this.incompleteFormMsg('Please select a date of service.');
+				$('#incomplete-form-alert').show();
+				return;
+			}
+
+			if (!this.cars() || this.cars().length === 0) {
+				this.incompleteFormMsg('Please add at least one vehicle.');
+				$('#incomplete-form-alert').show();
+				return;
+			}
+
 			var selectedCars = _.filter(this.cars(), function (car) {
 				return car.selected();
 			});
 			if (selectedCars.length === 0) {
-				bootbox.alert("Please add and select at least one vehicle.");
+				this.incompleteFormMsg('Please select at least one vehicle to service.');
+				$('#incomplete-form-alert').show();
+				return;
+			}
+
+			if (!this.locations() || this.locations().length === 0) {
+				this.incompleteFormMsg('Please add a location.');
 				return;
 			}
 
@@ -1198,16 +1219,20 @@ var OrderFormViewModel = function () {
 				return loc.selected();
 			});
 			if (!selectedLocation) {
-				bootbox.alert("Please add and select a location.");
+				this.incompleteFormMsg('Please select your desired location.');
+				$('#incomplete-form-alert').show();
 				return;
 			}
 
 			if (!Utils.VerifyZip(selectedLocation.zip)) {
-				bootbox.alert(Constants.BAD_ZIP_MSG);
+				this.incompleteFormMsg(Constants.BAD_ZIP_MSG);
+				$('#incomplete-form-alert').show();
 				return;
 			}
 
-			if (!this.$orderDetailsForm.valid()) {
+			if (!this.$contactDetailsForm.valid()) {
+				this.incompleteFormMsg('Please complete the contact information.');
+				$('#incomplete-form-alert').show();
 				return;
 			}
 
@@ -1232,13 +1257,15 @@ var OrderFormViewModel = function () {
 				this.description("");
 				this.showAddVehicleForm(false);
 				this.showAddLocationForm(false);
-				$('#datetimepicker').data("DateTimePicker").date(new Date());
 				this.selectedCarSize(this.carSizes[0]);
 				this.selectedTimeRange(this.timeRangeOptions[0]);
 				this.carYear(this.carYears[1]);
 
-				// Reste Forms
+				// Reset Forms
 				this.$orderDetailsForm.validate().resetForm();
+				this.$contactDetailsForm.validate().resetForm();
+
+				$('#incomplete-form-alert').hide();
 			} catch (ex) {
 				console.log("Failed to reset fields OnFormCancel()");
 				console.log(ex);
@@ -1390,18 +1417,18 @@ var OrderFormViewModel = function () {
 	}, {
 		key: '_onDatepickerChange',
 		value: function _onDatepickerChange(event) {
-			this._updatePickerAndTimerangeOptions(event.date);
+			if (event) {
+				this._updatePickerAndTimerangeOptions(event.date);
+			}
 		}
 	}, {
 		key: '_updatePickerAndTimerangeOptions',
-		value: function _updatePickerAndTimerangeOptions(date) {
+		value: function _updatePickerAndTimerangeOptions(momentObj) {
 			var hourOfDay = moment().hour();
 			var today = moment().format(Constants.DATE_FORMAT);
+			var selectedDate = momentObj.format(Constants.DATE_FORMAT);
 
-			this.date(date);
-			$('#datetimepicker').data("DateTimePicker").date(date);
-
-			var appointments = this.storageHelper.AppointmentsByDate[date] || [];
+			var appointments = this.storageHelper.AppointmentsByDate[selectedDate] || [];
 
 			var maxMinutesPerInterval = Constants.MAX_JOB_TIME_PER_INTERVAL;
 			var morningAppts = _.filter(appointments, function (appt) {
@@ -1419,16 +1446,16 @@ var OrderFormViewModel = function () {
 
 			Constants.MORNING_TIME_RANGE.disabled(_.reduce(morningAppts, function (total, appt) {
 				return total + appt.timeEstimate;
-			}, 0) > maxMinutesPerInterval || date == today && hourOfDay > 11);
+			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay > 11);
 			Constants.AFTERNOON_TIME_RANGE.disabled(_.reduce(afternoonAppts, function (total, appt) {
 				return total + appt.timeEstimate;
-			}, 0) > maxMinutesPerInterval || date == today && hourOfDay > 14);
+			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay > 14);
 			Constants.EVENING_TIME_RANGE.disabled(_.reduce(eveningAppts, function (total, appt) {
 				return total + appt.timeEstimate;
-			}, 0) > maxMinutesPerInterval || date == today && hourOfDay > 17);
+			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay > 17);
 			Constants.NIGHT_TIME_RANGE.disabled(_.reduce(nightAppts, function (total, appt) {
 				return total + appt.timeEstimate;
-			}, 0) > maxMinutesPerInterval || date == today && hourOfDay > 20);
+			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay > 20);
 
 			for (var i = 0; i < this.timeRangeOptions.length; i++) {
 				var option = this.timeRangeOptions[i];
@@ -1443,8 +1470,16 @@ var OrderFormViewModel = function () {
 		value: function _initValidation() {
 			this.$orderDetailsForm.validate({
 				rules: {
+					date: "required"
+				},
+				errorPlacement: function errorPlacement() {}
+			});
+
+			this.$contactDetailsForm.validate({
+				rules: {
 					first: "required",
 					last: "required",
+					date: "required",
 					email: {
 						required: true,
 						email: true

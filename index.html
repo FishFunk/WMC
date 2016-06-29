@@ -73,7 +73,7 @@
         <header>
             <div class="container">
                 <div class="intro-text">
-                    <div class="intro-lead-in">VA's Most Reliable Mobile Auto Wash & Detail Service</strong></div>
+                    <div class="intro-heading">VA's #1 On-Demand Car Wash</div>
                     <h3>Save time and keep your car looking great.</h3>
                     <br>
                     <button class="btn btn-xl ghost-btn" data-toggle="modal" type="button" data-target="#login-modal">Schedule Now!</button>
@@ -109,7 +109,7 @@
                             <i class="fa fa-calendar fa-stack-1x fa-inverse"></i>
                         </span>
                         <h4 class="service-heading">Schedule</h4>
-                        <p class="text-muted pinch">Simply make your appointment online with our checkout process <a href="#" data-toggle="modal" data-target="#login-modal">HERE</a>.</p>
+                        <p class="text-muted pinch">We know you're busy! Simply make an appointment when your car will be parked for a few hours with our online checkout process <a href="#" data-toggle="modal" data-target="#login-modal">HERE</a>.</p>
                     </div>
                     <div class="col-md-4">
                         <span class="fa-stack fa-4x">
@@ -117,7 +117,7 @@
                             <i class="fa fa-map-marker fa-stack-1x fa-inverse"></i>
                         </span>
                         <h4 class="service-heading">Location</h4>
-                        <p class="text-muted pinch">We bring our service to you! At work, home, or wherever is convenient for you.</p>
+                        <p class="text-muted pinch">In a world of on-demand services, why wait in line for a car wash? We bring our services to you at work, home, or wherever is convenient for you. <strong>You don't need even need to be present unless you choose to pay on-site or request interior cleaning!</strong></p>
                     </div>
                     <div class="col-md-4">
                         <span class="fa-stack fa-4x">
@@ -125,7 +125,7 @@
                             <i class="fa fa-smile-o fa-stack-1x fa-inverse"></i>
                         </span>
                         <h4 class="service-heading">Smile</h4>
-                        <p class="text-muted pinch">Our professional hand washing technique is <strong>10x more thorough and effective</strong> than a drive-thru car wash and won't scratch your paint or clear coat. Top notch quality and convenience starting at <strong>$<span data-bind="text: WASH_COST"></span>!</strong></p>
+                        <p class="text-muted pinch">You can feel good about your decision. Our professional hand washing technique is <strong>10x more thorough</strong> than a drive-thru car wash and <strong>won't damage your paint or clear coat</strong>. This top notch quality and convenience starting at only <strong>$<span data-bind="text: WASH_COST"></span>!</strong></p>
                     </div>
                 </div>
             </div>
@@ -230,16 +230,31 @@
       </div>
       <div class="modal-footer">
             <div class="row text-center">
-                <div class="col-sm-6">
-                    <a href="mailto:contact@washmycarva.com" class="btn btn-sm ghost-btn black">
-                    <i class="fa fa-envelope-o fa-2x"></i>
-                    <br> contact@washmycarva.com</a>
+                <div class="hidden-xs">
+                    <div class="col-sm-6">
+                        <a href="mailto:contact@washmycarva.com" class="btn btn-sm ghost-btn black">
+                        <i class="fa fa-envelope-o fa-2x"></i>
+                        <br> contact@washmycarva.com</a>
+                    </div>
+                    <div class="col-sm-6">
+                        <a href="tel:+12028109274" class="btn btn-sm ghost-btn black">
+                          <i class="fa fa-phone fa-2x"></i>
+                          <br>
+                          202.810.9274</a>
+                    </div>
                 </div>
-                <div class="col-sm-6">
-                    <a href="tel:+12028109274" class="btn btn-sm ghost-btn black">
-                      <i class="fa fa-phone fa-2x"></i>
-                      <br>
-                      202.810.9274</a>
+                <div class="hidden-sm hidden-md hidden-lg">
+                    <div class="col-xs-6">
+                        <a href="mailto:contact@washmycarva.com" class="btn btn-xs ghost-btn black">
+                        <i class="fa fa-envelope-o fa-2x"></i>
+                        <br> contact@washmycarva.com</a>
+                    </div>
+                    <div class="col-xs-6">
+                        <a href="tel:+12028109274" class="btn btn-xs ghost-btn black">
+                          <i class="fa fa-phone fa-2x"></i>
+                          <br>
+                          202.810.9274</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -344,7 +359,9 @@
 
 <div id="order-form-modal" class="modal fade pinch" role="dialog" data-bind="with: OrderFormViewModel" tabindex="-1">
   <div class="modal-dialog" role="document">
-    <div class="modal-content" data-bind="template: {name: 'order-form-tmpl', afterRender: OnAfterRender }"></div>
+    <div class="modal-content">
+        <div data-bind="template: {name: 'order-form-tmpl', afterRender: OnAfterRender}"></div>
+    </div>
   </div>
 </div>
 
