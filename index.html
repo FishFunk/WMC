@@ -181,9 +181,9 @@
             </div>
           </div>
       </div>
-  </section>
+    </section>
 
-  <footer>
+<footer>
     <div class="container">
         <div class="row">
             <a href="#page-top" data-bind="click: OnPageScroll">
@@ -215,169 +215,38 @@
         </div>
     </div>
 </footer>
-
-<div id="contact-modal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title text-center">Call or Email Us - We're Listening!</h4>
-      </div>
-      <div class="modal-body">
-        <p>Our #1 goal at WMC is to ensure our customers are satisfied. We greatly appreciate you taking the time to contact us with any questions or comments.</p><br>
-        <i class="fa fa-heart"></i><br>
-        <span> - The WMC team</span>
-      </div>
-      <div class="modal-footer">
-            <div class="row text-center">
-                <div class="hidden-xs">
-                    <div class="col-sm-6">
-                        <a href="mailto:contact@washmycarva.com" class="btn btn-sm ghost-btn black">
-                        <i class="fa fa-envelope-o fa-2x"></i>
-                        <br> contact@washmycarva.com</a>
-                    </div>
-                    <div class="col-sm-6">
-                        <a href="tel:+12028109274" class="btn btn-sm ghost-btn black">
-                          <i class="fa fa-phone fa-2x"></i>
-                          <br>
-                          202.810.9274</a>
-                    </div>
-                </div>
-                <div class="hidden-sm hidden-md hidden-lg">
-                    <div class="col-xs-6">
-                        <a href="mailto:contact@washmycarva.com" class="btn btn-xs ghost-btn black">
-                        <i class="fa fa-envelope-o fa-2x"></i>
-                        <br> contact@washmycarva.com</a>
-                    </div>
-                    <div class="col-xs-6">
-                        <a href="tel:+12028109274" class="btn btn-xs ghost-btn black">
-                          <i class="fa fa-phone fa-2x"></i>
-                          <br>
-                          202.810.9274</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  </div>
-</div>
-
-
-<div id="login-modal" class="modal fade" role="dialog" data-bind="with: LogInViewModel">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header text-center">
-                <img id="wmc-mini-logo" src="img/wmc_logo.png"></img>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="modal-body">
-                <div data-bind="visible: ShowForgotPwd">
-                    <form id="forgot-pwd-form" data-bind="submit: OnSubmitForgotPwd">
-                        <div class="row">
-                            <div class="form-group">
-                                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                                    <input data-bind="value: email" class="form-control" type="email" name="email" placeholder="johnny.appleseed@yahoo.com">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                                    <input data-bind="value: verifyEmail" class="form-control" type="email" name="verifyEmail" placeholder="Verify Email">
-                                </div>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="row text-center">
-                            <button type="button" class="btn btn-lg btn-default" data-bind="click: OnCancelForgotPwd">Cancel</button>
-                            <button type="submit" class="btn btn-lg btn-primary">OK</button>
-                        </div>      
-                    </form>               
-                </div>
-                <div data-bind="visible: ShowCreateAcct">
-                    <form id="create-acct-form" data-bind="submit: OnCreateAcct">
-                        <div class="row">
-                            <div class="form-group">
-                                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                                    <input data-bind="value: email" class="form-control" type="email" name="email" placeholder="johnny.appleseed@yahoo.com">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                                    <input data-bind="value: verifyEmail" class="form-control" type="email" name="verifyEmail" placeholder="Verify Email">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                                    <input data-bind="value: pwd" class="form-control" type="password" name="pwd" placeholder="***********">
-                                </div>
-                            </div>
-                            <div class="form-group" data-bind="visible: ShowCreateAcct">
-                                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                                    <input id="verifyPwd" data-bind="value: verifyPwd" class="form-control" type="password" name="verifyPwd" placeholder="Verify Password">
-                                </div>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="row text-center">
-                            <button type="button" class="btn btn-lg btn-default" data-bind="click: OnCancelCreateAcct">Cancel</button>
-                            <button type="submit" class="btn btn-lg btn-primary">Create</button>
-                        </div>        
-                    </form>
-                </div>
-                <div data-bind="visible: ShowLogin">
-                    <form id="login-form" data-bind="submit: OnLogIn">
-                        <div class="row">
-                            <div class="form-group">
-                                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                                    <input data-bind="value: email" class="form-control" type="email" name="email" placeholder="johnny.appleseed@yahoo.com">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                                    <input data-bind="value: pwd" class="form-control" type="password" name="pwd" placeholder="***********">
-                                </div>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="row text-center">
-                            <button type="submit" class="btn btn-lg btn-primary">Log In</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <div class="row text-center">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-sm btn-link col-xs-12 col-sm-4" data-bind="click: OnShowCreateAcct">Create Account</button>
-                        <button type="button" class="btn btn-sm btn-link col-xs-12 col-sm-4" data-bind="click: OnShowForgotPwd">Forgot Password</button>
-                        <button type="button" class="btn btn-sm btn-link col-xs-12 col-sm-4" data-bind="click: OnContinueAsGuest">Continue As Guest</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="order-form-modal" class="modal fade pinch" role="dialog" data-bind="with: OrderFormViewModel" tabindex="-1">
+  
+<!-- Templates -->
+<div id="order-form-modal" class="modal fade" role="dialog" data-bind="with: OrderFormViewModel" tabindex="-1">
   <div class="modal-dialog" role="document">
-    <div class="modal-content">
-        <div data-bind="template: {name: 'order-form-tmpl', afterRender: OnAfterRender}"></div>
-    </div>
+    <div id="order-form-tmpl" data-bind="template: {data: $data, afterRender: OnAfterRender}"></div>
+  </div>
+</div>
+<div hidden id="vehicle-tmpl"></div>
+<div hidden id="location-tmpl"></div>
+
+<div id="contact-modal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog" role="document">
+    <div id="contact-modal-tmpl"></div>
   </div>
 </div>
 
+<div id="login-modal" class="modal fade" role="dialog" tabindex="-1" data-bind="with: LogInViewModel">
+  <div class="modal-dialog" role="document">
+    <div id="login-modal-tmpl"></div>
+  </div>
+</div>
+
+<!-- Overlays -->
 <div id="splash">
   <img src="img/wmc_logo.jpg">
 </div>
-
-<div hidden id="order-form-tmpl" data-bind="with: OrderFormViewModel"></div>
-<div hidden id="vehicle-tmpl"></div>
-<div hidden id="location-tmpl"></div>
 
 <div id="page-load-spinner" class="loading-spinner-overlay">
     <div id="spinner-container" class="loading-spinner"></div>
 </div>
 
-<!-- spells -->
+<!-- Hosted Scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.15.0/jquery.validate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/bootstrap.min.js"></script>

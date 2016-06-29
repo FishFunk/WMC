@@ -49,6 +49,26 @@ class Bootstrapper{
 					});
 				},
 				(callback)=>{
+					$('#contact-modal-tmpl')
+					.load('./templates/contact-modal-tmpl.html', (res, status, jqHXR)=>{
+						if(status==="error"){
+							callback(failureMsg);
+						} else {
+							callback();
+						}
+					});
+				},
+				(callback)=>{
+					$('#login-modal-tmpl')
+					.load('./templates/login-modal-tmpl.html', (res, status, jqHXR)=>{
+						if(status==="error"){
+							callback(failureMsg);
+						} else {
+							callback();
+						}
+					});
+				},
+				(callback)=>{
 					$('#vehicle-tmpl')
 					.load('./templates/vehicle-tmpl.html', (res, status, jqHXR)=>{
 						if(status==="error"){

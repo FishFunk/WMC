@@ -1,196 +1,198 @@
-<div class="modal-body">
-  <div class="row">
-    <legend class="col-xs-12">Order Details</legend>
-    <div class="form-group col-sm-12">
-      <label class="control-label" for="checkbox">Service Options</label>
-      <div class="form-inline">
-        <div class="checkbox">
-          <label><input type="checkbox" disabled checked>&nbsp;Exterior Hand Wash</label>&nbsp;(<strong>$<span data-bind="text: WASH_COST"></span></strong>)
+<div class="modal-content">
+  <div class="modal-body">
+    <div class="row">
+      <legend class="col-xs-12">Order Details</legend>
+      <div class="form-group col-sm-12">
+        <label class="control-label" for="checkbox">Service Options</label>
+        <div class="form-inline">
+          <div class="checkbox">
+            <label><input type="checkbox" disabled checked>&nbsp;Exterior Hand Wash</label>&nbsp;(<strong>$<span data-bind="text: WASH_COST"></span></strong>)
+          </div>
+          <div class="checkbox">
+            <label><input type="checkbox" data-bind="checked: addShine">&nbsp;Deep Tire Clean & Shine&nbsp;</label>(<strong>$<span data-bind="text: TIRE_SHINE_COST"></span></strong>)
+          </div>
+          <div class="checkbox">
+            <label><input type="checkbox" data-bind="checked: addWax">&nbsp;Hand Wax & Buff</label>&nbsp;(<strong>$<span data-bind="text: WAX_COST"></span></strong>)
+          </div>
+          <div class="checkbox">
+            <label><input type="checkbox" data-bind="checked: addInterior">&nbsp;Full Interior</label>&nbsp;(<strong>$<span data-bind="text: INTERIOR_COST"></span></strong>)
+          </div>
+          <div data-bind="visible: addInterior" class="alert alert-info alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>Heads Up!</strong> Interior work requires you to be present so we can enter your vehicle.
+          </div>
         </div>
-        <div class="checkbox">
-          <label><input type="checkbox" data-bind="checked: addShine">&nbsp;Deep Tire Clean & Shine&nbsp;</label>(<strong>$<span data-bind="text: TIRE_SHINE_COST"></span></strong>)
-        </div>
-        <div class="checkbox">
-          <label><input type="checkbox" data-bind="checked: addWax">&nbsp;Hand Wax & Buff</label>&nbsp;(<strong>$<span data-bind="text: WAX_COST"></span></strong>)
-        </div>
-        <div class="checkbox">
-          <label><input type="checkbox" data-bind="checked: addInterior">&nbsp;Full Interior</label>&nbsp;(<strong>$<span data-bind="text: INTERIOR_COST"></span></strong>)
-        </div>
-        <div data-bind="visible: addInterior" class="alert alert-info alert-dismissible" role="alert">
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <strong>Heads Up!</strong> Interior work requires you to be present so we can enter your vehicle.
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <form id="order-details-form" data-toggle="validator" role="form" autocomplete="off">
-      <div class="form-group col-sm-4">
-        <label class="control-label">Date</label>
-        <div class='input-group date' id='datetimepicker'>
-          <input name="date" type='text' class="form-control"/>
-          <span class="input-group-addon">
-            <span class="glyphicon glyphicon-calendar"></span>
-          </span>
-        </div>
-      </div>
-      <div class="form-group col-sm-4">
-        <label class="control-label" for="select">Time Range</label>
-        <select class="form-control" data-bind="value: selectedTimeRange, foreach: timeRangeOptions">
-          <option data-bind="text: $data.range, value: $data, attr: { disabled: $data.disabled }"></option>
-        </select>
       </div>
     </div>
     <div class="row">
-      <div class="form-group col-xs-12">
-        <label class="control-label">Description</label>
-        <textarea data-bind="value: description" maxlength="250" class="form-control" placeholder="Special requests, location details, access codes, etc."></textarea>
-      </div>
-    </div>
-  </form>
-  <div class="row">
-    <legend class="col-xs-12">Vehicles</legend>
-    <div data-bind="template: { name: 'vehicle-tmpl', foreach: cars}"></div>
-    <form id="add-vehicle-form" data-toggle="validator" role="form" data-bind="visible: showAddVehicleForm, submit: OnSaveNewVehicle" autocomplete="off">
-      <div class="form-group">
-        <label class="col-sm-1 control-label">Make</label>
-        <div class="col-sm-5">
-          <input data-bind="value: make" name="make" placeholder="Volkswagen" class="form-control">
+      <form id="order-details-form" data-toggle="validator" role="form" autocomplete="off">
+        <div class="form-group col-sm-4">
+          <label class="control-label">Date</label>
+          <div class='input-group date' id='datetimepicker'>
+            <input name="date" type='text' class="form-control"/>
+            <span class="input-group-addon">
+              <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+          </div>
         </div>
-        <label class="col-sm-1 control-label">Model</label>
-        <div class="col-sm-5">
-          <input data-bind="value: model" name="model" placeholder="Golf" class="form-control">
+        <div class="form-group col-sm-4">
+          <label class="control-label" for="select">Time Range</label>
+          <select class="form-control" data-bind="value: selectedTimeRange, foreach: timeRangeOptions">
+            <option data-bind="text: $data.range, value: $data, attr: { disabled: $data.disabled }"></option>
+          </select>
         </div>
       </div>
-      <div class="form-group">
-        <label class="col-sm-1 control-label">Color</label>
-        <div class="col-sm-5">
-          <input data-bind="value: color" name="color" maxlength="12" placeholder="Silver" class="form-control">
+      <div class="row">
+        <div class="form-group col-xs-12">
+          <label class="control-label">Description</label>
+          <textarea data-bind="value: description" maxlength="250" class="form-control" placeholder="Special requests, location details, access codes, etc."></textarea>
         </div>
-        <label class="col-sm-1 control-label">Tag*</label>
-        <div class="col-sm-5">
-          <input data-bind="value: tag" name="tag" maxlength="12" placeholder="000-0000" class="form-control">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="col-sm-1 control-label">Year</label>
-        <div class="col-sm-5">
-          <select data-bind="options: carYears, value: carYear" class="form-control"></select>
-        </div>
-        <label class="control-label col-sm-1" for="select">Size</label>
-        <div class="col-sm-5">
-          <select data-bind="options: carSizes, optionsText: 'size', value: selectedCarSize" class="form-control"></select>
-        </div>
-      </div>
-      <div class="text-center">
-        <button data-bind="click: OnCancelNewVehicle" class="btn btn-default buffer-top">Cancel&nbsp;<span class="fa fa-times"></span></button>
-        <button class="btn btn-primary buffer-top" type="submit">Save&nbsp;<span class="fa fa-save"></span></button>
       </div>
     </form>
-    <div class="text-center" data-bind="visible: !showAddVehicleForm()">
-      <button data-bind="click: OnAddNewVehicle" class="btn btn-sm btn-primary">Add New&nbsp;
+    <div class="row">
+      <legend class="col-xs-12">Vehicles</legend>
+      <div data-bind="template: { name: 'vehicle-tmpl', foreach: cars}"></div>
+      <form id="add-vehicle-form" data-toggle="validator" role="form" data-bind="visible: showAddVehicleForm, submit: OnSaveNewVehicle" autocomplete="off">
+        <div class="form-group">
+          <label class="col-sm-1 control-label">Make</label>
+          <div class="col-sm-5">
+            <input data-bind="value: make" name="make" placeholder="Volkswagen" class="form-control">
+          </div>
+          <label class="col-sm-1 control-label">Model</label>
+          <div class="col-sm-5">
+            <input data-bind="value: model" name="model" placeholder="Golf" class="form-control">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-1 control-label">Color</label>
+          <div class="col-sm-5">
+            <input data-bind="value: color" name="color" maxlength="12" placeholder="Silver" class="form-control">
+          </div>
+          <label class="col-sm-1 control-label">Tag*</label>
+          <div class="col-sm-5">
+            <input data-bind="value: tag" name="tag" maxlength="12" placeholder="000-0000" class="form-control">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-1 control-label">Year</label>
+          <div class="col-sm-5">
+            <select data-bind="options: carYears, value: carYear" class="form-control"></select>
+          </div>
+          <label class="control-label col-sm-1" for="select">Size</label>
+          <div class="col-sm-5">
+            <select data-bind="options: carSizes, optionsText: 'size', value: selectedCarSize" class="form-control"></select>
+          </div>
+        </div>
+        <div class="text-center">
+          <button data-bind="click: OnCancelNewVehicle" class="btn btn-default buffer-top">Cancel&nbsp;<span class="fa fa-times"></span></button>
+          <button class="btn btn-primary buffer-top" type="submit">Save&nbsp;<span class="fa fa-save"></span></button>
+        </div>
+      </form>
+      <div class="text-center" data-bind="visible: !showAddVehicleForm()">
+        <button data-bind="click: OnAddNewVehicle" class="btn btn-sm btn-primary">Add New&nbsp;
+          <span class="fa fa-plus"></span>
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <legend class="col-xs-12">Location</legend>
+      <div data-bind="template: { name: 'location-tmpl', foreach: locations}"></div>
+      <form id="add-location-form" data-toggle="validator" role="form" data-bind="visible: showAddLocationForm, submit: OnSaveNewLocation" autocomplete="off">
+        <div class="form-group">
+          <label class="col-sm-1 control-label">Street</label>
+          <div class="col-sm-11">
+            <input data-bind="value: street" name="street" placeholder="Street" class="form-control">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-1 control-label">City</label>
+          <div class="col-sm-11">
+            <input data-bind="value: city" name="city" placeholder="City" class="form-control">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-1 control-label">State</label>
+          <div class="col-sm-3">
+            <input data-bind="value: state" name="state" maxlength="2" placeholder="XX" class="form-control">
+          </div>
+          <label class="col-sm-1 control-label">Zip</label>
+          <div class="col-sm-3">
+            <input data-bind="value: zip" name="zip" maxlength="9" placeholder="Postal Code" class="form-control">
+          </div>
+          <label class="col-sm-1 control-label">Type</label>
+          <div class="col-sm-3">
+            <select class="form-control" data-bind="options: locationTitleOptions, value: title"></select>
+          </div>
+        </div>
+        <div class="text-center">
+          <button data-bind="click: OnCancelNewLocation" class="btn btn-default buffer-top">Cancel&nbsp;<span class="fa fa-times"></span></button>
+          <button class="btn btn-primary buffer-top" type="submit">Save&nbsp;<span class="fa fa-save"></span></button>
+        </div>
+      </form>
+    </div>
+    <div class="text-center" data-bind="visible: !showAddLocationForm()">
+      <button data-bind="click: OnAddNewLocation" class="btn btn-sm btn-primary">Add New&nbsp;
         <span class="fa fa-plus"></span>
       </button>
     </div>
-  </div>
-  <div class="row">
-    <legend class="col-xs-12">Location</legend>
-    <div data-bind="template: { name: 'location-tmpl', foreach: locations}"></div>
-    <form id="add-location-form" data-toggle="validator" role="form" data-bind="visible: showAddLocationForm, submit: OnSaveNewLocation" autocomplete="off">
-      <div class="form-group">
-        <label class="col-sm-1 control-label">Street</label>
-        <div class="col-sm-11">
-          <input data-bind="value: street" name="street" placeholder="Street" class="form-control">
+    <form id="contact-details-form" data-toggle="validator" role="form" autocomplete="off">
+      <div class="row">
+        <legend class="col-xs-12">Contact</legend>
+        <div class="form-group">
+          <label class="col-sm-1 control-label">First Name</label>
+          <div class="col-sm-5">
+            <input data-bind="value: first" name="first" maxlength="30" class="form-control">
+          </div>
+          <label class="col-sm-1 control-label">Last Name</label>
+          <div class="col-sm-5">
+            <input data-bind="value: last" name="last" maxlength="30" class="form-control">
+          </div>
         </div>
       </div>
-      <div class="form-group">
-        <label class="col-sm-1 control-label">City</label>
-        <div class="col-sm-11">
-          <input data-bind="value: city" name="city" placeholder="City" class="form-control">
+      <div class="row">
+        <div class="form-group">
+          <label class="col-sm-1 control-label">Email</label>
+          <div class="col-sm-5">
+            <input data-bind="value: email, disable: disableEmailInput" name="email" type="email" maxlength="45" placeholder="johnny@appleseed.com" class="form-control">
+          </div>
+          <label class="col-sm-1 control-label">Phone</label>
+          <div class="col-sm-5">
+            <input id="phone" data-bind="value: phone" name="phone" class="form-control">
+          </div>
         </div>
-      </div>
-      <div class="form-group">
-        <label class="col-sm-1 control-label">State</label>
-        <div class="col-sm-3">
-          <input data-bind="value: state" name="state" maxlength="2" placeholder="XX" class="form-control">
-        </div>
-        <label class="col-sm-1 control-label">Zip</label>
-        <div class="col-sm-3">
-          <input data-bind="value: zip" name="zip" maxlength="9" placeholder="Postal Code" class="form-control">
-        </div>
-        <label class="col-sm-1 control-label">Type</label>
-        <div class="col-sm-3">
-          <select class="form-control" data-bind="options: locationTitleOptions, value: title"></select>
-        </div>
-      </div>
-      <div class="text-center">
-        <button data-bind="click: OnCancelNewLocation" class="btn btn-default buffer-top">Cancel&nbsp;<span class="fa fa-times"></span></button>
-        <button class="btn btn-primary buffer-top" type="submit">Save&nbsp;<span class="fa fa-save"></span></button>
       </div>
     </form>
-  </div>
-  <div class="text-center" data-bind="visible: !showAddLocationForm()">
-    <button data-bind="click: OnAddNewLocation" class="btn btn-sm btn-primary">Add New&nbsp;
-      <span class="fa fa-plus"></span>
-    </button>
-  </div>
-  <form id="contact-details-form" data-toggle="validator" role="form" autocomplete="off">
-    <div class="row">
-      <legend class="col-xs-12">Contact</legend>
-      <div class="form-group">
-        <label class="col-sm-1 control-label">First Name</label>
-        <div class="col-sm-5">
-          <input data-bind="value: first" name="first" maxlength="30" class="form-control">
-        </div>
-        <label class="col-sm-1 control-label">Last Name</label>
-        <div class="col-sm-5">
-          <input data-bind="value: last" name="last" maxlength="30" class="form-control">
-        </div>
+  </div> <!--.modal-body-->
+
+  <!-- Important notice -->
+  <div class="modal-footer">
+    <div id="order-review-panel" class="panel panel-success">
+      <div class="panel-heading">
+        <h3 class="panel-title">Please Review Your Order!</h3>
+      </div>
+      <div class="panel-body">
+        <p data-bind="html: orderSummary"></p>
+        <p>Total: $<strong data-bind="text: orderTotal"></strong>.</p>
       </div>
     </div>
-    <div class="row">
-      <div class="form-group">
-        <label class="col-sm-1 control-label">Email</label>
-        <div class="col-sm-5">
-          <input data-bind="value: email, disable: disableEmailInput" name="email" type="email" maxlength="45" placeholder="johnny@appleseed.com" class="form-control">
-        </div>
-        <label class="col-sm-1 control-label">Phone</label>
-        <div class="col-sm-5">
-          <input id="phone" data-bind="value: phone" name="phone" class="form-control">
-        </div>
+
+    <!-- Submit -->
+    <div class="control-group">
+      <div class="controls">
+        <center id="incomplete-form-alert" class="alert alert-danger fade in" role="alert" hidden>
+          <strong>Whoops!</strong>&nbsp;<span data-bind="text: incompleteFormMsg"></span>
+        </center>
+        <center class="hidden-xs">
+          <button data-bind="click: OnFormCancel" class="btn btn-lg btn-default">Cancel</button>
+          <button class="btn btn-lg btn-default" data-bind="click: OnSubmit.bind($data,false)">Pay Later</button>
+          <button class="btn btn-lg btn-primary" data-bind="click: OnSubmit.bind($data,true)">Pay Now</button>
+        </center>
+        <center class="hidden-sm hidden-md hidden-lg">
+          <button data-bind="click: OnFormCancel" class="btn btn-md btn-default">Cancel</button>
+          <button class="btn btn-md btn-default" data-bind="click: OnSubmit.bind($data,false)">Pay Later</button>
+          <button class="btn btn-md btn-primary" data-bind="click: OnSubmit.bind($data,true)">Pay Now</button>
+        </center>
       </div>
-    </div>
-  </form>
-</div> <!--.modal-body-->
-
-<!-- Important notice -->
-<div class="modal-footer">
-  <div id="order-review-panel" class="panel panel-success">
-    <div class="panel-heading">
-      <h3 class="panel-title">Please Review Your Order!</h3>
-    </div>
-    <div class="panel-body">
-      <p data-bind="html: orderSummary"></p>
-      <p>Total: $<strong data-bind="text: orderTotal"></strong>.</p>
-    </div>
-  </div>
-
-  <!-- Submit -->
-  <div class="control-group">
-    <div class="controls">
-      <center id="incomplete-form-alert" class="alert alert-danger fade in" role="alert" hidden>
-        <strong>Whoops!</strong>&nbsp;<span data-bind="text: incompleteFormMsg"></span>
-      </center>
-      <center class="hidden-xs">
-        <button data-bind="click: OnFormCancel" class="btn btn-lg btn-default">Cancel</button>
-        <button class="btn btn-lg btn-primary" data-bind="click: OnSubmit.bind($data,true)">Pay Now</button>
-        <button class="btn btn-lg btn-secondary" data-bind="click: OnSubmit.bind($data,false)">Pay Later</button>
-      </center>
-      <center class="hidden-sm hidden-md hidden-lg">
-        <button data-bind="click: OnFormCancel" class="btn btn-md btn-default">Cancel</button>
-        <button class="btn btn-md btn-primary" data-bind="click: OnSubmit.bind($data,true)">Pay Now</button>
-        <button class="btn btn-md btn-secondary" data-bind="click: OnSubmit.bind($data,false)">Pay Later</button>
-      </center>
     </div>
   </div>
 </div>

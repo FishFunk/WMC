@@ -58,6 +58,22 @@ var Bootstrapper = function () {
 					}
 				});
 			}, function (callback) {
+				$('#contact-modal-tmpl').load('./templates/contact-modal-tmpl.html', function (res, status, jqHXR) {
+					if (status === "error") {
+						callback(failureMsg);
+					} else {
+						callback();
+					}
+				});
+			}, function (callback) {
+				$('#login-modal-tmpl').load('./templates/login-modal-tmpl.html', function (res, status, jqHXR) {
+					if (status === "error") {
+						callback(failureMsg);
+					} else {
+						callback();
+					}
+				});
+			}, function (callback) {
 				$('#vehicle-tmpl').load('./templates/vehicle-tmpl.html', function (res, status, jqHXR) {
 					if (status === "error") {
 						callback(failureMsg);
@@ -1080,7 +1096,7 @@ var OrderFormViewModel = function () {
 					var carSize = _.find(Constants.CAR_SIZES, function (obj) {
 						return obj.size == car.size || obj.multiplier == car.multiplier;
 					});
-					summary += $.validator.format("<strong>{5} {6}</strong><br>" + "Exterior Hand Wash<br>{0}{1}{2}{3} = {4}x cost multiplier.<br>", self.addShine() ? "Deep Tire Clean & Shine<br>" : "", self.addWax() ? "Hand Wax & Buff<br>" : "", self.addInterior() ? "Full Interior Cleaning<br>" : "", carSize.size, carSize.multiplier.toString(), car.make, car.model);
+					summary += $.validator.format("<strong>{7} between {8}</strong><hr>" + "<strong>{5} {6}</strong><br>" + "Exterior Hand Wash<br>{0}{1}{2}{3} = {4}x cost multiplier.<br>", self.addShine() ? "Deep Tire Clean & Shine<br>" : "", self.addWax() ? "Hand Wax & Buff<br>" : "", self.addInterior() ? "Full Interior Cleaning<br>" : "", carSize.size, carSize.multiplier.toString(), car.make, car.model, self.date(), self.selectedTimeRange().range);
 				}
 			});
 
@@ -1427,6 +1443,8 @@ var OrderFormViewModel = function () {
 			var hourOfDay = moment().hour();
 			var today = moment().format(Constants.DATE_FORMAT);
 			var selectedDate = momentObj.format(Constants.DATE_FORMAT);
+
+			this.date(momentObj.format("ddd MMM Do"));
 
 			var appointments = this.storageHelper.AppointmentsByDate[selectedDate] || [];
 

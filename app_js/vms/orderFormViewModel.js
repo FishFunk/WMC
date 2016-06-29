@@ -114,7 +114,9 @@ class OrderFormViewModel {
 			self.cars().forEach((car)=>{
 				if(car.selected()){
 					var carSize = _.find(Constants.CAR_SIZES, (obj) => obj.size == car.size || obj.multiplier == car.multiplier);
-					summary += $.validator.format("<strong>{5} {6}</strong><br>" +
+					summary += $.validator.format(
+						"<strong>{7} between {8}</strong><hr>" +
+						"<strong>{5} {6}</strong><br>" +
 						"Exterior Hand Wash<br>{0}{1}{2}{3} = {4}x cost multiplier.<br>", 
 						(self.addShine() ? "Deep Tire Clean & Shine<br>" : ""),
 						(self.addWax() ? "Hand Wax & Buff<br>" : ""),
@@ -122,7 +124,9 @@ class OrderFormViewModel {
 						carSize.size,
 						carSize.multiplier.toString(),
 						car.make,
-						car.model);
+						car.model,
+						self.date(),
+						self.selectedTimeRange().range);
 				}
 			});
 
@@ -433,6 +437,8 @@ class OrderFormViewModel {
 		var hourOfDay = moment().hour();
 		var today = moment().format(Constants.DATE_FORMAT);
 		var selectedDate = momentObj.format(Constants.DATE_FORMAT);
+
+		this.date(momentObj.format("ddd MMM Do"));
 
 		var appointments = this.storageHelper.AppointmentsByDate[selectedDate] || [];
 
