@@ -336,13 +336,13 @@ class OrderFormViewModel {
 
 	_onOrderFailure(error){
 		spinner.Hide();
-		bootbox.alert(Constants.ORDER_FAILURE_MSG);
-		console.log(error);			
+		dialogPresenter.ShowOrderFailure();
+		console.log(error);
 	}
 
 	_onOrderSuccess(){
 		spinner.Hide();
-		bootbox.alert(Constants.ORDER_SUCCESS_MSG);
+		dialogPresenter.ShowOrderSuccess();
 		this.OnFormCancel();		
 	}
 

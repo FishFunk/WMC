@@ -1,7 +1,4 @@
-const ORDER_SUCCESS_MSG = "Thank you! Your order has been placed. Please check your email for confirmation.",
-      ORDER_FAILURE_MSG = "We're really sorry about this... Looks like there was a problem submitting your order. Please contact us for support.",
-      BAD_ZIP_MSG = s.sprintf("Sorry about this but we don't service your area yet! We're still young and growing so check back soon. Feel free to <a href=%s>contact us</a> so we know where to target next. <BR><BR> Sincerely, <BR> - The WMC Team", "javascript:$('.modal').removeClass('fade');$('.modal').modal('hide');$('#contact-modal').modal('show');$('.modal').addClass('fade');"),
-      ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
+const ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
       DATE_FORMAT = "MM/DD/YY",
       DEFAULT_JOB_TIME_MINS = 120,
       MAX_JOB_TIME_PER_DAY_MINS = 720,

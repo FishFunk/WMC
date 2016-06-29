@@ -4,6 +4,18 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     </div>
     <div class="modal-body">
+        <center id="login-form-alert" class="alert alert-danger fade in" role="alert" hidden>
+            <button type="button" class="close" data-bind="click: OnDismissMsg">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <span data-bind="text: loginFormMsg"></span>
+        </center>
+        <center id="login-form-info" class="alert alert-info fade in" role="alert" hidden>
+            <button type="button" class="close" data-bind="click: OnDismissMsg">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <span data-bind="text: loginFormMsg"></span>
+        </center>
         <div data-bind="visible: ShowForgotPwd">
             <form id="forgot-pwd-form" data-bind="submit: OnSubmitForgotPwd">
                 <div class="row">

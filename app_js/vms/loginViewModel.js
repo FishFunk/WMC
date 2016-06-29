@@ -8,10 +8,14 @@ class LogInViewModel {
 		this.$loginForm = $("#login-form");
 		this.$createAcctForm = $("#create-acct-form");
 		this.$forgotPwdForm = $("#forgot-pwd-form");
+		this.$loginFormAlert = $("#login-form-alert");
+		this.$loginFormInfo = $("#login-form-info");
 
 		this.ShowLogin = ko.observable(true);
 		this.ShowCreateAcct = ko.observable(false);
 		this.ShowForgotPwd = ko.observable(false);
+
+		this.loginFormMsg = ko.observable("");
 
 		this.email = ko.observable();
 		this.pwd = ko.observable();
@@ -20,9 +24,14 @@ class LogInViewModel {
 		this.lastName = ko.observable("");
 		this.phone = ko.observable("");
 		this.verifyPwd = ko.observable("");
-		this.verifyEmail = ko.observableArray("");
+		this.verifyEmail = ko.observable("");
 
 		this._initValidation();
+	}
+
+	OnDismissMsg(){
+		this.$loginFormAlert.hide();
+		this.$loginFormInfo.hide();
 	}
 
 	OnContinueAsGuest(){
@@ -56,9 +65,11 @@ class LogInViewModel {
 				possibleError=>{
 					spinner.Hide();
 					if(possibleError === Constants.ASYNC_INTERUPTION_MARKER){
-						bootbox.alert("That email is already in use! Did you forget your password?");
+						self.loginFormMsg("That email is already in use! Did you forget your password?");
+						self.$loginFormAlert.show();
 					} else if (possibleError) {
-						bootbox.alert("There was a problem creating your account.");
+						self.loginFormMsg("There was a problem creating your account.");
+						self.$loginFormAlert.show();
 					} else {
 						self._toggleModals();
 					}
@@ -77,15 +88,16 @@ class LogInViewModel {
 						self._resetForms();
 						self._toggleModals();
 					} else {
-						bootbox.alert("Hmmm, we didn't find an account matching those credentials. \
+						self.loginFormMsg("Hmmm, we didn't find an account matching those credentials. \
 							Please verify your info and try again or click the 'Forgot Password' link.");
+						self.$loginFormAlert.show()
 						self._resetForms();
-						self.$loginForm.valid();
 					}
 				})
 				.fail(err =>{
 					self._resetForms();
-					bootbox.alert("Uh oh... something went wrong!");
+					self.loginFormMsg("Uh oh... something went wrong.");
+					self.$loginFormAlert.show()
 				})
 				.always(()=>spinner.Hide());
 		}
@@ -111,12 +123,14 @@ class LogInViewModel {
 			spinner.Show();
 			this.webSvc.ForgotPassword(this.email())
 				.then(()=>{
-					bootbox.alert("Nice! Check your email ;)");
+					self.loginFormMsg("Nice! Check your email ;)");
+					self.$loginFormInfo.show();
 					self._resetForms();
 					self.OnCancelForgotPwd();
 				})
 				.fail(err => {
-					bootbox.alert("Uh oh, there was a problem...");
+					self.loginFormMsg("Uh oh... something went wrong.");
+					self.$loginFormAlert.show();
 					console.log(err)
 					self._resetForms();
 				})

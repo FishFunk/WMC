@@ -7,6 +7,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // global variables
 var spinner = null;
 var environment = "debug";
+var dialogPresenter = null;
 
 var Bootstrapper = function () {
 	function Bootstrapper() {
@@ -19,6 +20,7 @@ var Bootstrapper = function () {
 			var deferred = $.Deferred();
 			var webSvc = null;
 			spinner = new LoadingSpinner();
+			dialogPresenter = new DialogPresenter();
 
 			// Closes the Responsive Menu on Menu Item Click
 			$('.navbar-collapse ul li a').click(function () {
@@ -248,10 +250,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ORDER_SUCCESS_MSG = "Thank you! Your order has been placed. Please check your email for confirmation.",
-    ORDER_FAILURE_MSG = "We're really sorry about this... Looks like there was a problem submitting your order. Please contact us for support.",
-    BAD_ZIP_MSG = s.sprintf("Sorry about this but we don't service your area yet! We're still young and growing so check back soon. Feel free to <a href=%s>contact us</a> so we know where to target next. <BR><BR> Sincerely, <BR> - The WMC Team", "javascript:$('.modal').removeClass('fade');$('.modal').modal('hide');$('#contact-modal').modal('show');$('.modal').addClass('fade');"),
-    ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
+var ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
     DATE_FORMAT = "MM/DD/YY",
     DEFAULT_JOB_TIME_MINS = 120,
     MAX_JOB_TIME_PER_DAY_MINS = 720,
@@ -432,6 +431,47 @@ var Constants = function () {
   }]);
 
   return Constants;
+}();
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var DialogPresenter = function () {
+	function DialogPresenter() {
+		_classCallCheck(this, DialogPresenter);
+
+		this.title = ko.observable("");
+		this.body = ko.observable("");
+		this.$modal = $('#generic-modal');
+	}
+
+	_createClass(DialogPresenter, [{
+		key: "ShowOrderFailure",
+		value: function ShowOrderFailure() {
+			this.title("Oh no :(");
+			this.body("We're really sorry about this... Looks like there was a problem submitting your order. Please contact us for support.");
+			this.$modal.modal('show');
+		}
+	}, {
+		key: "ShowOrderSuccess",
+		value: function ShowOrderSuccess() {
+			this.title("Thank you!");
+			this.body("Your order has been placed. Please check your email for confirmation.");
+			this.$modal.modal('show');
+		}
+	}, {
+		key: "ShowBadZip",
+		value: function ShowBadZip() {
+			this.title("Darn! We don't service that area yet.");
+			this.body(s.sprintf('We\'re still young and growing so check back soon. Feel free to \
+              <a href=%s>contact us</a> so we know where to target next.', "javascript:$('.modal').removeClass('fade');$('.modal').modal('hide');$('#contact-modal').modal('show');$('.modal').addClass('fade');"));
+			this.$modal.modal('show');
+		}
+	}]);
+
+	return DialogPresenter;
 }();
 "use strict";
 
@@ -686,10 +726,14 @@ var LogInViewModel = function () {
 		this.$loginForm = $("#login-form");
 		this.$createAcctForm = $("#create-acct-form");
 		this.$forgotPwdForm = $("#forgot-pwd-form");
+		this.$loginFormAlert = $("#login-form-alert");
+		this.$loginFormInfo = $("#login-form-info");
 
 		this.ShowLogin = ko.observable(true);
 		this.ShowCreateAcct = ko.observable(false);
 		this.ShowForgotPwd = ko.observable(false);
+
+		this.loginFormMsg = ko.observable("");
 
 		this.email = ko.observable();
 		this.pwd = ko.observable();
@@ -698,12 +742,18 @@ var LogInViewModel = function () {
 		this.lastName = ko.observable("");
 		this.phone = ko.observable("");
 		this.verifyPwd = ko.observable("");
-		this.verifyEmail = ko.observableArray("");
+		this.verifyEmail = ko.observable("");
 
 		this._initValidation();
 	}
 
 	_createClass(LogInViewModel, [{
+		key: "OnDismissMsg",
+		value: function OnDismissMsg() {
+			this.$loginFormAlert.hide();
+			this.$loginFormInfo.hide();
+		}
+	}, {
 		key: "OnContinueAsGuest",
 		value: function OnContinueAsGuest() {
 			this._resetForms();
@@ -734,9 +784,11 @@ var LogInViewModel = function () {
 				async.series([this._checkIfEmailExists.bind(this), this._createNewUser.bind(this)], function (possibleError) {
 					spinner.Hide();
 					if (possibleError === Constants.ASYNC_INTERUPTION_MARKER) {
-						bootbox.alert("That email is already in use! Did you forget your password?");
+						self.loginFormMsg("That email is already in use! Did you forget your password?");
+						self.$loginFormAlert.show();
 					} else if (possibleError) {
-						bootbox.alert("There was a problem creating your account.");
+						self.loginFormMsg("There was a problem creating your account.");
+						self.$loginFormAlert.show();
 					} else {
 						self._toggleModals();
 					}
@@ -755,14 +807,15 @@ var LogInViewModel = function () {
 						self._resetForms();
 						self._toggleModals();
 					} else {
-						bootbox.alert("Hmmm, we didn't find an account matching those credentials. \
+						self.loginFormMsg("Hmmm, we didn't find an account matching those credentials. \
 							Please verify your info and try again or click the 'Forgot Password' link.");
+						self.$loginFormAlert.show();
 						self._resetForms();
-						self.$loginForm.valid();
 					}
 				}).fail(function (err) {
 					self._resetForms();
-					bootbox.alert("Uh oh... something went wrong!");
+					self.loginFormMsg("Uh oh... something went wrong.");
+					self.$loginFormAlert.show();
 				}).always(function () {
 					return spinner.Hide();
 				});
@@ -791,11 +844,13 @@ var LogInViewModel = function () {
 				var self = this;
 				spinner.Show();
 				this.webSvc.ForgotPassword(this.email()).then(function () {
-					bootbox.alert("Nice! Check your email ;)");
+					self.loginFormMsg("Nice! Check your email ;)");
+					self.$loginFormInfo.show();
 					self._resetForms();
 					self.OnCancelForgotPwd();
 				}).fail(function (err) {
-					bootbox.alert("Uh oh, there was a problem...");
+					self.loginFormMsg("Uh oh... something went wrong.");
+					self.$loginFormAlert.show();
 					console.log(err);
 					self._resetForms();
 				}).always(function () {
@@ -931,6 +986,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // Main ViewModel Class
 
 var MainViewModel = function () {
+	_createClass(MainViewModel, [{
+		key: "DialogPresenter",
+		get: function get() {
+			return dialogPresenter;
+		}
+	}]);
+
 	function MainViewModel(storageHelper, logInVm, orderFormVm) {
 		_classCallCheck(this, MainViewModel);
 
@@ -970,7 +1032,7 @@ var MainViewModel = function () {
 				this.zipVerified(true);
 				this.storageHelper.ZipCode = this.zip();
 			} else {
-				bootbox.alert(Constants.BAD_ZIP_MSG);
+				dialogPresenter.ShowBadZip();
 			}
 		}
 	}]);
@@ -1325,14 +1387,14 @@ var OrderFormViewModel = function () {
 		key: '_onOrderFailure',
 		value: function _onOrderFailure(error) {
 			spinner.Hide();
-			bootbox.alert(Constants.ORDER_FAILURE_MSG);
+			dialogPresenter.ShowOrderFailure();
 			console.log(error);
 		}
 	}, {
 		key: '_onOrderSuccess',
 		value: function _onOrderSuccess() {
 			spinner.Hide();
-			bootbox.alert(Constants.ORDER_SUCCESS_MSG);
+			dialogPresenter.ShowOrderSuccess();
 			this.OnFormCancel();
 		}
 	}, {

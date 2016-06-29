@@ -1,12 +1,14 @@
 // global variables
 var spinner = null;
 var environment = "debug";
+var dialogPresenter = null;
 
 class Bootstrapper{
 	static Run(){
 		var deferred = $.Deferred();
 		var webSvc = null;
 		spinner = new LoadingSpinner();
+		dialogPresenter = new DialogPresenter();
 
 		// Closes the Responsive Menu on Menu Item Click
 		$('.navbar-collapse ul li a').click(()=>{

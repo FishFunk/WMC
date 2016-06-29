@@ -1,5 +1,10 @@
 // Main ViewModel Class
 class MainViewModel {
+
+	get DialogPresenter(){
+		return dialogPresenter;
+	}
+
 	constructor(storageHelper, logInVm, orderFormVm){
 		
 		// observables
@@ -35,7 +40,7 @@ class MainViewModel {
 			this.zipVerified(true);
 			this.storageHelper.ZipCode = this.zip();
 		} else {
-			bootbox.alert(Constants.BAD_ZIP_MSG);
+			dialogPresenter.ShowBadZip();
 		}
 	}
 }
