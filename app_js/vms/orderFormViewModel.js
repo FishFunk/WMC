@@ -52,7 +52,7 @@ class OrderFormViewModel {
 		];
 		this.selectedTimeRange = ko.observable(this.timeRangeOptions[0]);
 
-		this.date = ko.observable("");
+		this.dateMoment = null;
 
 		// Car Info
 		this.showAddVehicleForm = ko.observable(false);
@@ -125,7 +125,7 @@ class OrderFormViewModel {
 						carSize.multiplier.toString(),
 						car.make,
 						car.model,
-						self.date(),
+						self.dateMoment.format("ddd MMM Do"),
 						self.selectedTimeRange().range);
 				}
 			});
@@ -430,6 +430,7 @@ class OrderFormViewModel {
 
 	_onDatepickerChange(event){
 		if(event){
+			this.dateMoment = event.date;
 			this._updatePickerAndTimerangeOptions(event.date);
 		}
 	}
@@ -438,8 +439,6 @@ class OrderFormViewModel {
 		var hourOfDay = moment().hour();
 		var today = moment().format(Constants.DATE_FORMAT);
 		var selectedDate = momentObj.format(Constants.DATE_FORMAT);
-
-		this.date(momentObj.format("ddd MMM Do"));
 
 		var appointments = this.storageHelper.AppointmentsByDate[selectedDate] || [];
 
@@ -531,10 +530,12 @@ class OrderFormViewModel {
 	}
 
 	_makeAppointmentSchema(){
+		const selectedCars = _.filter(this.cars(), (car)=> car.selected());
+		const selectedLocation = _.find(this.locations(), (loc)=> loc.selected());
 		return {
-			cars: [this._makeCarSchema()],
-			date: new Date(this.date()),
-			location: this._makeLocationSchema(),
+			cars: selectedCars,
+			date: this.dateMoment.toDate(),
+			location: selectedLocation,
 			price: this.orderTotal(),
 			services: this._buildServicesArray(),
 			timeEstimate: this._getTimeEstimate(),

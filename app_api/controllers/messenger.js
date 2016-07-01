@@ -18,7 +18,12 @@ const br = "<br/>";
 const strong = "<strong>";
 const _strong = "</strong>";
 
-const logoUrl = path.join('../../public/img', 'wmc_logo.jpg');
+const DEBUG_MODE = process.env.NODE_ENV == null;
+
+const logoUrl = DEBUG_MODE ? 
+	"https://wmc-test.herokuapp.com/img/wmc_logo.png" : 
+	"https://wmc-prod.herokuapp.com/img/wmc_logo.png";
+	
 const hrefPhone = "+17034736358";
 const displayPhone = "+703.473.6358";
 const contactEmail = "contact@washmycarva.com";
@@ -26,7 +31,6 @@ const noReplyEmail = "donotreply@washmycarva.com";
 const appUrl = "www.washmycarva.com";
 
 var transport;
-const DEBUG_MODE = process.env.NODE_ENV == null;
 
 if(DEBUG_MODE){
 	console.log("Messenger controller running in DEBUG MODE");

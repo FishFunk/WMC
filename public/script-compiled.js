@@ -1095,7 +1095,7 @@ var OrderFormViewModel = function () {
 		this.timeRangeOptions = [Constants.MORNING_TIME_RANGE, Constants.AFTERNOON_TIME_RANGE, Constants.EVENING_TIME_RANGE, Constants.NIGHT_TIME_RANGE];
 		this.selectedTimeRange = ko.observable(this.timeRangeOptions[0]);
 
-		this.date = ko.observable("");
+		this.dateMoment = null;
 
 		// Car Info
 		this.showAddVehicleForm = ko.observable(false);
@@ -1158,7 +1158,7 @@ var OrderFormViewModel = function () {
 					var carSize = _.find(Constants.CAR_SIZES, function (obj) {
 						return obj.size == car.size || obj.multiplier == car.multiplier;
 					});
-					summary += $.validator.format("<strong>{7} between {8}</strong><hr>" + "<strong>{5} {6}</strong><br>" + "Exterior Hand Wash<br>{0}{1}{2}{3} = {4}x cost multiplier.<br>", self.addShine() ? "Deep Tire Clean & Shine<br>" : "", self.addWax() ? "Hand Wax & Buff<br>" : "", self.addInterior() ? "Full Interior Cleaning<br>" : "", carSize.size, carSize.multiplier.toString(), car.make, car.model, self.date(), self.selectedTimeRange().range);
+					summary += $.validator.format("<strong>{7} between {8}</strong><hr>" + "<strong>{5} {6}</strong><br>" + "Exterior Hand Wash<br>{0}{1}{2}{3} = {4}x cost multiplier.<br>", self.addShine() ? "Deep Tire Clean & Shine<br>" : "", self.addWax() ? "Hand Wax & Buff<br>" : "", self.addInterior() ? "Full Interior Cleaning<br>" : "", carSize.size, carSize.multiplier.toString(), car.make, car.model, self.dateMoment.format("ddd MMM Do"), self.selectedTimeRange().range);
 				}
 			});
 
@@ -1497,6 +1497,7 @@ var OrderFormViewModel = function () {
 		key: '_onDatepickerChange',
 		value: function _onDatepickerChange(event) {
 			if (event) {
+				this.dateMoment = event.date;
 				this._updatePickerAndTimerangeOptions(event.date);
 			}
 		}
@@ -1506,8 +1507,6 @@ var OrderFormViewModel = function () {
 			var hourOfDay = moment().hour();
 			var today = moment().format(Constants.DATE_FORMAT);
 			var selectedDate = momentObj.format(Constants.DATE_FORMAT);
-
-			this.date(momentObj.format("ddd MMM Do"));
 
 			var appointments = this.storageHelper.AppointmentsByDate[selectedDate] || [];
 
@@ -1611,10 +1610,16 @@ var OrderFormViewModel = function () {
 	}, {
 		key: '_makeAppointmentSchema',
 		value: function _makeAppointmentSchema() {
+			var selectedCars = _.filter(this.cars(), function (car) {
+				return car.selected();
+			});
+			var selectedLocation = _.find(this.locations(), function (loc) {
+				return loc.selected();
+			});
 			return {
-				cars: [this._makeCarSchema()],
-				date: new Date(this.date()),
-				location: this._makeLocationSchema(),
+				cars: selectedCars,
+				date: this.dateMoment.toDate(),
+				location: selectedLocation,
 				price: this.orderTotal(),
 				services: this._buildServicesArray(),
 				timeEstimate: this._getTimeEstimate(),
