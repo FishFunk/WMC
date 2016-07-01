@@ -29,7 +29,7 @@
         <div class="form-group col-sm-4">
           <label class="control-label">Date</label>
           <div class='input-group date' id='datetimepicker'>
-            <input name="date" type='text' class="form-control"/>
+            <input name="date" type='text' class="form-control" readonly/>
             <span class="input-group-addon">
               <span class="glyphicon glyphicon-calendar"></span>
             </span>
@@ -117,7 +117,7 @@
           </div>
           <label class="col-sm-1 control-label">Zip</label>
           <div class="col-sm-3">
-            <input data-bind="value: zip" name="zip" maxlength="9" placeholder="Postal Code" class="form-control">
+            <input data-bind="value: zip" name="zip" type="tel" pattern="[0-9]*" maxlength="9" placeholder="Postal Code" class="form-control">
           </div>
           <label class="col-sm-1 control-label">Type</label>
           <div class="col-sm-3">
@@ -157,7 +157,7 @@
           </div>
           <label class="col-sm-1 control-label">Phone</label>
           <div class="col-sm-5">
-            <input id="phone" data-bind="value: phone" name="phone" class="form-control">
+            <input id="phone" data-bind="value: phone" name="phone" type="tel" pattern="[0-9]*" class="form-control">
           </div>
         </div>
       </div>

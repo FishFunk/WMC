@@ -84,7 +84,7 @@
                     <div data-bind="visible: !zipVerified()">
                       <h4>Make sure we service your area</h4>
                       <form id="verify-zip" class="input-group" data-bind="submit: OnVerifyZip">
-                        <input type="text" class="form-control" placeholder="Zipcode" data-bind="value: zip" maxlength="5">
+                        <input type="tel" pattern="[0-9]*" class="form-control" placeholder="Zipcode" data-bind="value: zip" maxlength="5">
                         <span class="input-group-btn">
                           <button class="btn btn-default" type="submit">OK</button>
                         </span>

@@ -54,6 +54,8 @@ a.ghost-btn:focus{
 	outline:none;
 }
 
+input[readonly] { background-color: white !important; }
+
 .navbar-default{background-color:#222;}
 .navbar-default .navbar-brand{color:#00acea;font-family:"BOLDfinger";}
 .navbar-default .navbar-brand:hover,.navbar-default .navbar-default .navbar-brand:active,.navbar-default .navbar-brand.active{color:#000fff}

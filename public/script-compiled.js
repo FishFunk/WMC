@@ -1181,7 +1181,8 @@ var OrderFormViewModel = function () {
 				maxDate: moment().add(60, 'days'),
 				format: Constants.DATE_FORMAT,
 				allowInputToggle: true,
-				focusOnShow: false
+				focusOnShow: false,
+				ignoreReadonly: true
 			}).on('dp.change', self._onDatepickerChange.bind(self));
 
 			self._initValidation();
@@ -1526,16 +1527,16 @@ var OrderFormViewModel = function () {
 
 			Constants.MORNING_TIME_RANGE.disabled(_.reduce(morningAppts, function (total, appt) {
 				return total + appt.timeEstimate;
-			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay > 11);
+			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 11);
 			Constants.AFTERNOON_TIME_RANGE.disabled(_.reduce(afternoonAppts, function (total, appt) {
 				return total + appt.timeEstimate;
-			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay > 14);
+			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 14);
 			Constants.EVENING_TIME_RANGE.disabled(_.reduce(eveningAppts, function (total, appt) {
 				return total + appt.timeEstimate;
-			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay > 17);
+			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 17);
 			Constants.NIGHT_TIME_RANGE.disabled(_.reduce(nightAppts, function (total, appt) {
 				return total + appt.timeEstimate;
-			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay > 20);
+			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 20);
 
 			for (var i = 0; i < this.timeRangeOptions.length; i++) {
 				var option = this.timeRangeOptions[i];
