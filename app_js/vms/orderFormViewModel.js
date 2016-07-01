@@ -274,6 +274,12 @@ class OrderFormViewModel {
 			this.addWax(false);
 			this.addInterior(false);
 			this.showBillingAddress(false);
+			this.first("");
+			this.last("");
+			this.email("");
+			this.phone("");
+			this.locations([]);
+			this.cars([]);
 			this.description("");
 			this.showAddVehicleForm(false);
 			this.showAddLocationForm(false);

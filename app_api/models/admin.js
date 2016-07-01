@@ -6,8 +6,7 @@ var adminSchema = new mongoose.Schema({
 	email: { type: String, required: true },
 	phone: { type: String, required: true },
 	usr: { type: String, required: true, minlength: 8},
-	pwd: { type: String, required: true, minlength: 12},
-	lastLogin: Date
+	pwd: { type: String, required: true, minlength: 8}
 });
 
 mongoose.model('Admin', adminSchema);
