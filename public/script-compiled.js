@@ -1332,6 +1332,12 @@ var OrderFormViewModel = function () {
 				this.addWax(false);
 				this.addInterior(false);
 				this.showBillingAddress(false);
+				this.first("");
+				this.last("");
+				this.email("");
+				this.phone("");
+				this.locations([]);
+				this.cars([]);
 				this.description("");
 				this.showAddVehicleForm(false);
 				this.showAddLocationForm(false);
@@ -1622,7 +1628,7 @@ var OrderFormViewModel = function () {
 				services: this._buildServicesArray(),
 				timeEstimate: this._getTimeEstimate(),
 				timeRange: this.selectedTimeRange().range,
-				timeRangeEnum: this.selectedTimeRange().key,
+				timeRangeKey: this.selectedTimeRange().key,
 				description: this.description()
 			};
 		}
