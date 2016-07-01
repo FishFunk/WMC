@@ -38,6 +38,12 @@
             </form>               
         </div>
         <div data-bind="visible: ShowCreateAcct">
+            <center id="login-form-info" class="alert alert-info fade in" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <span>Creating an account makes future visits easier by remembering certain information. Don't worry, we will never save your credit card information!</span>
+            </center>
             <form id="create-acct-form" data-bind="submit: OnCreateAcct">
                 <div class="row">
                     <div class="form-group">

@@ -102,11 +102,7 @@ class OrderFormViewModel {
 				}
 			});
 
-			if(total < 10){
-				return total.toPrecision(3);
-			}
-
-			return total >= 100 ? total.toPrecision(5) : total.toPrecision(4);
+			return Math.floor(total);
 		});
 
 		this.orderSummary = ko.computed(()=>{
@@ -269,6 +265,7 @@ class OrderFormViewModel {
 
 	OnFormCancel(){
 		try{
+			this.storageHelper.LoggedInUser = null;
 			this.$orderFormModal.modal('hide');
 			window.location = "#page-top";
 
@@ -298,8 +295,7 @@ class OrderFormViewModel {
 	_openCheckout(){
 		this.stripeHandler.open({
 			key: "pk_test_luqEThs0vblV173fgAHgPZBG",
-			name: 'WMC',
-			description: '2 widgets',
+			name: 'WMC Checkout',
 			amount: this.orderTotal() * 100,
 			zipCode: true,
 			email: this.email()
@@ -540,7 +536,7 @@ class OrderFormViewModel {
 			services: this._buildServicesArray(),
 			timeEstimate: this._getTimeEstimate(),
 			timeRange: this.selectedTimeRange().range,
-			timeRangeEnum: this.selectedTimeRange().key,
+			timeRangeKey: this.selectedTimeRange().key,
 			description: this.description()
 		}
 	}

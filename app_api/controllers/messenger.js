@@ -20,10 +20,10 @@ const _strong = "</strong>";
 
 const DEBUG_MODE = process.env.NODE_ENV == null;
 
-const logoUrl = DEBUG_MODE ? 
-	"https://wmc-test.herokuapp.com/img/wmc_logo.png" : 
-	"https://wmc-prod.herokuapp.com/img/wmc_logo.png";
-	
+const logoUrl = process.env.NODE_ENV == 'production' ? 
+	"https://wmc-prod.herokuapp.com/img/wmc_logo.png" :
+	"https://wmc-test.herokuapp.com/img/wmc_logo.png";
+
 const hrefPhone = "+17034736358";
 const displayPhone = "+703.473.6358";
 const contactEmail = "contact@washmycarva.com";

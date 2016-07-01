@@ -756,6 +756,7 @@ var LogInViewModel = function () {
 	}, {
 		key: "OnContinueAsGuest",
 		value: function OnContinueAsGuest() {
+			this.storageHelper.LoggedInUser = null;
 			this._resetForms();
 			this._toggleModals();
 		}
@@ -790,6 +791,7 @@ var LogInViewModel = function () {
 						self.loginFormMsg("There was a problem creating your account.");
 						self.$loginFormAlert.show();
 					} else {
+						self.OnCancelCreateAcct();
 						self._toggleModals();
 					}
 				});
@@ -1144,11 +1146,7 @@ var OrderFormViewModel = function () {
 				}
 			});
 
-			if (total < 10) {
-				return total.toPrecision(3);
-			}
-
-			return total >= 100 ? total.toPrecision(5) : total.toPrecision(4);
+			return Math.floor(total);
 		});
 
 		this.orderSummary = ko.computed(function () {
@@ -1325,6 +1323,7 @@ var OrderFormViewModel = function () {
 		key: 'OnFormCancel',
 		value: function OnFormCancel() {
 			try {
+				this.storageHelper.LoggedInUser = null;
 				this.$orderFormModal.modal('hide');
 				window.location = "#page-top";
 
@@ -1355,8 +1354,7 @@ var OrderFormViewModel = function () {
 		value: function _openCheckout() {
 			this.stripeHandler.open({
 				key: "pk_test_luqEThs0vblV173fgAHgPZBG",
-				name: 'WMC',
-				description: '2 widgets',
+				name: 'WMC Checkout',
 				amount: this.orderTotal() * 100,
 				zipCode: true,
 				email: this.email()

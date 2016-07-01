@@ -34,7 +34,7 @@ module.exports.updateUser = (req, res)=>{
 
 module.exports.getFutureApptDatesAndTimes = (req, res)=>{
 	Usr.find()
-	   .select('appointments.date appointments.timeEstimate appointments.timeRange')
+	   .select('appointments.date appointments.timeEstimate appointments.timeRange appointments.timeRangeKey')
 	   .exec((err, docs)=>{
 		if(err){
 			sendJsonResponse(res, internalErrorCode, "DB Failure - getFutureAppointments", err);
