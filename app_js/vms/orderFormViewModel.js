@@ -17,22 +17,19 @@ class OrderFormViewModel {
 		});
 
 		this.webSvc = webSvc;
+		this.storageHelper = storageHelper;
+
 		this.$orderFormModal = $('#order-form-modal');
 
 		this.$orderFormModal.on('show.bs.modal', ()=>{
 			self._prePopulateUserData();
 		});
 
-		this.storageHelper = storageHelper;
-
-		var usr = storageHelper.LoggedInUser;
-
 		this.TIRE_SHINE_COST = Constants.TIRE_SHINE_DETAILS.price;
 		this.INTERIOR_COST = Constants.INTERIOR_DETAILS.price;
 		this.WAX_COST = Constants.WAX_DETAILS.price;
 		this.WASH_COST = Constants.WASH_DETAILS.price;
 
-		/**** Observables ****/
 		this.disableEmailInput = ko.observable(false);
 		this.incompleteFormMsg = ko.observable("");
 
@@ -86,6 +83,9 @@ class OrderFormViewModel {
 		this.state = ko.observable("");
 		this.zip = ko.observable(this.storageHelper.ZipCode);
 
+		this.couponCode = ko.observable("");
+		this.coupon = ko.observable(null);
+
 		this.orderTotal = ko.computed(()=>{
 			let total = 0;
 			let serviceCost = parseFloat((self.WASH_COST + 
@@ -102,6 +102,11 @@ class OrderFormViewModel {
 				}
 			});
 
+			if(self.coupon()){
+				var percent = self.coupon().discountPercentage / 100;
+				total = total - (total * percent);
+			}
+
 			return Math.floor(total);
 		});
 
@@ -113,7 +118,8 @@ class OrderFormViewModel {
 					summary += $.validator.format(
 						"<strong>{7} between {8}</strong><hr>" +
 						"<strong>{5} {6}</strong><br>" +
-						"Exterior Hand Wash<br>{0}{1}{2}{3} = {4}x cost multiplier.<br>", 
+						"Exterior Hand Wash<br>{0}{1}{2}{3} = {4}x cost multiplier.<br>" +
+						"{9}", 
 						(self.addShine() ? "Deep Tire Clean & Shine<br>" : ""),
 						(self.addWax() ? "Hand Wax & Buff<br>" : ""),
 						(self.addInterior() ? "Full Interior Cleaning<br>" : ""),
@@ -122,7 +128,8 @@ class OrderFormViewModel {
 						car.make,
 						car.model,
 						self.dateMoment.format("ddd MMM Do"),
-						self.selectedTimeRange().range);
+						self.selectedTimeRange().range,
+						(self.coupon() ? ("Promo discount " + self.coupon().discountPercentage.toString() + "%") : ""));
 				}
 			});
 
@@ -269,32 +276,41 @@ class OrderFormViewModel {
 			this.$orderFormModal.modal('hide');
 			window.location = "#page-top";
 
-			// Manually clear observables
-			this.addShine(false);
-			this.addWax(false);
-			this.addInterior(false);
-			this.showBillingAddress(false);
-			this.first("");
-			this.last("");
-			this.email("");
-			this.phone("");
-			this.locations([]);
-			this.cars([]);
-			this.description("");
-			this.showAddVehicleForm(false);
-			this.showAddLocationForm(false);
-			this.selectedCarSize(this.carSizes[0]);
-			this.selectedTimeRange(this.timeRangeOptions[0]);
-			this.carYear(this.carYears[1]);
+			// Reset observables
+			this._resetObservables();
 
 			// Reset Forms
 			this.$orderDetailsForm.validate().resetForm();
 			this.$contactDetailsForm.validate().resetForm();
 
 			$('#incomplete-form-alert').hide();
+			$('#invalid-coupon-alert').hide();
+			$('#success-coupon-alert').hide();
+
 		} catch (ex){
 			console.log("Failed to reset fields OnFormCancel()");
 			console.log(ex);
+		}
+	}
+
+	OnApplyCoupon(){
+		var self = this;
+		$('#invalid-coupon-alert').hide();
+		$('#success-coupon-alert').hide();
+
+		if(this.couponCode && this.couponCode().length > 0){
+			this.webSvc.VerifyCoupon(this.couponCode())
+				.then((coupon)=>{
+					if(!coupon){
+						$('#invalid-coupon-alert').show();
+					} else {
+						$('#success-coupon-alert').show();
+						this.coupon(coupon);
+					}
+				})
+				.fail(err => {
+					console.log(err);
+				});
 		}
 	}
 
@@ -428,6 +444,50 @@ class OrderFormViewModel {
 
 			$('#phone').trigger('input');
 		}
+	}
+
+	_resetObservables(){
+		this.disableEmailInput(false);
+		this.incompleteFormMsg("");
+
+		// Order Details
+		this.addShine(false);
+		this.addWax(false);
+		this.addInterior(false);
+		this.showBillingAddress(false);
+
+		this.description = ko.observable("");
+		this.selectedTimeRange(this.timeRangeOptions[0]);
+
+		this.dateMoment = null;
+
+		// Car Info
+		this.showAddVehicleForm(false);
+		this.cars([]);
+		this.make("");
+		this.model("");
+		this.color("");
+		this.tag("");
+		this.selectedCarSize(this.carSizes[0]);
+		this.carYear(this.carYears[1]);
+
+		// Contact Info
+		this.first("");
+		this.last("");
+		this.email("");
+		this.phone("");
+
+		// Location Info
+		this.showAddLocationForm(false);
+		this.locations([]);
+		this.title(this.locationTitleOptions[0]);
+		this.street("");
+		this.city("");
+		this.state("");
+		this.zip("");
+
+		this.couponCode("");
+		this.coupon(null);
 	}
 
 	_onDatepickerChange(event){

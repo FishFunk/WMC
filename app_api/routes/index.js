@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var ctrlAdmin = require('../controllers/admin');
-var ctrlUsers = require('../controllers/users');
+var ctrlUsers = require('../controllers/user');
 var ctrlMoney = require('../controllers/money');
 var ctrlMsgs = require('../controllers/messenger');
+var ctrlCoupon = require('../controllers/coupon');
 
 // API Routes
 router.post('/createNewUser', ctrlUsers.createNewUser);
@@ -27,6 +28,8 @@ router.post('/verifyAdmin', ctrlAdmin.verifyAdmin);
 router.get('/getEnvironment', (req, res)=>{
 	sendJsonResponse(res, 200, "Success", process.env.NODE_ENV || "debug");
 });
+
+router.post('/verifyCoupon', ctrlCoupon.verifyCoupon);
 
 var sendJsonResponse = (res, status, msg, data)=>{
 	res.setHeader('Content-Type', 'application/json');

@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
-require('./users');
+require('./user');
 require('./admin');
+require('./coupon');
 
 var dbURI = 'mongodb://localhost/WMC';
 

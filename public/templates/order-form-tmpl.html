@@ -41,14 +41,12 @@
             <option data-bind="text: $data.range, value: $data, attr: { disabled: $data.disabled }"></option>
           </select>
         </div>
-      </div>
-      <div class="row">
         <div class="form-group col-xs-12">
           <label class="control-label">Description</label>
           <textarea data-bind="value: description" maxlength="250" class="form-control" placeholder="Special requests, location details, access codes, etc."></textarea>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
     <div class="row">
       <legend class="col-xs-12">Vehicles</legend>
       <div data-bind="template: { name: 'vehicle-tmpl', foreach: cars}"></div>
@@ -174,7 +172,21 @@
         <p data-bind="html: orderSummary"></p>
         <p>Total: $<strong data-bind="text: orderTotal"></strong></p>
       </div>
-    </div>
+      <div class="panel-footer">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Coupon Code" data-bind="value: couponCode">
+          <span class="input-group-btn">
+            <button data-bind="click: OnApplyCoupon" class="btn btn-deault" type="button">Apply</button>
+          </span>
+        </div>
+        <center id="invalid-coupon-alert" class="alert alert-danger fade in coupon-alert" role="alert" hidden>
+          <strong>Bad news...</strong>&nbsp;<span>invalid coupon code.</span>
+        </center>
+        <center id="success-coupon-alert" class="alert alert-info fade in coupon-alert" role="alert" hidden>
+          <strong>Nice!</strong>&nbsp;<span>Discount applied.</span>
+        </center>
+      </div>
+    </div> <!--.panel-->
 
     <!-- Submit -->
     <div class="control-group">

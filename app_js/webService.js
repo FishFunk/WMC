@@ -45,6 +45,10 @@ class WebService {
 			});
 	}
 
+	VerifyCoupon(code){
+		return this._executeAjaxCall('POST', "/api/verifyCoupon", { code: code });
+	}
+
 	// 'data' is an optional param
 	_executeAjaxCall(type, ext, data){
 		this.deferred = $.Deferred();
