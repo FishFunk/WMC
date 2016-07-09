@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Usr = mongoose.model('User');
 var _ = require('underscore');
+var crtlCoupon = require('./coupon')
 
 const badRequestCode = 400;
 const internalErrorCode = 500;
@@ -93,12 +94,19 @@ module.exports.createNewUser = (req, res)=>{
 			lastName: "",
 			pwd: req.body.pwd,
 			locations: [],
+			isGuest: req.body.isGuest,
 			lastLogin: new Date()
 		}, (err, usr)=>{
 			if(err){
+				console.error(err);
 				sendJsonResponse(res, internalErrorCode, "DB Failure - createUser", err);
 			} else {
-				sendJsonResponse(res, createSuccessCode, "Success", usr);
+				if(!req.body.isGuest){
+					console.log("User created. Sending one time coupon.");
+					crtlCoupon.createTempFreeCoupon(req, res);
+				} else {
+					sendJsonResponse(res, createSuccessCode, "Success", usr);
+				}
 			}
 		});
 	} else {
@@ -111,6 +119,7 @@ module.exports.getUserByEmail = (req, res)=>{
 	{
 		Usr.findOne({email: req.body.email.trim().toLowerCase()}, (err, usr)=>{
 			if (err){
+				console.error(err);
 				sendJsonResponse(res, internalErrorCode, err, "DB Failure - getUserByEmail");
 			} else if(!usr){
 				sendJsonResponse(res, noContentSuccessCode, "User email not found");
@@ -128,6 +137,7 @@ module.exports.getUserByEmailAndPwd = (req, res)=>{
 	{
 		Usr.findOne({email: req.body.email.trim().toLowerCase(), pwd: req.body.pwd}, (err, usr)=>{
 			if(err){
+				console.error(err);
 				sendJsonResponse(res, internalErrorCode, "DB Error - getUserByEmailAndPwd", err);
 			} else if(!usr){
 				sendJsonResponse(res, noContentSuccessCode, "No matching usr and pwd");

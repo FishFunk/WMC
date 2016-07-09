@@ -103,8 +103,13 @@ class OrderFormViewModel {
 			});
 
 			if(self.coupon()){
-				var percent = self.coupon().discountPercentage / 100;
-				total = total - (total * percent);
+				if(self.coupon().discountPercentage == 100){
+					// First Time Free Wash Discount
+					total -= self.WASH_COST;
+				} else {
+					var percent = self.coupon().discountPercentage / 100;
+					total = total - (total * percent);
+				}
 			}
 
 			return Math.floor(total);
@@ -112,6 +117,16 @@ class OrderFormViewModel {
 
 		this.orderSummary = ko.computed(()=>{
 			let summary = "";
+			let promoMsg = "";
+
+			if(self.coupon()){
+				if(self.coupon().discountPercentage == 100){
+					promoMsg = "First Timer Discount - First Wash Free!"
+				} else {
+					promoMsg = "Promo discount: " + self.couponCode().discountPercentage.toString() + "%";
+				}
+			}
+
 			self.cars().forEach((car)=>{
 				if(car.selected()){
 					var carSize = _.find(Constants.CAR_SIZES, (obj) => obj.size == car.size || obj.multiplier == car.multiplier);
@@ -129,7 +144,7 @@ class OrderFormViewModel {
 						car.model,
 						self.dateMoment.format("ddd MMM Do"),
 						self.selectedTimeRange().range,
-						(self.coupon() ? ("Promo discount " + self.coupon().discountPercentage.toString() + "%") : ""));
+						promoMsg);
 				}
 			});
 
@@ -574,6 +589,7 @@ class OrderFormViewModel {
 
 	_makeGuestUserSchema(){
 		return {
+			isGuest: true,
 			email: this.email(),
 			pwd: Utils.GenerateUUID()
 		}

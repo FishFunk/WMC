@@ -94,15 +94,58 @@ module.exports.forgotPassword = (req, res)=>{
 					</body>\
 					</html>'
 				},
-					(err, responseStatus)=>{
-						sendJsonResponse(res, noContentSuccessCode, "Success");
-					});
+				(err, responseStatus)=>{
+					sendJsonResponse(res, noContentSuccessCode, "Success");
+				});
 			}
 		});
 	} else 
 	{
 		sendJsonResponse(res, badRequestCode, "No request body");
 	}
+}
+
+// Not part of API - used by coupon.js
+module.exports.sendCouponCode = (req, res, couponCode, email)=>{
+	if(DEBUG_MODE){
+		sendJsonResponse(res, noContentSuccessCode, 'DEBUG MODE - Coupon code email sent!');
+		return;
+	}
+	try{
+		transport.sendMail({
+	          from: 'WashMyCar <donotreply@washmycarva.com>',
+	          to: email,
+	          subject: 'Your WashMyCar 100% Off Coupon!',
+		      html:
+		      	'<html style="font-family: sans-serif; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">\
+		      		<body>\
+					<div style="padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto;">\
+					    <div style="text-align: center;">\
+					    <img src="' + logoUrl + '" style="width:150px;">\
+					    </div>\
+					    <hr>\
+		      			<p>Thanks for joining WashMyCar! \
+		      			Apply the coupon below when checking out and enjoy your <strong>first wash completely free!</strong> \
+		      			But hurry! This discount is only good for the next 12 hours. \
+		      			We look forward to servicing you!</p> \
+		      			<u>Coupon Code:</u><h4>' + couponCode + '</h4> \
+		      		</div>\
+		      		</body>\
+		      	</html>'
+	        },(err, responseStatus)=>{
+			  if (err) {
+			    sendJsonResponse(res, internalErrorCode, 'Failed to send discount email.', err);
+			    console.log(err);
+			  } else {
+			    sendJsonResponse(res, noContentSuccessCode, 'Discount email sent!');
+			  }
+	    });
+	} catch(ex) {
+		console.log("Message send failure - sendCouponCode");
+		console.error(ex);
+		sendJsonResponse(res, internalErrorCode, 'Confirmation email(s) sent!', ex);
+	}
+
 }
 
 module.exports.sendConfirmationEmail = (req, res)=>{

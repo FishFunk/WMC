@@ -11,6 +11,7 @@ class DataGenerator{
 			lastName: this.MakeRandomWord(),
 			pwd: this.MakeRandomWord(10),
 			locations: [this.MakeLocation()],
+			isGuest: false,
 			lastLogin: new Date()
 		}
 	};

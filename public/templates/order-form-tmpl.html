@@ -173,7 +173,7 @@
         <p>Total: $<strong data-bind="text: orderTotal"></strong></p>
       </div>
       <div class="panel-footer">
-        <div class="input-group">
+        <div class="input-group" data-bind="visible: !coupon()">
           <input type="text" class="form-control" placeholder="Coupon Code" data-bind="value: couponCode">
           <span class="input-group-btn">
             <button data-bind="click: OnApplyCoupon" class="btn btn-deault" type="button">Apply</button>
@@ -194,15 +194,23 @@
         <center id="incomplete-form-alert" class="alert alert-danger fade in" role="alert" hidden>
           <strong>Whoops!</strong>&nbsp;<span data-bind="text: incompleteFormMsg"></span>
         </center>
-        <center class="hidden-xs">
+        <center class="hidden-xs" data-bind="visible: orderTotal() > 0">
           <button data-bind="click: OnFormCancel" class="btn btn-lg btn-default">Cancel</button>
           <button class="btn btn-lg btn-default" data-bind="click: OnSubmit.bind($data,false)">Pay Later</button>
           <button class="btn btn-lg btn-primary" data-bind="click: OnSubmit.bind($data,true)">Pay Now</button>
         </center>
-        <center class="hidden-sm hidden-md hidden-lg">
+        <center class="hidden-sm hidden-md hidden-lg" data-bind="visible: orderTotal() > 0">
           <button data-bind="click: OnFormCancel" class="btn btn-md btn-default">Cancel</button>
           <button class="btn btn-md btn-default" data-bind="click: OnSubmit.bind($data,false)">Pay Later</button>
           <button class="btn btn-md btn-primary" data-bind="click: OnSubmit.bind($data,true)">Pay Now</button>
+        </center>
+        <center class="hidden-xs" data-bind="visible: orderTotal() == 0">
+          <button data-bind="click: OnFormCancel" class="btn btn-lg btn-default">Cancel</button>
+          <button class="btn btn-lg btn-primary" data-bind="click: OnSubmit.bind($data,false)">WashMyCar!</button>
+        </center>
+        <center class="hidden-sm hidden-md hidden-lg" data-bind="visible: orderTotal() == 0">
+          <button data-bind="click: OnFormCancel" class="btn btn-md btn-default">Cancel</button>
+          <button class="btn btn-md btn-primary" data-bind="click: OnSubmit.bind($data,false)">WashMyCar!</button>
         </center>
       </div>
     </div>

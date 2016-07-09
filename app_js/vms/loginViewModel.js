@@ -36,6 +36,7 @@ class LogInViewModel {
 
 	OnContinueAsGuest(){
 		this.storageHelper.LoggedInUser = null;
+		this.OnDismissMsg();
 		this._resetForms();
 		this._toggleModals();
 	}
@@ -46,6 +47,7 @@ class LogInViewModel {
 		this.ShowForgotPwd(false);
 		this.ShowLogin(false);
 		this.ShowCreateAcct(true);
+		this.OnDismissMsg();
 	}
 
 	OnCancelCreateAcct(){
@@ -53,6 +55,7 @@ class LogInViewModel {
 		this.ShowForgotPwd(false);
 		this.ShowCreateAcct(false);
 		this.ShowLogin(true);
+		this.OnDismissMsg();
 	}
 
 	OnCreateAcct(){
@@ -60,7 +63,7 @@ class LogInViewModel {
 		if(this.$createAcctForm.valid()){
 			spinner.Show();
 			async.series([
-					this._checkIfEmailExists.bind(this),
+					this._checkIfUserExists.bind(this),
 					this._createNewUser.bind(this)
 				],
 				possibleError=>{
@@ -84,9 +87,9 @@ class LogInViewModel {
 		if(this.$loginForm.valid()){
 			spinner.Show()
 			this.webSvc.GetUserByEmailAndPwd(this.email(), this.pwd())
-				.then((user)=>{
-					if(user){
-						self.storageHelper.LoggedInUser = user;
+				.then((usr)=>{
+					if(usr){
+						self.storageHelper.LoggedInUser = usr;
 						self._resetForms();
 						self._toggleModals();
 					} else {
@@ -110,6 +113,7 @@ class LogInViewModel {
 		this.ShowLogin(false);
 		this.ShowCreateAcct(false);
 		this.ShowForgotPwd(true);
+		this.OnDismissMsg();
 	}
 
 	OnCancelForgotPwd(){
@@ -117,6 +121,7 @@ class LogInViewModel {
 		this.ShowCreateAcct(false);
 		this.ShowForgotPwd(false);
 		this.ShowLogin(true);
+		this.OnDismissMsg();
 	}
 
 	OnSubmitForgotPwd(){
@@ -128,7 +133,8 @@ class LogInViewModel {
 					self.loginFormMsg("Nice! Check your email ;)");
 					self.$loginFormInfo.show();
 					self._resetForms();
-					self.OnCancelForgotPwd();
+					self.ShowCreateAcct(false);
+					self.ShowForgotPwd(false);
 				})
 				.fail(err => {
 					self.loginFormMsg("Uh oh... something went wrong.");
@@ -140,10 +146,10 @@ class LogInViewModel {
 		}
 	}
 
-	_checkIfEmailExists(callback){
+	_checkIfUserExists(callback){
 		this.webSvc.GetUserByEmail(this.email())
 			.then((usr)=>{
-				if(usr){
+				if(usr && !usr.isGuest){
 					callback(Constants.ASYNC_INTERUPTION_MARKER);
 				} else {
 					callback();
@@ -158,7 +164,8 @@ class LogInViewModel {
 		var self = this;
 		var newUser = {
 			email: this.email(),
-			pwd: this.pwd()
+			pwd: this.pwd(),
+			isGuest: false
 		}
 		this.webSvc.CreateUser(newUser)
 			.then((newUser)=>{

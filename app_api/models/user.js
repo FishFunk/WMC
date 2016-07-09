@@ -38,6 +38,7 @@ var userSchema = new mongoose.Schema({
 	lastName: String,
 	pwd: String,
 	locations: [locationSchema],
+	isGuest: {type: Boolean, required: true},
 	lastLogin: Date
 });
 

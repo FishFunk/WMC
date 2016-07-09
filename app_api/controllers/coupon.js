@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
 var Coupon = mongoose.model('Coupon');
+var _ = require('underscore');
+var ctrlMsgs = require('./messenger');
 
 const badRequestCode = 400;
 const internalErrorCode = 500;
@@ -14,18 +16,74 @@ module.exports.verifyCoupon = (req, res)=>{
 		Coupon.findOne({code: req.body.code, startDate: { $lte: today}, endDate: { $gte: today} }, 
 			(err, coupon)=>{
 			if(err){
-				console.log(err);
+				console.error(err);
 				sendJsonResponse(res, internalErrorCode, "DB Failure - verifyCoupon", err);
 			} else if (!coupon) {
 				sendJsonResponse(res, noContentSuccessCode, "Invalid coupon");
 			} else {
-				sendJsonResponse(res, readSuccessCode, "Success", coupon);
+				if(coupon.discountPercentage == 100){
+					Coupon.remove({_id: coupon._id}, (err)=>{
+						if(err){
+							console.error("Failed to remove one time coupon");
+							console.error(err);
+							sendJsonResponse(res, internalErrorCode, "Failed to remove one time coupon");
+						} else {
+							sendJsonResponse(res, readSuccessCode, "Success", coupon);
+						}
+					});
+				} else {
+					sendJsonResponse(res, readSuccessCode, "Success", coupon);
+				}
 			}
 		});
 	} else {
 		sendJsonResponse(res, badRequestCode, "Invalid request body");
 	}
 };
+
+// Not expost to API - used by user.js
+module.exports.createTempFreeCoupon = (req, res)=>{
+	var now = new Date();
+	var end = new Date();
+	end.setHours(now.getHours() + 12);
+
+	const couponCode = generateRandomCouponCode();
+
+	if(req.body && req.body.email)
+	{
+		Coupon.insert({
+			code: couponCode,
+			startDate: now,
+			endDate: end,
+			discountPercentage: 100
+		}, (err, coupon)=>{
+			if(err){
+				console.error("DB Failure - createTempCoupon");
+				console.error(err);
+				sendJsonResponse(res, internalErrorCode, "DB Failure - createTempFreeCoupon", err);
+			} else {
+				ctrlMsgs.sendCouponCode(req, res, couponCode, req.body.email)
+			}
+		});
+	} else {
+		sendJsonResponse(res, badRequestCode, "Invalid request body - createTempFreeCoupon")
+	}
+}
+
+var generateRandomCouponCode = ()=>{
+	var code = "";
+	const chars = ['A','B','C','D','E','F','G','H','I','J', 
+	'K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+	'1','2','3','4','5','6','7','8','9','0'];
+
+	const sample = _.sample(aToZ, 10);
+
+	_.each(sample, (char)=>{
+		code += char;
+	});
+
+	return code;
+}
 
 var sendJsonResponse = (res, status, msg, data)=>{
 	res.setHeader('Content-Type', 'application/json');

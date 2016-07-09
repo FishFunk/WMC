@@ -30,8 +30,10 @@ module.exports.executeCharge = (req, res)=>{
 		}, function(err, charge) {
 		  if (err && err.type === 'StripeCardError') {
 		    // The card has been declined
+		    console.error(err);
 		    sendJsonResponse(res, badRequestCode, "Card Declined", err);
 		  } else if(err) {
+		  	console.error(err);
 		  	sendJsonResponse(res, internalErrorCode, "Unknown Stripe error", err);
 		  } else {
 		  	sendJsonResponse(res, noContentSuccessCode, "Charge success!");

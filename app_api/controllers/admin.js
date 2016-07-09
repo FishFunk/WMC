@@ -13,6 +13,7 @@ module.exports.verifyAdmin = (req, res)=>{
 		Admin.findOne({usr: req.body.usr, pwd: req.body.pwd}, 
 			(err, admin)=>{
 			if(err){
+				console.error(err);
 				sendJsonResponse(res, internalErrorCode, "DB Failure - verifyAdmin", err);
 			} else if (!admin) {
 				sendJsonResponse(res, noContentSuccessCode, "No matching usr and pwd");

@@ -473,19 +473,9 @@ var DialogPresenter = function () {
 
 	return DialogPresenter;
 }();
-"use strict";
+'use strict';
 
 window.jQuery(document).ready(function ($) {
-
-	function showFailureMsg() {
-		var msg = "This is embarrassing... something went wrong and our app will not work correctly.\
-		Please make sure you have a good internet connection and refresh the page.";
-		if (bootbox) {
-			bootbox.alert(msg);
-		} else {
-			alert(msg);
-		}
-	}
 
 	try {
 		// Initialize Application
@@ -496,10 +486,9 @@ window.jQuery(document).ready(function ($) {
 			}, 2000);
 		}).fail(function (err) {
 			console.error(err);
-			showFailureMsg();
 		});
 	} catch (ex) {
-		showFailureMsg();
+		console.error(ex);
 	}
 });
 "use strict";
@@ -757,6 +746,7 @@ var LogInViewModel = function () {
 		key: "OnContinueAsGuest",
 		value: function OnContinueAsGuest() {
 			this.storageHelper.LoggedInUser = null;
+			this.OnDismissMsg();
 			this._resetForms();
 			this._toggleModals();
 		}
@@ -767,6 +757,7 @@ var LogInViewModel = function () {
 			this.ShowForgotPwd(false);
 			this.ShowLogin(false);
 			this.ShowCreateAcct(true);
+			this.OnDismissMsg();
 		}
 	}, {
 		key: "OnCancelCreateAcct",
@@ -775,6 +766,7 @@ var LogInViewModel = function () {
 			this.ShowForgotPwd(false);
 			this.ShowCreateAcct(false);
 			this.ShowLogin(true);
+			this.OnDismissMsg();
 		}
 	}, {
 		key: "OnCreateAcct",
@@ -782,7 +774,7 @@ var LogInViewModel = function () {
 			var self = this;
 			if (this.$createAcctForm.valid()) {
 				spinner.Show();
-				async.series([this._checkIfEmailExists.bind(this), this._createNewUser.bind(this)], function (possibleError) {
+				async.series([this._checkIfUserExists.bind(this), this._createNewUser.bind(this)], function (possibleError) {
 					spinner.Hide();
 					if (possibleError === Constants.ASYNC_INTERUPTION_MARKER) {
 						self.loginFormMsg("That email is already in use! Did you forget your password?");
@@ -803,9 +795,9 @@ var LogInViewModel = function () {
 			var self = this;
 			if (this.$loginForm.valid()) {
 				spinner.Show();
-				this.webSvc.GetUserByEmailAndPwd(this.email(), this.pwd()).then(function (user) {
-					if (user) {
-						self.storageHelper.LoggedInUser = user;
+				this.webSvc.GetUserByEmailAndPwd(this.email(), this.pwd()).then(function (usr) {
+					if (usr) {
+						self.storageHelper.LoggedInUser = usr;
 						self._resetForms();
 						self._toggleModals();
 					} else {
@@ -830,6 +822,7 @@ var LogInViewModel = function () {
 			this.ShowLogin(false);
 			this.ShowCreateAcct(false);
 			this.ShowForgotPwd(true);
+			this.OnDismissMsg();
 		}
 	}, {
 		key: "OnCancelForgotPwd",
@@ -838,6 +831,7 @@ var LogInViewModel = function () {
 			this.ShowCreateAcct(false);
 			this.ShowForgotPwd(false);
 			this.ShowLogin(true);
+			this.OnDismissMsg();
 		}
 	}, {
 		key: "OnSubmitForgotPwd",
@@ -849,7 +843,8 @@ var LogInViewModel = function () {
 					self.loginFormMsg("Nice! Check your email ;)");
 					self.$loginFormInfo.show();
 					self._resetForms();
-					self.OnCancelForgotPwd();
+					self.ShowCreateAcct(false);
+					self.ShowForgotPwd(false);
 				}).fail(function (err) {
 					self.loginFormMsg("Uh oh... something went wrong.");
 					self.$loginFormAlert.show();
@@ -861,10 +856,10 @@ var LogInViewModel = function () {
 			}
 		}
 	}, {
-		key: "_checkIfEmailExists",
-		value: function _checkIfEmailExists(callback) {
+		key: "_checkIfUserExists",
+		value: function _checkIfUserExists(callback) {
 			this.webSvc.GetUserByEmail(this.email()).then(function (usr) {
-				if (usr) {
+				if (usr && !usr.isGuest) {
 					callback(Constants.ASYNC_INTERUPTION_MARKER);
 				} else {
 					callback();
@@ -879,7 +874,8 @@ var LogInViewModel = function () {
 			var self = this;
 			var newUser = {
 				email: this.email(),
-				pwd: this.pwd()
+				pwd: this.pwd(),
+				isGuest: false
 			};
 			this.webSvc.CreateUser(newUser).then(function (newUser) {
 				self.storageHelper.LoggedInUser = newUser;
@@ -1147,8 +1143,13 @@ var OrderFormViewModel = function () {
 			});
 
 			if (self.coupon()) {
-				var percent = self.coupon().discountPercentage / 100;
-				total = total - total * percent;
+				if (self.coupon().discountPercentage == 100) {
+					// First Time Free Wash Discount
+					total -= self.WASH_COST;
+				} else {
+					var percent = self.coupon().discountPercentage / 100;
+					total = total - total * percent;
+				}
 			}
 
 			return Math.floor(total);
@@ -1156,12 +1157,22 @@ var OrderFormViewModel = function () {
 
 		this.orderSummary = ko.computed(function () {
 			var summary = "";
+			var promoMsg = "";
+
+			if (self.coupon()) {
+				if (self.coupon().discountPercentage == 100) {
+					promoMsg = "First Timer Discount - First Wash Free!";
+				} else {
+					promoMsg = "Promo discount: " + self.couponCode().discountPercentage.toString() + "%";
+				}
+			}
+
 			self.cars().forEach(function (car) {
 				if (car.selected()) {
 					var carSize = _.find(Constants.CAR_SIZES, function (obj) {
 						return obj.size == car.size || obj.multiplier == car.multiplier;
 					});
-					summary += $.validator.format("<strong>{7} between {8}</strong><hr>" + "<strong>{5} {6}</strong><br>" + "Exterior Hand Wash<br>{0}{1}{2}{3} = {4}x cost multiplier.<br>" + "{9}", self.addShine() ? "Deep Tire Clean & Shine<br>" : "", self.addWax() ? "Hand Wax & Buff<br>" : "", self.addInterior() ? "Full Interior Cleaning<br>" : "", carSize.size, carSize.multiplier.toString(), car.make, car.model, self.dateMoment.format("ddd MMM Do"), self.selectedTimeRange().range, self.coupon() ? "Promo discount " + self.coupon().discountPercentage.toString() + "%" : "");
+					summary += $.validator.format("<strong>{7} between {8}</strong><hr>" + "<strong>{5} {6}</strong><br>" + "Exterior Hand Wash<br>{0}{1}{2}{3} = {4}x cost multiplier.<br>" + "{9}", self.addShine() ? "Deep Tire Clean & Shine<br>" : "", self.addWax() ? "Hand Wax & Buff<br>" : "", self.addInterior() ? "Full Interior Cleaning<br>" : "", carSize.size, carSize.multiplier.toString(), car.make, car.model, self.dateMoment.format("ddd MMM Do"), self.selectedTimeRange().range, promoMsg);
 				}
 			});
 
@@ -1653,6 +1664,7 @@ var OrderFormViewModel = function () {
 		key: '_makeGuestUserSchema',
 		value: function _makeGuestUserSchema() {
 			return {
+				isGuest: true,
 				email: this.email(),
 				pwd: Utils.GenerateUUID()
 			};
