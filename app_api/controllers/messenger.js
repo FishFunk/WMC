@@ -106,9 +106,9 @@ module.exports.forgotPassword = (req, res)=>{
 }
 
 // Not part of API - used by coupon.js
-module.exports.sendCouponCode = (req, res, couponCode, email)=>{
+module.exports.sendCouponCode = (couponCode, email)=>{
 	if(DEBUG_MODE){
-		sendJsonResponse(res, noContentSuccessCode, 'DEBUG MODE - Coupon code email sent!');
+		console.log('DEBUG MODE - Coupon code email sent!');
 		return;
 	}
 	try{
@@ -134,16 +134,15 @@ module.exports.sendCouponCode = (req, res, couponCode, email)=>{
 		      	</html>'
 	        },(err, responseStatus)=>{
 			  if (err) {
-			    sendJsonResponse(res, internalErrorCode, 'Failed to send discount email.', err);
-			    console.log(err);
+			    console.log('Failed to send discount email');
+			    console.error(err);
 			  } else {
-			    sendJsonResponse(res, noContentSuccessCode, 'Discount email sent!');
+			    console.log('Discount email sent');
 			  }
 	    });
 	} catch(ex) {
 		console.log("Message send failure - sendCouponCode");
 		console.error(ex);
-		sendJsonResponse(res, internalErrorCode, 'Confirmation email(s) sent!', ex);
 	}
 
 }
@@ -179,10 +178,10 @@ module.exports.sendConfirmationEmail = (req, res)=>{
 	      	</html>'
         },(err, responseStatus)=>{
 		  if (err) {
-		    sendJsonResponse(res, internalErrorCode, 'Failed to send confirmation email(s).', err);
+		    sendJsonResponse(res, internalErrorCode, 'Failed to send confirmation email(s)', err);
 		    console.log(err);
 		  } else {
-		    sendJsonResponse(res, noContentSuccessCode, 'Confirmation email(s) sent!');
+		    sendJsonResponse(res, noContentSuccessCode, 'Confirmation email(s) sent');
 		  }
         });
 	} else {

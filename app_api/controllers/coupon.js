@@ -41,15 +41,15 @@ module.exports.verifyCoupon = (req, res)=>{
 	}
 };
 
-// Not expost to API - used by user.js
-module.exports.createTempFreeCoupon = (req, res)=>{
+// Not exposed to API - used by user.js
+module.exports.createTempFreeCoupon = (email)=>{
 	var now = new Date();
 	var end = new Date();
 	end.setHours(now.getHours() + 12);
 
 	const couponCode = generateRandomCouponCode();
 
-	if(req.body && req.body.email)
+	if(email)
 	{
 		Coupon.create({
 			code: couponCode,
@@ -58,15 +58,14 @@ module.exports.createTempFreeCoupon = (req, res)=>{
 			discountPercentage: 100
 		}, (err, coupon)=>{
 			if(err){
-				console.error("DB Failure - createTempCoupon");
+				console.log("DB Failure - createTempCoupon");
 				console.error(err);
-				sendJsonResponse(res, internalErrorCode, "DB Failure - createTempFreeCoupon", err);
 			} else {
-				ctrlMsgs.sendCouponCode(req, res, couponCode, req.body.email)
+				ctrlMsgs.sendCouponCode(couponCode, email);
 			}
 		});
 	} else {
-		sendJsonResponse(res, badRequestCode, "Invalid request body - createTempFreeCoupon")
+		console.log("No email provided - createTempFreeCoupon");
 	}
 }
 

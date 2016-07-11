@@ -92,6 +92,7 @@ class LogInViewModel {
 				.then((usr)=>{
 					if(usr){
 						self.storageHelper.LoggedInUser = usr;
+						self.storageHelper.IsNewUser = false;
 						self._resetForms();
 						self._toggleModals();
 					} else {
@@ -168,10 +169,10 @@ class LogInViewModel {
 			email: this.email(),
 			pwd: this.pwd(),
 			isGuest: false
-		}
+		};
 		this.webSvc.CreateUser(newUser)
-			.then((newUser)=>{
-				self.storageHelper.LoggedInUser = newUser;
+			.then((usr)=>{
+				self.storageHelper.LoggedInUser = usr;
 				callback();
 			})
 			.fail(err=>{

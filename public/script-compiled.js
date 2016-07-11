@@ -814,6 +814,7 @@ var LogInViewModel = function () {
 				this.webSvc.GetUserByEmailAndPwd(this.email(), this.pwd()).then(function (usr) {
 					if (usr) {
 						self.storageHelper.LoggedInUser = usr;
+						self.storageHelper.IsNewUser = false;
 						self._resetForms();
 						self._toggleModals();
 					} else {
@@ -893,8 +894,8 @@ var LogInViewModel = function () {
 				pwd: this.pwd(),
 				isGuest: false
 			};
-			this.webSvc.CreateUser(newUser).then(function (newUser) {
-				self.storageHelper.LoggedInUser = newUser;
+			this.webSvc.CreateUser(newUser).then(function (usr) {
+				self.storageHelper.LoggedInUser = usr;
 				callback();
 			}).fail(function (err) {
 				callback(err);
@@ -1190,7 +1191,7 @@ var OrderFormViewModel = function () {
 					var carSize = _.find(Constants.CAR_SIZES, function (obj) {
 						return obj.size == car.size || obj.multiplier == car.multiplier;
 					});
-					summary += $.validator.format("<strong>{7} between {8}</strong><hr>" + "<strong>{5} {6}</strong><br>" + "Exterior Hand Wash<br>{0}{1}{2}{3} = {4}x cost multiplier.<br>" + "{9}", self.addShine() ? "Deep Tire Clean & Shine<br>" : "", self.addWax() ? "Hand Wax & Buff<br>" : "", self.addInterior() ? "Full Interior Cleaning<br>" : "", carSize.size, carSize.multiplier.toString(), car.make, car.model, self.dateMoment.format("ddd MMM Do"), self.selectedTimeRange().range, promoMsg);
+					summary += $.validator.format("<strong>{7} between {8}</strong><hr>" + "<strong>{5} {6}</strong><br>" + "Exterior Hand Wash<br>{0}{1}{2}{3} = {4}x cost multiplier.<br>" + "{9}", self.addShine() ? "Deep Tire Clean & Shine<br>" : "", self.addWax() ? "Hand Wax & Buff<br>" : "", self.addInterior() ? "Full Interior Cleaning<br>" : "", carSize.size, carSize.multiplier.toString(), car.make, car.model, self.dateMoment ? self.dateMoment.format("ddd MMM Do") : "", self.selectedTimeRange().range, promoMsg);
 				}
 			});
 
@@ -1346,6 +1347,9 @@ var OrderFormViewModel = function () {
 				$('#incomplete-form-alert').show();
 				return;
 			}
+
+			$('#incomplete-form-alert').hide();
+			$('#invalid-coupon-alert').hide();
 
 			if (payNow) {
 				this._openCheckout();
@@ -1545,6 +1549,7 @@ var OrderFormViewModel = function () {
 	}, {
 		key: '_resetObservables',
 		value: function _resetObservables() {
+			this.showNewUserAlert(false);
 			this.disableEmailInput(false);
 			this.incompleteFormMsg("");
 
@@ -1557,7 +1562,7 @@ var OrderFormViewModel = function () {
 			this.description = ko.observable("");
 			this.selectedTimeRange(this.timeRangeOptions[0]);
 
-			this.dateMoment = null;
+			$('#datetimepicker').data("DateTimePicker").clear();
 
 			// Car Info
 			this.showAddVehicleForm(false);

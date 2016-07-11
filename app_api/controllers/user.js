@@ -101,10 +101,12 @@ module.exports.createNewUser = (req, res)=>{
 				console.error(err);
 				sendJsonResponse(res, internalErrorCode, "DB Failure - createUser", err);
 			} else {
-				if(!req.body.isGuest){
-					console.log("User created. Sending one time coupon.");
-					crtlCoupon.createTempFreeCoupon(req, res);
+				if(!usr.isGuest){
+					console.log("New user created. Sending one time coupon");
+					crtlCoupon.createTempFreeCoupon(usr.email);
+					sendJsonResponse(res, createSuccessCode, "Success", usr);
 				} else {
+					console.log("Guest user created");
 					sendJsonResponse(res, createSuccessCode, "Success", usr);
 				}
 			}

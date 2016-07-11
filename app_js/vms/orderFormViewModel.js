@@ -144,7 +144,7 @@ class OrderFormViewModel {
 						carSize.multiplier.toString(),
 						car.make,
 						car.model,
-						self.dateMoment.format("ddd MMM Do"),
+						self.dateMoment ? self.dateMoment.format("ddd MMM Do") : "",
 						self.selectedTimeRange().range,
 						promoMsg);
 				}
@@ -279,6 +279,9 @@ class OrderFormViewModel {
 			$('#incomplete-form-alert').show();
 			return;
 		}
+
+		$('#incomplete-form-alert').hide();
+		$('#invalid-coupon-alert').hide();
 
 		if(payNow){
 			this._openCheckout();
@@ -466,6 +469,7 @@ class OrderFormViewModel {
 	}
 
 	_resetObservables(){
+		this.showNewUserAlert(false);
 		this.disableEmailInput(false);
 		this.incompleteFormMsg("");
 
@@ -478,7 +482,7 @@ class OrderFormViewModel {
 		this.description = ko.observable("");
 		this.selectedTimeRange(this.timeRangeOptions[0]);
 
-		this.dateMoment = null;
+		$('#datetimepicker').data("DateTimePicker").clear();
 
 		// Car Info
 		this.showAddVehicleForm(false);
