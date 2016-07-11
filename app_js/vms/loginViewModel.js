@@ -36,6 +36,7 @@ class LogInViewModel {
 
 	OnContinueAsGuest(){
 		this.storageHelper.LoggedInUser = null;
+		this.storageHelper.IsNewUser = false;
 		this.OnDismissMsg();
 		this._resetForms();
 		this._toggleModals();
@@ -75,6 +76,7 @@ class LogInViewModel {
 						self.loginFormMsg("There was a problem creating your account.");
 						self.$loginFormAlert.show();
 					} else {
+						self.storageHelper.IsNewUser = true;
 						self.OnCancelCreateAcct();
 						self._toggleModals();
 					}

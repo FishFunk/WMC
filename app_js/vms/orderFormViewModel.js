@@ -33,6 +33,8 @@ class OrderFormViewModel {
 		this.disableEmailInput = ko.observable(false);
 		this.incompleteFormMsg = ko.observable("");
 
+		this.showNewUserAlert = ko.observable(false);
+
 		// Order Details
 		this.addShine = ko.observable(false);
 		this.addWax = ko.observable(false);
@@ -459,6 +461,8 @@ class OrderFormViewModel {
 
 			$('#phone').trigger('input');
 		}
+
+		this.showNewUserAlert(this.storageHelper.IsNewUser);
 	}
 
 	_resetObservables(){

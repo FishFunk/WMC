@@ -48,4 +48,18 @@ class LocalStorageHelper{
 			this.storageType.loggedInUser = JSON.stringify(user);
 		}
 	}
+
+	get IsNewUser(){
+		if(this.storageType && this.storageType.isNewUser){
+			return JSON.parse(this.storageType.isNewUser);
+		} else {
+			return false;
+		}
+	}
+
+	set IsNewUser(bool){
+		if(this.storageType){
+			this.storageType.isNewUser = JSON.stringify(bool);
+		}
+	}
 }

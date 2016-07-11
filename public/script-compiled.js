@@ -550,6 +550,20 @@ var LocalStorageHelper = function () {
 				this.storageType.loggedInUser = JSON.stringify(user);
 			}
 		}
+	}, {
+		key: "IsNewUser",
+		get: function get() {
+			if (this.storageType && this.storageType.isNewUser) {
+				return JSON.parse(this.storageType.isNewUser);
+			} else {
+				return false;
+			}
+		},
+		set: function set(bool) {
+			if (this.storageType) {
+				this.storageType.isNewUser = JSON.stringify(bool);
+			}
+		}
 	}]);
 
 	return LocalStorageHelper;
@@ -746,6 +760,7 @@ var LogInViewModel = function () {
 		key: "OnContinueAsGuest",
 		value: function OnContinueAsGuest() {
 			this.storageHelper.LoggedInUser = null;
+			this.storageHelper.IsNewUser = false;
 			this.OnDismissMsg();
 			this._resetForms();
 			this._toggleModals();
@@ -783,6 +798,7 @@ var LogInViewModel = function () {
 						self.loginFormMsg("There was a problem creating your account.");
 						self.$loginFormAlert.show();
 					} else {
+						self.storageHelper.IsNewUser = true;
 						self.OnCancelCreateAcct();
 						self._toggleModals();
 					}
@@ -1078,6 +1094,8 @@ var OrderFormViewModel = function () {
 
 		this.disableEmailInput = ko.observable(false);
 		this.incompleteFormMsg = ko.observable("");
+
+		this.showNewUserAlert = ko.observable(false);
 
 		// Order Details
 		this.addShine = ko.observable(false);
@@ -1521,6 +1539,8 @@ var OrderFormViewModel = function () {
 
 				$('#phone').trigger('input');
 			}
+
+			this.showNewUserAlert(this.storageHelper.IsNewUser);
 		}
 	}, {
 		key: '_resetObservables',
