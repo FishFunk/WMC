@@ -292,20 +292,21 @@ class OrderFormViewModel {
 
 	OnFormCancel(){
 		try{
-			this.storageHelper.LoggedInUser = null;
-			this.$orderFormModal.modal('hide');
-			window.location = "#page-top";
-
-			// Reset observables
-			this._resetObservables();
-
-			// Reset Forms
-			this.$orderDetailsForm.validate().resetForm();
-			this.$contactDetailsForm.validate().resetForm();
-
 			$('#incomplete-form-alert').hide();
 			$('#invalid-coupon-alert').hide();
 			$('#success-coupon-alert').hide();
+
+			this.$orderFormModal.modal('hide');
+			this.$orderDetailsForm.validate().resetForm();
+			this.$contactDetailsForm.validate().resetForm();
+
+			this.storageHelper.LoggedInUser = null;
+			this.storageHelper.IsNewUser = false;
+			this.storageHelper.ZipCode = "";
+
+			this._resetObservables();
+
+			window.location = "#page-top";
 
 		} catch (ex){
 			console.log("Failed to reset fields OnFormCancel()");
@@ -325,7 +326,7 @@ class OrderFormViewModel {
 						$('#invalid-coupon-alert').show();
 					} else {
 						$('#success-coupon-alert').show();
-						this.coupon(coupon);
+						self.coupon(coupon);
 					}
 				})
 				.fail(err => {
@@ -374,15 +375,20 @@ class OrderFormViewModel {
 	}
 
 	_onOrderFailure(error){
-		spinner.Hide();
-		dialogPresenter.ShowOrderFailure();
-		console.log(error);
+		this.$orderFormModal.modal('hide');
+		setTimeout(()=>{
+			spinner.Hide();
+			dialogPresenter.ShowOrderFailure();
+			console.log(error);
+		}, 200);
 	}
 
 	_onOrderSuccess(){
-		spinner.Hide();
-		dialogPresenter.ShowOrderSuccess();
-		this.OnFormCancel();		
+		this.OnFormCancel();
+		setTimeout(()=>{
+			spinner.Hide();
+			dialogPresenter.ShowOrderSuccess();
+		}, 200);
 	}
 
 	_sendEmailConfirmation(callback){
