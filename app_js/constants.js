@@ -1,28 +1,4 @@
 const ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
-      DATE_FORMAT = "MM/DD/YY",
-      DEFAULT_JOB_TIME_MINS = 120,
-      MAX_JOB_TIME_PER_DAY_MINS = 720,
-      MAX_JOB_TIME_PER_INTERVAL = 180,
-      WASH_DETAILS = {
-        title: "Hand wash",
-        time: 30,
-        price: 19
-      },
-      TIRE_SHINE_DETAILS = {
-        title: "Tire shine",
-        time: 30,
-        price: 20
-      },
-      INTERIOR_DETAILS = {
-        title: "Interior cleaning",
-        time: 50,
-        price: 40
-      },
-      WAX_DETAILS = {
-        title: "Hand wax & buff",
-        time: 50,
-        price: 30
-      },
       MORNING_TIME_RANGE = {
             range: "9:00 - 12:00 PM",
             key: 1,
@@ -42,82 +18,9 @@ const ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
             range: "6:00 - 9:00 PM",
             key: 4,
             disabled: ko.observable(false)
-      },
-      CAR_SIZES = [
-        {
-          size: "Compact (2-4 door)",
-          multiplier: 1.0
-        },
-        {
-          size: "SUV (5-door)",
-          multiplier: 1.2
-        },
-        {
-          size: "XXL",
-          multiplier: 1.4
-        }
-      ],
-      ZIP_WHITE_LIST = [
-      "22314", // Alexandria
-      "22301", // Del Ray
-      "22305", // Arlandria
-      "22302", // Rosemont
-      "22304", // Landmark
-      "22202", // Crystal City
-      "22206", // Shirlington
-      "22311", // Alexandria West
-      "22312", // Lincolnia
-      "22204", // South Arlington
-      "22041", // Bailey's Crossroads
-      "22211", // Arlington Cemetary
-      "22201", // Clarendon
-      "22203", // Ballston
-      "22209", // Rosslyn
-      "22044", // Seven Corners
-      "22151", // North Springfield
-      "22150", // Springfield
-      "22152", // West Springfield
-      "22153", // More West Springfield
-      "22015", // Burke
-      "22205", // Westover
-      "22042", // West Falls Church
-      "22046", // Falls Church
-      "22003", // Annandale,
-      "22207", // Woodland Acres
-      "22213", // west Arlington
-      "22031", // Mantua
-      "22043", // Idylwood
-      "22027", // Dunn Loring
-      "22101", // McLean
-      "22182", // Wolf Trap
-      "22030", // Fairfax
-      "22032", // Fairfax Memorial Park
-      "22039", // Burke Lake Park
-      "20124" // Clifton
-      ]
+      }
 
 class Constants {
-
-  static get TIRE_SHINE_DETAILS() {
-    return TIRE_SHINE_DETAILS;
-  }
-
-  static get INTERIOR_DETAILS() {
-    return INTERIOR_DETAILS;
-  }
-
-  static get WAX_DETAILS() {
-    return WAX_DETAILS;
-  }
-
-  static get WASH_DETAILS() {
-    return WASH_DETAILS;
-  }
-
-  static get ZIP_WHITE_LIST(){
-  	return ZIP_WHITE_LIST;
-  }
-
   static get MORNING_TIME_RANGE(){
     return MORNING_TIME_RANGE;
   }
@@ -132,33 +35,5 @@ class Constants {
 
   static get NIGHT_TIME_RANGE(){
     return NIGHT_TIME_RANGE;
-  }
-
-  static get CAR_SIZES(){
-    return CAR_SIZES;
-  }
-
-  static get ORDER_SUCCESS_MSG(){
-    return ORDER_SUCCESS_MSG;
-  }
-
-  static get ORDER_FAILURE_MSG(){
-    return ORDER_FAILURE_MSG;
-  }
-
-  static get BAD_ZIP_MSG(){
-    return BAD_ZIP_MSG;
-  }
-
-  static get ASYNC_INTERUPTION_MARKER(){
-    return ASYNC_INTERUPTION_MARKER;
-  }
-
-  static get MAX_JOB_TIME_PER_INTERVAL(){
-    return MAX_JOB_TIME_PER_INTERVAL;
-  }
-
-  static get DATE_FORMAT(){
-    return DATE_FORMAT;
   }
 }

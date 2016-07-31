@@ -2,6 +2,7 @@
 var spinner = null;
 var environment = "debug";
 var dialogPresenter = null;
+var Configuration = {};
 
 class Bootstrapper{
 	static Run(){
@@ -95,6 +96,14 @@ class Bootstrapper{
 					webSvc.GetEnvironment()
 						.then((env)=>{
 							environment = env;
+							callback();
+						})
+						.fail(err => callback(err));
+				},
+				(callback)=>{
+					webSvc.GetSystemSettings()
+						.then(settings =>{
+							Configuration = settings;
 							callback();
 						})
 						.fail(err => callback(err));

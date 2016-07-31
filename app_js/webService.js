@@ -36,6 +36,10 @@ class WebService {
 		return this._executeAjaxCall('GET', "/api/getEnvironment");
 	}
 
+	GetSystemSettings(){
+		return this._executeAjaxCall('GET', "/api/getSystemSettings");
+	}
+
 	ExecuteCharge(stripeToken, price, lastName){
 		return this._executeAjaxCall('POST', "/api/executeCharge", {
 				stripeToken: stripeToken.id,

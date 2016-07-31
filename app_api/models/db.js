@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 require('./user');
 require('./admin');
 require('./coupon');
+require('./settings');
 
 var dbURI = 'mongodb://localhost/WMC';
 

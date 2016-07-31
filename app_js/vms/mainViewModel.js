@@ -8,10 +8,10 @@ class MainViewModel {
 	constructor(storageHelper, logInVm, orderFormVm){
 		
 		// observables
-		this.WASH_COST = Constants.WASH_DETAILS.price;
-		this.TireShinePriceHtml = "<sup>$</sup>"+Constants.TIRE_SHINE_DETAILS.price;
-		this.InteriorPriceHtml = "<sup>$</sup>"+Constants.INTERIOR_DETAILS.price;
-		this.WaxPriceHtml = "<sup>$</sup>"+Constants.WAX_DETAILS.price;
+		this.WASH_COST = Configuration.WASH_DETAILS.price;
+		this.TireShinePriceHtml = "<sup>$</sup>"+Configuration.TIRE_SHINE_DETAILS.price;
+		this.InteriorPriceHtml = "<sup>$</sup>"+Configuration.INTERIOR_DETAILS.price;
+		this.WaxPriceHtml = "<sup>$</sup>"+Configuration.WAX_DETAILS.price;
 
 		this.LogInViewModel = logInVm;
 		this.OrderFormViewModel = orderFormVm;

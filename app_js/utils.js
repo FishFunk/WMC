@@ -15,10 +15,10 @@ class Utils{
 						time+=a.timeEstimate;
 					} else {
 						// default time estimate in minutes
-						time+=Contsants.DEFAULT_JOB_TIME_MINS;
+						time+=Configuration.DEFAULT_JOB_TIME_MINS;
 					}
 				});
-				if(time > Constants.MAX_JOB_TIME_PER_DAY_MINS){
+				if(time > Configuration.MAX_JOB_TIME_PER_DAY_MINS){
 					datesToDisable.push(_.first(appts).date);
 				}
 			}
@@ -28,7 +28,7 @@ class Utils{
 	};
 
 	static VerifyZip(zip){
-		return _.contains(Constants.ZIP_WHITE_LIST, zip.trim());
+		return _.contains(Configuration.ZIP_WHITE_LIST, zip.trim());
 	}
 
 	static IsStrEqual(str1, str2){

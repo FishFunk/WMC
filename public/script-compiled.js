@@ -8,6 +8,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var spinner = null;
 var environment = "debug";
 var dialogPresenter = null;
+var Configuration = {};
 
 var Bootstrapper = function () {
 	function Bootstrapper() {
@@ -95,6 +96,13 @@ var Bootstrapper = function () {
 				webSvc = new WebService();
 				webSvc.GetEnvironment().then(function (env) {
 					environment = env;
+					callback();
+				}).fail(function (err) {
+					return callback(err);
+				});
+			}, function (callback) {
+				webSvc.GetSystemSettings().then(function (settings) {
+					Configuration = settings;
 					callback();
 				}).fail(function (err) {
 					return callback(err);
@@ -251,186 +259,55 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
-    DATE_FORMAT = "MM/DD/YY",
-    DEFAULT_JOB_TIME_MINS = 120,
-    MAX_JOB_TIME_PER_DAY_MINS = 720,
-    MAX_JOB_TIME_PER_INTERVAL = 180,
-    WASH_DETAILS = {
-  title: "Hand wash",
-  time: 30,
-  price: 19
-},
-    TIRE_SHINE_DETAILS = {
-  title: "Tire shine",
-  time: 30,
-  price: 20
-},
-    INTERIOR_DETAILS = {
-  title: "Interior cleaning",
-  time: 50,
-  price: 40
-},
-    WAX_DETAILS = {
-  title: "Hand wax & buff",
-  time: 50,
-  price: 30
-},
     MORNING_TIME_RANGE = {
-  range: "9:00 - 12:00 PM",
-  key: 1,
-  disabled: ko.observable(false)
+      range: "9:00 - 12:00 PM",
+      key: 1,
+      disabled: ko.observable(false)
 },
     AFTERNOON_TIME_RANGE = {
-  range: "12:00 - 3:00 PM",
-  key: 2,
-  disabled: ko.observable(false)
+      range: "12:00 - 3:00 PM",
+      key: 2,
+      disabled: ko.observable(false)
 },
     EVENING_TIME_RANGE = {
-  range: "3:00 - 6:00 PM",
-  key: 3,
-  disabled: ko.observable(false)
+      range: "3:00 - 6:00 PM",
+      key: 3,
+      disabled: ko.observable(false)
 },
     NIGHT_TIME_RANGE = {
-  range: "6:00 - 9:00 PM",
-  key: 4,
-  disabled: ko.observable(false)
-},
-    CAR_SIZES = [{
-  size: "Compact (2-4 door)",
-  multiplier: 1.0
-}, {
-  size: "SUV (5-door)",
-  multiplier: 1.2
-}, {
-  size: "XXL",
-  multiplier: 1.4
-}],
-    ZIP_WHITE_LIST = ["22314", // Alexandria
-"22301", // Del Ray
-"22305", // Arlandria
-"22302", // Rosemont
-"22304", // Landmark
-"22202", // Crystal City
-"22206", // Shirlington
-"22311", // Alexandria West
-"22312", // Lincolnia
-"22204", // South Arlington
-"22041", // Bailey's Crossroads
-"22211", // Arlington Cemetary
-"22201", // Clarendon
-"22203", // Ballston
-"22209", // Rosslyn
-"22044", // Seven Corners
-"22151", // North Springfield
-"22150", // Springfield
-"22152", // West Springfield
-"22153", // More West Springfield
-"22015", // Burke
-"22205", // Westover
-"22042", // West Falls Church
-"22046", // Falls Church
-"22003", // Annandale,
-"22207", // Woodland Acres
-"22213", // west Arlington
-"22031", // Mantua
-"22043", // Idylwood
-"22027", // Dunn Loring
-"22101", // McLean
-"22182", // Wolf Trap
-"22030", // Fairfax
-"22032", // Fairfax Memorial Park
-"22039", // Burke Lake Park
-"20124" // Clifton
-];
+      range: "6:00 - 9:00 PM",
+      key: 4,
+      disabled: ko.observable(false)
+};
 
 var Constants = function () {
-  function Constants() {
-    _classCallCheck(this, Constants);
-  }
+      function Constants() {
+            _classCallCheck(this, Constants);
+      }
 
-  _createClass(Constants, null, [{
-    key: "TIRE_SHINE_DETAILS",
-    get: function get() {
-      return TIRE_SHINE_DETAILS;
-    }
-  }, {
-    key: "INTERIOR_DETAILS",
-    get: function get() {
-      return INTERIOR_DETAILS;
-    }
-  }, {
-    key: "WAX_DETAILS",
-    get: function get() {
-      return WAX_DETAILS;
-    }
-  }, {
-    key: "WASH_DETAILS",
-    get: function get() {
-      return WASH_DETAILS;
-    }
-  }, {
-    key: "ZIP_WHITE_LIST",
-    get: function get() {
-      return ZIP_WHITE_LIST;
-    }
-  }, {
-    key: "MORNING_TIME_RANGE",
-    get: function get() {
-      return MORNING_TIME_RANGE;
-    }
-  }, {
-    key: "AFTERNOON_TIME_RANGE",
-    get: function get() {
-      return AFTERNOON_TIME_RANGE;
-    }
-  }, {
-    key: "EVENING_TIME_RANGE",
-    get: function get() {
-      return EVENING_TIME_RANGE;
-    }
-  }, {
-    key: "NIGHT_TIME_RANGE",
-    get: function get() {
-      return NIGHT_TIME_RANGE;
-    }
-  }, {
-    key: "CAR_SIZES",
-    get: function get() {
-      return CAR_SIZES;
-    }
-  }, {
-    key: "ORDER_SUCCESS_MSG",
-    get: function get() {
-      return ORDER_SUCCESS_MSG;
-    }
-  }, {
-    key: "ORDER_FAILURE_MSG",
-    get: function get() {
-      return ORDER_FAILURE_MSG;
-    }
-  }, {
-    key: "BAD_ZIP_MSG",
-    get: function get() {
-      return BAD_ZIP_MSG;
-    }
-  }, {
-    key: "ASYNC_INTERUPTION_MARKER",
-    get: function get() {
-      return ASYNC_INTERUPTION_MARKER;
-    }
-  }, {
-    key: "MAX_JOB_TIME_PER_INTERVAL",
-    get: function get() {
-      return MAX_JOB_TIME_PER_INTERVAL;
-    }
-  }, {
-    key: "DATE_FORMAT",
-    get: function get() {
-      return DATE_FORMAT;
-    }
-  }]);
+      _createClass(Constants, null, [{
+            key: "MORNING_TIME_RANGE",
+            get: function get() {
+                  return MORNING_TIME_RANGE;
+            }
+      }, {
+            key: "AFTERNOON_TIME_RANGE",
+            get: function get() {
+                  return AFTERNOON_TIME_RANGE;
+            }
+      }, {
+            key: "EVENING_TIME_RANGE",
+            get: function get() {
+                  return EVENING_TIME_RANGE;
+            }
+      }, {
+            key: "NIGHT_TIME_RANGE",
+            get: function get() {
+                  return NIGHT_TIME_RANGE;
+            }
+      }]);
 
-  return Constants;
+      return Constants;
 }();
 "use strict";
 
@@ -673,10 +550,10 @@ var Utils = function () {
 							time += a.timeEstimate;
 						} else {
 							// default time estimate in minutes
-							time += Contsants.DEFAULT_JOB_TIME_MINS;
+							time += Configuration.DEFAULT_JOB_TIME_MINS;
 						}
 					});
-					if (time > Constants.MAX_JOB_TIME_PER_DAY_MINS) {
+					if (time > Configuration.MAX_JOB_TIME_PER_DAY_MINS) {
 						datesToDisable.push(_.first(appts).date);
 					}
 				}
@@ -687,7 +564,7 @@ var Utils = function () {
 	}, {
 		key: 'VerifyZip',
 		value: function VerifyZip(zip) {
-			return _.contains(Constants.ZIP_WHITE_LIST, zip.trim());
+			return _.contains(Configuration.ZIP_WHITE_LIST, zip.trim());
 		}
 	}, {
 		key: 'IsStrEqual',
@@ -1012,10 +889,10 @@ var MainViewModel = function () {
 		_classCallCheck(this, MainViewModel);
 
 		// observables
-		this.WASH_COST = Constants.WASH_DETAILS.price;
-		this.TireShinePriceHtml = "<sup>$</sup>" + Constants.TIRE_SHINE_DETAILS.price;
-		this.InteriorPriceHtml = "<sup>$</sup>" + Constants.INTERIOR_DETAILS.price;
-		this.WaxPriceHtml = "<sup>$</sup>" + Constants.WAX_DETAILS.price;
+		this.WASH_COST = Configuration.WASH_DETAILS.price;
+		this.TireShinePriceHtml = "<sup>$</sup>" + Configuration.TIRE_SHINE_DETAILS.price;
+		this.InteriorPriceHtml = "<sup>$</sup>" + Configuration.INTERIOR_DETAILS.price;
+		this.WaxPriceHtml = "<sup>$</sup>" + Configuration.WAX_DETAILS.price;
 
 		this.LogInViewModel = logInVm;
 		this.OrderFormViewModel = orderFormVm;
@@ -1088,10 +965,10 @@ var OrderFormViewModel = function () {
 			self._prePopulateUserData();
 		});
 
-		this.TIRE_SHINE_COST = Constants.TIRE_SHINE_DETAILS.price;
-		this.INTERIOR_COST = Constants.INTERIOR_DETAILS.price;
-		this.WAX_COST = Constants.WAX_DETAILS.price;
-		this.WASH_COST = Constants.WASH_DETAILS.price;
+		this.TIRE_SHINE_COST = Configuration.TIRE_SHINE_DETAILS.price;
+		this.INTERIOR_COST = Configuration.INTERIOR_DETAILS.price;
+		this.WAX_COST = Configuration.WAX_DETAILS.price;
+		this.WASH_COST = Configuration.WASH_DETAILS.price;
 
 		this.disableEmailInput = ko.observable(false);
 		this.incompleteFormMsg = ko.observable("");
@@ -1118,7 +995,7 @@ var OrderFormViewModel = function () {
 		this.model = ko.observable("");
 		this.color = ko.observable("");
 		this.tag = ko.observable("");
-		this.carSizes = Constants.CAR_SIZES;
+		this.carSizes = Configuration.CAR_SIZES;
 		this.selectedCarSize = ko.observable(this.carSizes[0]);
 		this.carYears = [];
 		var year = new Date().getFullYear() + 1;
@@ -1152,7 +1029,7 @@ var OrderFormViewModel = function () {
 
 			self.cars().forEach(function (car) {
 				if (car.selected()) {
-					var carSize = _.find(Constants.CAR_SIZES, function (obj) {
+					var carSize = _.find(Configuration.CAR_SIZES, function (obj) {
 						return obj.size == car.size || obj.multiplier == car.multiplier;
 					});
 					if (carSize) {
@@ -1188,7 +1065,7 @@ var OrderFormViewModel = function () {
 
 			self.cars().forEach(function (car) {
 				if (car.selected()) {
-					var carSize = _.find(Constants.CAR_SIZES, function (obj) {
+					var carSize = _.find(Configuration.CAR_SIZES, function (obj) {
 						return obj.size == car.size || obj.multiplier == car.multiplier;
 					});
 					summary += $.validator.format("<strong>{7} between {8}</strong><hr>" + "<strong>{5} {6}</strong><br>" + "Exterior Hand Wash<br>{0}{1}{2}{3} = {4}x cost multiplier.<br>" + "{9}", self.addShine() ? "Deep Tire Clean & Shine<br>" : "", self.addWax() ? "Hand Wax & Buff<br>" : "", self.addInterior() ? "Full Interior Cleaning<br>" : "", carSize.size, carSize.multiplier.toString(), car.make, car.model, self.dateMoment ? self.dateMoment.format("ddd MMM Do") : "", self.selectedTimeRange().range, promoMsg);
@@ -1212,7 +1089,7 @@ var OrderFormViewModel = function () {
 			$('#datetimepicker').datetimepicker({
 				minDate: moment().subtract(1, 'days'),
 				maxDate: moment().add(60, 'days'),
-				format: Constants.DATE_FORMAT,
+				format: Configuration.DATE_FORMAT,
 				allowInputToggle: true,
 				focusOnShow: false,
 				ignoreReadonly: true
@@ -1337,7 +1214,7 @@ var OrderFormViewModel = function () {
 			}
 
 			if (!Utils.VerifyZip(selectedLocation.zip)) {
-				this.incompleteFormMsg(Constants.BAD_ZIP_MSG);
+				this.incompleteFormMsg("Sorry but we currently don't service within that zip code.");
 				$('#incomplete-form-alert').show();
 				return;
 			}
@@ -1608,12 +1485,12 @@ var OrderFormViewModel = function () {
 		key: '_updatePickerAndTimerangeOptions',
 		value: function _updatePickerAndTimerangeOptions(momentObj) {
 			var hourOfDay = moment().hour();
-			var today = moment().format(Constants.DATE_FORMAT);
-			var selectedDate = momentObj.format(Constants.DATE_FORMAT);
+			var today = moment().format(Configuration.DATE_FORMAT);
+			var selectedDate = momentObj.format(Configuration.DATE_FORMAT);
 
 			var appointments = this.storageHelper.AppointmentsByDate[selectedDate] || [];
 
-			var maxMinutesPerInterval = Constants.MAX_JOB_TIME_PER_INTERVAL;
+			var maxMinutesPerInterval = Configuration.MAX_JOB_TIME_PER_INTERVAL;
 			var morningAppts = _.filter(appointments, function (appt) {
 				return appt.timeRangeKey === Constants.MORNING_TIME_RANGE.key;
 			});
@@ -1747,30 +1624,30 @@ var OrderFormViewModel = function () {
 	}, {
 		key: '_getTimeEstimate',
 		value: function _getTimeEstimate() {
-			var totalTime = Constants.WASH_DETAILS.time;
+			var totalTime = Configuration.WASH_DETAILS.time;
 			if (this.addShine()) {
-				totalTime += Constants.TIRE_SHINE_DETAILS.time;
+				totalTime += Configuration.TIRE_SHINE_DETAILS.time;
 			}
 			if (this.addWax()) {
-				totalTime += Constants.WAX_DETAILS.time;
+				totalTime += Configuration.WAX_DETAILS.time;
 			}
 			if (this.addInterior()) {
-				totalTime += Constants.INTERIOR_DETAILS.time;
+				totalTime += Configuration.INTERIOR_DETAILS.time;
 			}
 			return totalTime;
 		}
 	}, {
 		key: '_buildServicesArray',
 		value: function _buildServicesArray() {
-			var services = [Constants.WASH_DETAILS.title];
+			var services = [Configuration.WASH_DETAILS.title];
 			if (this.addShine()) {
-				services.push(Constants.TIRE_SHINE_DETAILS.title);
+				services.push(Configuration.TIRE_SHINE_DETAILS.title);
 			}
 			if (this.addWax()) {
-				services.push(Constants.WAX_DETAILS.title);
+				services.push(Configuration.WAX_DETAILS.title);
 			}
 			if (this.addInterior()) {
-				services.push(Constants.INTERIOR_DETAILS.title);
+				services.push(Configuration.INTERIOR_DETAILS.title);
 			}
 			return services;
 		}
@@ -1831,6 +1708,11 @@ var WebService = function () {
 		key: 'GetEnvironment',
 		value: function GetEnvironment() {
 			return this._executeAjaxCall('GET', "/api/getEnvironment");
+		}
+	}, {
+		key: 'GetSystemSettings',
+		value: function GetSystemSettings() {
+			return this._executeAjaxCall('GET', "/api/getSystemSettings");
 		}
 	}, {
 		key: 'ExecuteCharge',

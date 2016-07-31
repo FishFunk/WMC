@@ -25,10 +25,10 @@ class OrderFormViewModel {
 			self._prePopulateUserData();
 		});
 
-		this.TIRE_SHINE_COST = Constants.TIRE_SHINE_DETAILS.price;
-		this.INTERIOR_COST = Constants.INTERIOR_DETAILS.price;
-		this.WAX_COST = Constants.WAX_DETAILS.price;
-		this.WASH_COST = Constants.WASH_DETAILS.price;
+		this.TIRE_SHINE_COST = Configuration.TIRE_SHINE_DETAILS.price;
+		this.INTERIOR_COST = Configuration.INTERIOR_DETAILS.price;
+		this.WAX_COST = Configuration.WAX_DETAILS.price;
+		this.WASH_COST = Configuration.WASH_DETAILS.price;
 
 		this.disableEmailInput = ko.observable(false);
 		this.incompleteFormMsg = ko.observable("");
@@ -60,7 +60,7 @@ class OrderFormViewModel {
 		this.model = ko.observable("");
 		this.color = ko.observable("");
 		this.tag = ko.observable("");
-		this.carSizes = Constants.CAR_SIZES;
+		this.carSizes = Configuration.CAR_SIZES;
 		this.selectedCarSize = ko.observable(this.carSizes[0]);
 		this.carYears = [];
 		var year = new Date().getFullYear() + 1;
@@ -97,7 +97,7 @@ class OrderFormViewModel {
 
 			self.cars().forEach((car)=>{
 				if(car.selected()){
-					var carSize = _.find(Constants.CAR_SIZES, (obj) => obj.size == car.size || obj.multiplier == car.multiplier);
+					var carSize = _.find(Configuration.CAR_SIZES, (obj) => obj.size == car.size || obj.multiplier == car.multiplier);
 					if(carSize){
 						total += serviceCost * carSize.multiplier;
 					}
@@ -131,7 +131,7 @@ class OrderFormViewModel {
 
 			self.cars().forEach((car)=>{
 				if(car.selected()){
-					var carSize = _.find(Constants.CAR_SIZES, (obj) => obj.size == car.size || obj.multiplier == car.multiplier);
+					var carSize = _.find(Configuration.CAR_SIZES, (obj) => obj.size == car.size || obj.multiplier == car.multiplier);
 					summary += $.validator.format(
 						"<strong>{7} between {8}</strong><hr>" +
 						"<strong>{5} {6}</strong><br>" +
@@ -165,7 +165,7 @@ class OrderFormViewModel {
 		$('#datetimepicker').datetimepicker({
 			minDate: moment().subtract(1, 'days'),
 			maxDate: moment().add(60, 'days'),
-			format: Constants.DATE_FORMAT,
+			format: Configuration.DATE_FORMAT,
 			allowInputToggle: true,
 			focusOnShow: false,
 			ignoreReadonly: true
@@ -269,7 +269,7 @@ class OrderFormViewModel {
 		}
 
 		if(!Utils.VerifyZip(selectedLocation.zip)){
-			this.incompleteFormMsg(Constants.BAD_ZIP_MSG);
+			this.incompleteFormMsg("Sorry but we currently don't service within that zip code.");
 			$('#incomplete-form-alert').show();
 			return;
 		}
@@ -528,12 +528,12 @@ class OrderFormViewModel {
 
 	_updatePickerAndTimerangeOptions(momentObj){
 		var hourOfDay = moment().hour();
-		var today = moment().format(Constants.DATE_FORMAT);
-		var selectedDate = momentObj.format(Constants.DATE_FORMAT);
+		var today = moment().format(Configuration.DATE_FORMAT);
+		var selectedDate = momentObj.format(Configuration.DATE_FORMAT);
 
 		var appointments = this.storageHelper.AppointmentsByDate[selectedDate] || [];
 
-		const maxMinutesPerInterval = Constants.MAX_JOB_TIME_PER_INTERVAL;
+		const maxMinutesPerInterval = Configuration.MAX_JOB_TIME_PER_INTERVAL;
 		var morningAppts = _.filter(appointments, (appt) => appt.timeRangeKey === Constants.MORNING_TIME_RANGE.key);
 		var afternoonAppts = _.filter(appointments, (appt) => appt.timeRangeKey === Constants.AFTERNOON_TIME_RANGE.key);
 		var eveningAppts = _.filter(appointments, (appt) => appt.timeRangeKey === Constants.EVENING_TIME_RANGE.key);
@@ -649,29 +649,29 @@ class OrderFormViewModel {
 	}
 
 	_getTimeEstimate(){
-		var totalTime = Constants.WASH_DETAILS.time;
+		var totalTime = Configuration.WASH_DETAILS.time;
 		if(this.addShine()){
-			totalTime += Constants.TIRE_SHINE_DETAILS.time;
+			totalTime += Configuration.TIRE_SHINE_DETAILS.time;
 		}
 		if(this.addWax()){
-			totalTime += Constants.WAX_DETAILS.time;
+			totalTime += Configuration.WAX_DETAILS.time;
 		}
 		if(this.addInterior()){
-			totalTime += Constants.INTERIOR_DETAILS.time;
+			totalTime += Configuration.INTERIOR_DETAILS.time;
 		}
 		return totalTime;
 	}
 
 	_buildServicesArray(){
-		var services = [Constants.WASH_DETAILS.title];
+		var services = [Configuration.WASH_DETAILS.title];
 		if(this.addShine()){
-			services.push(Constants.TIRE_SHINE_DETAILS.title);
+			services.push(Configuration.TIRE_SHINE_DETAILS.title);
 		}
 		if(this.addWax()){
-			services.push(Constants.WAX_DETAILS.title);
+			services.push(Configuration.WAX_DETAILS.title);
 		}
 		if(this.addInterior()){
-			services.push(Constants.INTERIOR_DETAILS.title);
+			services.push(Configuration.INTERIOR_DETAILS.title);
 		}
 		return services;
 	}
