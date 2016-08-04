@@ -103,7 +103,7 @@ class Bootstrapper{
 				(callback)=>{
 					webSvc.GetSystemSettings()
 						.then(settings =>{
-							Configuration = settings;
+							Configuration = new Configuration(settings);
 							callback();
 						})
 						.fail(err => callback(err));

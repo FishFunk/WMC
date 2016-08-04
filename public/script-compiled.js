@@ -102,7 +102,7 @@ var Bootstrapper = function () {
 				});
 			}, function (callback) {
 				webSvc.GetSystemSettings().then(function (settings) {
-					Configuration = settings;
+					Configuration = new Configuration(settings);
 					callback();
 				}).fail(function (err) {
 					return callback(err);
@@ -252,6 +252,82 @@ var cbpAnimatedHeader = function () {
     window.classie = classie;
   }
 })(window);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Configuration = function () {
+  function Configuration(settings) {
+    _classCallCheck(this, Configuration);
+
+    this.settings = settings;
+  }
+
+  _createClass(Configuration, [{
+    key: "DATE_FORMAT",
+    get: function get() {
+      return this.settings.DATE_FORMAT || "MM/DD/YY";
+    }
+  }, {
+    key: "DEFAULT_JOB_TIME_MINS",
+    get: function get() {
+      return this.settings.DEFAULT_JOB_TIME_MINS || 120;
+    }
+  }, {
+    key: "MAX_JOB_TIME_PER_DAY_MINS",
+    get: function get() {
+      return this.settings.MAX_JOB_TIME_PER_DAY_MINS || 720;
+    }
+  }, {
+    key: "MAX_JOB_TIME_PER_INTERVAL",
+    get: function get() {
+      return this.settings.MAX_JOB_TIME_PER_INTERVAL || 180;
+    }
+  }, {
+    key: "WASH_DETAILS",
+    get: function get() {
+      return this.settings.WASH_DETAILS || { price: 19, time: 30, title: "Hand wash" };
+    }
+  }, {
+    key: "TIRE_SHINE_DETAILS",
+    get: function get() {
+      return this.settings.TIRE_SHINE_DETAILS || { price: 20, time: 30, title: "Tire shine" };
+    }
+  }, {
+    key: "INTERIOR_DETAILS",
+    get: function get() {
+      return this.settings.INTERIOR_DETAILS || { price: 40, time: 50, title: "Interior cleaning" };
+    }
+  }, {
+    key: "WAX_DETAILS",
+    get: function get() {
+      return this.settings.WAX_DETAILS || { price: 30, time: 50, title: "Hand Wax & Buff" };
+    }
+  }, {
+    key: "CAR_SIZES",
+    get: function get() {
+      return this.settings.CAR_SIZES || [{
+        "multiplier": 1,
+        "size": "Compact (2-4 door)"
+      }, {
+        "multiplier": 1.2,
+        "size": "SUV (5-door)"
+      }, {
+        "multiplier": 1.4,
+        "size": "XXL"
+      }];
+    }
+  }, {
+    key: "ZIP_WHITE_LIST",
+    get: function get() {
+      return this.settings.ZIP_WHITE_LIST || ["22314", "22301", "22305", "22302", "22304", "22202", "22206", "22311", "22312", "22204", "22041", "22211", "22201", "22203", "22209", "22044", "22151", "22150", "22152", "22153", "22015", "22205", "22042", "22046", "22003", "22207", "22213", "22031", "22043", "22027", "22101", "22182", "22030", "22032", "22039", "20124"];
+    }
+  }]);
+
+  return Configuration;
+}();
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
