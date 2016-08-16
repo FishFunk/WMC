@@ -231,7 +231,7 @@ var formatCars = (cars)=>{
 }
 
 var formatLocation = (loc)=>{
-	return br + loc.street + br + loc.city + ',' + " " + loc.state + loc.zip; 
+	return br + loc.street + br + loc.city + ',' + " " + loc.state + " " + loc.zip;
 }
 
 var sendJsonResponse = (res, status, msg, data)=>{

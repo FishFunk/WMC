@@ -1,0 +1,133 @@
+API Details
+
+POST
+/createNewUser
+/getUserByEmail
+/getUserByEmailAndPwd
+/executeCharge
+/sendConfirmationEmail
+/forgotPassword
+/verifyAdmin
+/verifyCoupon
+
+GET
+/getFutureApptDatesAndTimes
+{
+  "msg": "Success",
+  "data": [
+    {
+      "date": "2016-08-21T00:44:04.329Z",
+      "timeRange": "12:00 - 3:00 PM",
+      "timeRangeKey": 2,
+      "timeEstimate": 38
+    },
+    {
+      "date": "2016-08-17T00:44:04.330Z",
+      "timeRange": "3:00 - 6:00 PM",
+      "timeRangeKey": 3,
+      "timeEstimate": 116
+    }
+    ...
+  ]
+}
+
+/getAllAppointments
+{
+  "msg": "Success",
+  "data": [
+    {
+      "date": "2016-06-17T00:44:04.328Z",
+      "location": {
+        "city": "CJZVKFD",
+        "state": "WF",
+        "street": "7595 CTCYJZFHMVTZ St.",
+        "title": "TNTGIBGLTEPB",
+        "zip": "59410",
+        "_id": "57b2676902013c030035bfe8"
+      },
+      "price": 205,
+      "timeEstimate": 113,
+      "description": "LMWOEKBIDXVPBHI EWNRAJVDNPTC CQRAUVVLD ZJJAPFTEJQYDA ODLEAGEFJTQD PPPWTRRTLJIIR AXHCZUJ OFMYA BWFOPIHWHOIVC RDTIMLNHKUCFHC TMSWC DDM VZK JQAQVUDQNM QWOGYVVQQWD SIWFBFCSITD TAVWOIPW DJUZTXZPZAX BSLTFCUFIHID LJTNHBKYB ",
+      "services": [
+        "Exterior Wash",
+        "Tire Shine",
+        "Interior",
+        "Wax & Buff"
+      ],
+      "cars": [
+        {
+          "color": "JOTJKIT",
+          "make": "TYCVARVB",
+          "model": "PCF",
+          "size": "HXAGBJ",
+          "tag": "642-DOLU"
+        }
+      ]
+    }
+    ...
+  ]
+}
+
+/getEnvironment
+{
+  "msg": "Success",
+  "data": "production"
+}
+
+/getSystemSettings
+{
+  "msg": "success",
+  "data": {
+    "DATE_FORMAT": "MM/DD/YY",
+    "DEFAULT_JOB_TIME_MINS": 120,
+    "MAX_JOB_TIME_PER_DAY_MINS": 720,
+    "MAX_JOB_TIME_PER_INTERVAL": 180,
+    "WASH_DETAILS": {
+      "price": 19,
+      "time": 30,
+      "title": "Hand wash"
+    },
+    "TIRE_SHINE_DETAILS": {
+      "price": 20,
+      "time": 30,
+      "title": "Tire shine"
+    },
+    "INTERIOR_DETAILS": {
+      "price": 40,
+      "time": 50,
+      "title": "Interior cleaning"
+    },
+    "WAX_DETAILS": {
+      "price": 30,
+      "time": 50,
+      "title": "Hand wax & buff"
+    },
+    "CAR_SIZES": [
+      {
+        "multiplier": 1,
+        "size": "Compact (2-4 door)"
+      },
+      {
+        "multiplier": 1.2,
+        "size": "SUV (5-door)"
+      },
+      {
+        "multiplier": 1.4,
+        "size": "XXL"
+      }
+    ],
+    "ZIP_WHITE_LIST": [
+      "22314",
+      "22301",
+      "22305",
+      ...
+    ]
+  }
+}
+
+PUT
+/updateUser
+
+
+DELETE
+/deleteExpiredAppointments

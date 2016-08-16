@@ -1,0 +1,69 @@
+Car Schema 
+{
+	color: {type: String, required: true},
+	make: {type: String, required: true},
+	model: {type: String, required: true},
+	size: String, // 2-door, SUV, etc.
+	tag: String, // License plate
+	year: {type: Number, required: true}
+}
+
+Location Schema
+{
+	city: {type: String, required: true},
+	state: {type: String, required: true},
+	street: {type: String, required: true},	
+	title: String, // Home, work, etc.
+	zip: {type: String, required: true}
+}
+
+Appointment Schema
+{
+	cars: Car[],
+	date: { type: Date, required: true},
+	location: Location,
+	price: Number,
+	services: String[],
+	timeEstimate: Number, // minutes
+	timeRange: { type: String, required: true},
+	timeRangeKey: { type: Number, required: true }, // Enum 1 - 4
+	description: String
+}
+
+User Schema
+{
+	appointments: Appointment[],
+	cars: Car[],
+	email: { type: String, required: true },
+	phone: String,
+	firstName: String,
+	lastName: String,
+	pwd: String,
+	locations: Location[],
+	isGuest: { type: Boolean, required: true },
+	lastLogin: Date
+}
+
+System Setting Schema
+{
+	key: { type: String, required: true },
+	value: { type: Any, required: true }
+}
+
+Coupon Schema
+{
+	code: { type: String, required: true },
+	startDate: { type: Date, required: true },
+	endDate: { type: Date },
+	discountPercentage: {type: Number, required: true}
+}
+
+Admin Schema
+{
+	firstName: { type: String, required: true },
+	lastName: { type: String, required: true },
+	email: { type: String, required: true },
+	phone: { type: String, required: true },
+	usr: { type: String, required: true, minlength: 8},
+	pwd: { type: String, required: true, minlength: 8}
+}
