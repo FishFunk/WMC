@@ -363,7 +363,11 @@ class OrderFormViewModel {
 					this._sendEmailConfirmation.bind(this)
 				],
 				possibleError=>{
-					if(possibleError){
+					if(possibleError === Constants.CHARGE_FAILURE_MARKER){
+						self.incompleteFormMsg('That card information didn\'t work.');
+						$('#incomplete-form-alert').show();
+					}
+					else if(possibleError){
 						self._onOrderFailure(possibleError);		
 					} else {
 						self._onOrderSuccess();
@@ -426,7 +430,10 @@ class OrderFormViewModel {
 	_executeCharge(token, callback){
       	this.webSvc.ExecuteCharge(token, this.orderTotal() * 100, this.last())
 	      	.then(()=>callback())
-	      	.fail((err)=>callback(err));
+	      	.fail((err)=>{
+	      		console.log(err);
+	      		callback(Constants.CHARGE_FAILURE_MARKER);
+	      	});
 	}
 
 	_updateUserData(callback){

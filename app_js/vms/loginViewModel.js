@@ -138,6 +138,7 @@ class LogInViewModel {
 					self._resetForms();
 					self.ShowCreateAcct(false);
 					self.ShowForgotPwd(false);
+					self.ShowLogin(true);
 				})
 				.fail(err => {
 					self.loginFormMsg("Uh oh... something went wrong.");

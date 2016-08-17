@@ -24,8 +24,8 @@ const logoUrl = process.env.NODE_ENV == 'production' ?
 	"https://wmc-prod.herokuapp.com/img/wmc_logo.png" :
 	"https://wmc-test.herokuapp.com/img/wmc_logo.png";
 
-const hrefPhone = "+17034736358";
-const displayPhone = "+703.473.6358";
+const hrefPhone = "+12028109274";
+const displayPhone = "+202.810.9274";
 const contactEmail = "contact@washmycarva.com";
 const noReplyEmail = "donotreply@washmycarva.com";
 const appUrl = "www.washmycarva.com";

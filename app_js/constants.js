@@ -1,4 +1,5 @@
 const ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
+      CHARGE_FAILURE_MARKER = "CARD_CHARGE_FAILURE",
       MORNING_TIME_RANGE = {
             range: "9:00 - 12:00 PM",
             key: 1,

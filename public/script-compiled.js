@@ -335,6 +335,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
+    CHARGE_FAILURE_MARKER = "CARD_CHARGE_FAILURE",
     MORNING_TIME_RANGE = {
       range: "9:00 - 12:00 PM",
       key: 1,
@@ -815,6 +816,7 @@ var LogInViewModel = function () {
 					self._resetForms();
 					self.ShowCreateAcct(false);
 					self.ShowForgotPwd(false);
+					self.ShowLogin(true);
 				}).fail(function (err) {
 					self.loginFormMsg("Uh oh... something went wrong.");
 					self.$loginFormAlert.show();
@@ -1377,7 +1379,10 @@ var OrderFormViewModel = function () {
 					// user chose to pay later
 					callback();
 				}, this._verifyUser.bind(this), this._updateUserData.bind(this), this._sendEmailConfirmation.bind(this)], function (possibleError) {
-					if (possibleError) {
+					if (possibleError === Constants.CHARGE_FAILURE_MARKER) {
+						self.incompleteFormMsg('That card information didn\'t work.');
+						$('#incomplete-form-alert').show();
+					} else if (possibleError) {
 						self._onOrderFailure(possibleError);
 					} else {
 						self._onOrderSuccess();
@@ -1448,7 +1453,8 @@ var OrderFormViewModel = function () {
 			this.webSvc.ExecuteCharge(token, this.orderTotal() * 100, this.last()).then(function () {
 				return callback();
 			}).fail(function (err) {
-				return callback(err);
+				console.log(err);
+				callback(Constants.CHARGE_FAILURE_MARKER);
 			});
 		}
 	}, {
