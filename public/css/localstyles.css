@@ -26,8 +26,8 @@ input, textarea, select {
 
 .text-muted{color:#777}
 .text-primary{color:#00acea}
-p{font-size:14px;line-height:1.75}
-p.large{font-size:16px}a,a:hover,a:active,a.active{outline:0}a{color:#00acea}
+p{font-size:16px;line-height:1.75}
+p.large{font-size:18px}a,a:hover,a:active,a.active{outline:0}a{color:#00acea}
 a:hover,a:active,a.active{color:#00acea}
 h1,h2,h3,h4,h5,h6{font-family:Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;text-transform:uppercase;font-weight:700}
 .img-centered{margin:0 auto}
