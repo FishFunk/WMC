@@ -71,7 +71,9 @@ module.exports.getAllAppointments = (req, res)=>{
 };
 
 module.exports.deleteExpiredAppointments = (req, res)=>{
-	var now = new Date().toISOString();
+	var now = new Date();
+ 	now.setDate(now.getDate()-1);
+	var now = now.toISOString();
 	Usr.update({}, { $pull : { 'appointments': { 'date': { $lt: now } } } }, {multi: true},
 		(err, docs)=>{
 		if(err){
@@ -103,7 +105,7 @@ module.exports.createNewUser = (req, res)=>{
 			} else {
 				if(!usr.isGuest){
 					console.log("New user created. Sending one time coupon");
-					crtlCoupon.createTempFreeCoupon(usr.email);
+					crtlCoupon.createTempCoupon(usr.email);
 					sendJsonResponse(res, createSuccessCode, "Success", usr);
 				} else {
 					console.log("Guest user created");

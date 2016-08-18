@@ -21,7 +21,7 @@ module.exports.verifyCoupon = (req, res)=>{
 			} else if (!coupon) {
 				sendJsonResponse(res, noContentSuccessCode, "Invalid coupon");
 			} else {
-				if(coupon.discountPercentage == 100){
+				if(coupon.onlyUseOnce){
 					Coupon.remove({_id: coupon._id}, (err)=>{
 						if(err){
 							console.error("Failed to remove one time coupon");
@@ -42,7 +42,7 @@ module.exports.verifyCoupon = (req, res)=>{
 };
 
 // Not exposed to API - used by user.js
-module.exports.createTempFreeCoupon = (email)=>{
+module.exports.createTempCoupon = (email)=>{
 	var now = new Date();
 	var end = new Date();
 	end.setHours(now.getHours() + 12);
@@ -55,7 +55,8 @@ module.exports.createTempFreeCoupon = (email)=>{
 			code: couponCode,
 			startDate: now,
 			endDate: end,
-			discountPercentage: 100
+			discountPercentage: 50,
+			onlyUseOnce: true
 		}, (err, coupon)=>{
 			if(err){
 				console.log("DB Failure - createTempCoupon");
@@ -65,7 +66,7 @@ module.exports.createTempFreeCoupon = (email)=>{
 			}
 		});
 	} else {
-		console.log("No email provided - createTempFreeCoupon");
+		console.log("No email provided - createTempCoupon");
 	}
 }
 

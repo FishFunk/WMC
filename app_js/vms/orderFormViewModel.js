@@ -123,7 +123,7 @@ class OrderFormViewModel {
 
 			if(self.coupon()){
 				if(self.coupon().discountPercentage == 100){
-					promoMsg = "First Timer Discount - First Wash Free!"
+					promoMsg = "Wow! A free wash! Now that's a sweet deal!"
 				} else {
 					promoMsg = "Promo discount: " + self.couponCode().discountPercentage.toString() + "%";
 				}
