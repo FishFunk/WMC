@@ -54,7 +54,9 @@
     <div class="row">
       <legend class="col-xs-12">Vehicles</legend>
       <div data-bind="template: { name: 'vehicle-tmpl', foreach: cars}"></div>
-      <form id="add-vehicle-form" data-toggle="validator" role="form" data-bind="visible: showAddVehicleForm, submit: OnSaveNewVehicle" autocomplete="off">
+    </div>
+    <div class="row" data-bind="visible: showAddVehicleForm">
+      <form id="add-vehicle-form" data-toggle="validator" role="form" data-bind="submit: OnSaveNewVehicle" autocomplete="off">
         <div class="form-group">
           <label class="col-sm-1 control-label">Make</label>
           <div class="col-sm-5">
@@ -99,7 +101,9 @@
     <div class="row">
       <legend class="col-xs-12">Location</legend>
       <div data-bind="template: { name: 'location-tmpl', foreach: locations}"></div>
-      <form id="add-location-form" data-toggle="validator" role="form" data-bind="visible: showAddLocationForm, submit: OnSaveNewLocation" autocomplete="off">
+    </div>
+    <div class="row" data-bind="visible: showAddLocationForm">
+      <form id="add-location-form" data-toggle="validator" role="form" data-bind="submit: OnSaveNewLocation" autocomplete="off">
         <div class="form-group">
           <label class="col-sm-1 control-label">Street</label>
           <div class="col-sm-11">

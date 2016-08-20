@@ -118,8 +118,10 @@ class OrderFormViewModel {
 		});
 
 		this.orderSummary = ko.computed(()=>{
-			let summary = "";
 			let promoMsg = "";
+			let summary = $.validator.format("<strong>{0} between {1}</strong><hr>", 
+				self.dateMoment ? self.dateMoment.format("ddd MMM Do") : "",
+				self.selectedTimeRange().range);
 
 			if(self.coupon()){
 				if(self.coupon().discountPercentage == 100){
@@ -133,22 +135,19 @@ class OrderFormViewModel {
 				if(car.selected()){
 					var carSize = _.find(Configuration.CAR_SIZES, (obj) => obj.size == car.size || obj.multiplier == car.multiplier);
 					summary += $.validator.format(
-						"<strong>{7} between {8}</strong><hr>" +
 						"<strong>{5} {6}</strong><br>" +
-						"Exterior Hand Wash<br>{0}{1}{2}{3} = {4}x cost multiplier.<br>" +
-						"{9}", 
+						"Exterior Hand Wash<br>{0}{1}{2}{3}{4}<br>", 
 						(self.addShine() ? "Deep Tire Clean & Shine<br>" : ""),
 						(self.addWax() ? "Hand Wax & Buff<br>" : ""),
 						(self.addInterior() ? "Full Interior Cleaning<br>" : ""),
 						carSize.size,
-						carSize.multiplier.toString(),
+						carSize.multiplier > 1 ? " - additional " + Math.round(((carSize.multiplier - 1) * 100)).toString() + "%" : "",
 						car.make,
-						car.model,
-						self.dateMoment ? self.dateMoment.format("ddd MMM Do") : "",
-						self.selectedTimeRange().range,
-						promoMsg);
+						car.model);
 				}
 			});
+
+			summary += promoMsg;
 
 			return summary;
 		});
