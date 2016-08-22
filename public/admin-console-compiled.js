@@ -54,13 +54,74 @@ var AdminConsoleVm = function () {
 			}
 
 			var self = this;
-			bootbox.confirm("Are you sure you want to delete expired appointments??", function (bool) {
+			bootbox.confirm("Are you sure you want to delete expired appointments?", function (bool) {
 				if (bool) {
 					spinner.Show();
-					webSvc.DeleteExpiredAppointments().fail(function (err) {
-						return console.log(err);
+					webSvc.DeleteExpiredAppointments().then(function () {
+						return self.Load();
+					}).fail(function (err) {
+						return console.error(err);
 					}).always(function () {
 						return spinner.Hide();
+					});
+				}
+			});
+		}
+	}, {
+		key: "OnEditAppointment",
+		value: function OnEditAppointment(appointment) {
+			var self = this;
+			var html = '<textarea id="edit-appointment-json" style="min-width:500px;min-height:400px;">' + JSON.stringify(appointment, null, 4) + '</textarea>';
+			if (!appointment._id) {
+				bootbox.alert("Unable to update - no ID");
+				return;
+			}
+			bootbox.dialog({
+				title: "Edit Appointment",
+				message: html,
+				buttons: {
+					cancel: {
+						label: 'CANCEL',
+						className: 'btn-default',
+						callback: function callback() {}
+					},
+					submit: {
+						label: 'DONE',
+						className: 'btn-primary',
+						callback: function callback() {
+							try {
+								var newJson = $('#edit-appointment-json').val();
+								var data = JSON.parse(newJson);
+								webSvc.UpdateAppointment(data).then(function () {
+									bootbox.alert("Update Successful!");
+									self.Load();
+								}).fail(function (err) {
+									console.error(err);
+									bootbox.alert("Update Failed!");
+								});
+							} catch (ex) {
+								ex.Message = "Invalid JSON";
+								console.error(ex);
+							}
+						}
+					}
+				}
+			});
+		}
+	}, {
+		key: "OnDeleteAppointment",
+		value: function OnDeleteAppointment(targetId) {
+			var self = this;
+			if (!targetId) {
+				bootbox.alert("No ID found for this appointment. Unable to delete.");
+				return;
+			}
+			bootbox.confirm("Are you sure you want to delete this appointment?", function (bool) {
+				if (bool) {
+					webSvc.DeleteSingleAppointment(targetId).then(function () {
+						self.Load();
+					}).fail(function (err) {
+						console.log(err);
 					});
 				}
 			});
@@ -73,6 +134,140 @@ var AdminConsoleVm = function () {
 	}]);
 
 	return AdminConsoleVm;
+}();
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Configuration = function () {
+  function Configuration(settings) {
+    _classCallCheck(this, Configuration);
+
+    this.settings = settings;
+  }
+
+  _createClass(Configuration, [{
+    key: "DATE_FORMAT",
+    get: function get() {
+      return this.settings.DATE_FORMAT || "MM/DD/YY";
+    }
+  }, {
+    key: "DEFAULT_JOB_TIME_MINS",
+    get: function get() {
+      return this.settings.DEFAULT_JOB_TIME_MINS || 120;
+    }
+  }, {
+    key: "MAX_JOB_TIME_PER_DAY_MINS",
+    get: function get() {
+      return this.settings.MAX_JOB_TIME_PER_DAY_MINS || 720;
+    }
+  }, {
+    key: "MAX_JOB_TIME_PER_INTERVAL",
+    get: function get() {
+      return this.settings.MAX_JOB_TIME_PER_INTERVAL || 180;
+    }
+  }, {
+    key: "WASH_DETAILS",
+    get: function get() {
+      return this.settings.WASH_DETAILS || { price: 19, time: 30, title: "Hand wash" };
+    }
+  }, {
+    key: "TIRE_SHINE_DETAILS",
+    get: function get() {
+      return this.settings.TIRE_SHINE_DETAILS || { price: 20, time: 30, title: "Tire shine" };
+    }
+  }, {
+    key: "INTERIOR_DETAILS",
+    get: function get() {
+      return this.settings.INTERIOR_DETAILS || { price: 40, time: 50, title: "Interior cleaning" };
+    }
+  }, {
+    key: "WAX_DETAILS",
+    get: function get() {
+      return this.settings.WAX_DETAILS || { price: 30, time: 50, title: "Hand Wax & Buff" };
+    }
+  }, {
+    key: "CAR_SIZES",
+    get: function get() {
+      return this.settings.CAR_SIZES || [{
+        "multiplier": 1,
+        "size": "Compact (2-4 door)"
+      }, {
+        "multiplier": 1.2,
+        "size": "SUV (5-door)"
+      }, {
+        "multiplier": 1.4,
+        "size": "XXL"
+      }];
+    }
+  }, {
+    key: "ZIP_WHITE_LIST",
+    get: function get() {
+      return this.settings.ZIP_WHITE_LIST || ["22314", "22301", "22305", "22302", "22304", "22202", "22206", "22311", "22312", "22204", "22041", "22211", "22201", "22203", "22209", "22044", "22151", "22150", "22152", "22153", "22015", "22205", "22042", "22046", "22003", "22207", "22213", "22031", "22043", "22027", "22101", "22182", "22030", "22032", "22039", "20124"];
+    }
+  }]);
+
+  return Configuration;
+}();
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
+    CHARGE_FAILURE_MARKER = "CARD_CHARGE_FAILURE",
+    MORNING_TIME_RANGE = {
+      range: "9:00 - 12:00 PM",
+      key: 1,
+      disabled: ko.observable(false)
+},
+    AFTERNOON_TIME_RANGE = {
+      range: "12:00 - 3:00 PM",
+      key: 2,
+      disabled: ko.observable(false)
+},
+    EVENING_TIME_RANGE = {
+      range: "3:00 - 6:00 PM",
+      key: 3,
+      disabled: ko.observable(false)
+},
+    NIGHT_TIME_RANGE = {
+      range: "6:00 - 9:00 PM",
+      key: 4,
+      disabled: ko.observable(false)
+};
+
+var Constants = function () {
+      function Constants() {
+            _classCallCheck(this, Constants);
+      }
+
+      _createClass(Constants, null, [{
+            key: "MORNING_TIME_RANGE",
+            get: function get() {
+                  return MORNING_TIME_RANGE;
+            }
+      }, {
+            key: "AFTERNOON_TIME_RANGE",
+            get: function get() {
+                  return AFTERNOON_TIME_RANGE;
+            }
+      }, {
+            key: "EVENING_TIME_RANGE",
+            get: function get() {
+                  return EVENING_TIME_RANGE;
+            }
+      }, {
+            key: "NIGHT_TIME_RANGE",
+            get: function get() {
+                  return NIGHT_TIME_RANGE;
+            }
+      }]);
+
+      return Constants;
 }();
 'use strict';
 
@@ -89,14 +284,20 @@ var Day = function Day(date, appts) {
 
 var spinner = null;
 var webSvc = null;
+var Configuration;
 
 window.jQuery(document).ready(function ($) {
-   spinner = new LoadingSpinner();
-   webSvc = new WebService();
-   var vm = new AdminConsoleVm();
+	spinner = new LoadingSpinner();
+	webSvc = new WebService();
 
-   ko.applyBindings(vm);
-   vm.Load();
+	webSvc.GetSystemSettings().then(function (settings) {
+		Configuration = new Configuration(settings);
+		var vm = new AdminConsoleVm();
+		ko.applyBindings(vm);
+		vm.Load();
+	}).fail(function (err) {
+		return console.log(error);
+	});
 });
 "use strict";
 
@@ -250,6 +451,21 @@ var WebService = function () {
 		key: 'DeleteExpiredAppointments',
 		value: function DeleteExpiredAppointments(user) {
 			return this._executeAjaxCall('DELETE', "/api/deleteExpiredAppointments");
+		}
+	}, {
+		key: 'DeleteSingleAppointment',
+		value: function DeleteSingleAppointment(id) {
+			return this._executeAjaxCall('DELETE', "/api/deleteSingleAppointment?id=" + id);
+		}
+	}, {
+		key: 'UpdateAppointment',
+		value: function UpdateAppointment(appt) {
+			return this._executeAjaxCall('POST', "/api/updateAppointment", { appt: appt });
+		}
+	}, {
+		key: 'GetSystemSettings',
+		value: function GetSystemSettings() {
+			return this._executeAjaxCall('GET', "/api/getSystemSettings");
 		}
 
 		// 'data' is an optional param

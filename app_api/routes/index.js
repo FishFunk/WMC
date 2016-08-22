@@ -11,6 +11,7 @@ var ctrlSettings = require('../controllers/settings');
 router.post('/createNewUser', ctrlUsers.createNewUser);
 router.post('/getUserByEmail', ctrlUsers.getUserByEmail);
 router.post('/getUserByEmailAndPwd', ctrlUsers.getUserByEmailAndPwd);
+router.post('/updateAppointment', ctrlUsers.updateAppointment);
 
 router.get('/getFutureApptDatesAndTimes', ctrlUsers.getFutureApptDatesAndTimes);
 router.get('/getAllAppointments', ctrlUsers.getAllAppointments);
@@ -23,6 +24,7 @@ router.post('/sendConfirmationEmail', ctrlMsgs.sendConfirmationEmail);
 router.post('/forgotPassword', ctrlMsgs.forgotPassword);
 
 router.delete('/deleteExpiredAppointments', ctrlUsers.deleteExpiredAppointments);
+router.delete('/deleteSingleAppointment/:id?', ctrlUsers.deleteSingleAppointment);
 
 router.post('/verifyAdmin', ctrlAdmin.verifyAdmin);
 

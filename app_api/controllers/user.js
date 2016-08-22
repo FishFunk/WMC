@@ -23,6 +23,7 @@ module.exports.updateUser = (req, res)=>{
 			lastLogin: new Date()
 		}, (err, usr)=>{
 			if(err){
+				console.error(err);
 				sendJsonResponse(res, internalErrorCode, "DB Failure - updateUser", err);
 			} else {
 				sendJsonResponse(res, noContentSuccessCode, "Success");
@@ -38,6 +39,7 @@ module.exports.getFutureApptDatesAndTimes = (req, res)=>{
 	   .select('appointments.date appointments.timeEstimate appointments.timeRange appointments.timeRangeKey')
 	   .exec((err, docs)=>{
 		if(err){
+			console.error(err);
 			sendJsonResponse(res, internalErrorCode, "DB Failure - getFutureAppointments", err);
 		} else {
 			var now = new Date();
@@ -61,9 +63,9 @@ module.exports.getAllAppointments = (req, res)=>{
 	   .select('appointments')
 	   .exec((err, docs)=>{
 		if(err){
+			console.error(err);
 			sendJsonResponse(res, internalErrorCode, "DB Failure - getAllAppointments", err);
 		} else {
-			var now = new Date();
 			var userAppointmentArrs = _.map(docs, (d)=>{ return d.appointments });
 			sendJsonResponse(res, readSuccessCode, "Success", _.flatten(userAppointmentArrs));
 		}
@@ -77,11 +79,50 @@ module.exports.deleteExpiredAppointments = (req, res)=>{
 	Usr.update({}, { $pull : { 'appointments': { 'date': { $lt: now } } } }, {multi: true},
 		(err, docs)=>{
 		if(err){
+			console.error(err);
 			sendJsonResponse(res, internalErrorCode, "DB Failure - deleteExpiredAppointments", err);
 		} else {
 			sendJsonResponse(res, noContentSuccessCode, "Success");
 		}
 	});
+};
+
+module.exports.deleteSingleAppointment = (req, res)=>{
+	const id = req.query.id;
+	if(id){
+		Usr.findOneAndUpdate({'appointments._id' : id}, { $pull : {'appointments' : { '_id' : id} } },
+			(err)=>{
+				if(err){
+					console.error(err);
+					sendJsonResponse(res, internalErrorCode, "DB Failure - deleteSingleAppointment", err);
+				} else {
+					sendJsonResponse(res, noContentSuccessCode, "Success");
+				}
+			});
+	} else {
+		sendJsonResponse(res, badRequestCode, "No ID param");
+	}
+};
+
+module.exports.updateAppointment = (req, res)=>{
+	try{
+		if(req.body && req.body.appt){
+			Usr.findOneAndUpdate({'appointments._id' : req.body.appt._id}, { $set : {'appointments.$' : req.body.appt } },
+				(err)=>{
+					if(err){
+						console.error(err);
+						sendJsonResponse(res, internalErrorCode, "DB Failure - deleteSingleAppointment", err);
+					} else {
+						sendJsonResponse(res, noContentSuccessCode, "Success");
+					}
+				});
+		} else {
+			sendJsonResponse(res, badRequestCode, "No request body");
+		}
+	} catch(ex){
+		console.error(ex);
+		sendJsonResponse(res, internalErrorCode, 'Failure updating appointment');
+	}
 };
 
 module.exports.createNewUser = (req, res)=>{

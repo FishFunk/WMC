@@ -16,6 +16,18 @@ class WebService {
 		return this._executeAjaxCall('DELETE', "/api/deleteExpiredAppointments");
 	}
 
+	DeleteSingleAppointment(id){
+		return this._executeAjaxCall('DELETE', "/api/deleteSingleAppointment?id=" + id);
+	}
+
+	UpdateAppointment(appt){
+		return this._executeAjaxCall('POST', "/api/updateAppointment", { appt: appt });
+	}
+
+	GetSystemSettings(){
+		return this._executeAjaxCall('GET', "/api/getSystemSettings");
+	}
+
 	// 'data' is an optional param
 	_executeAjaxCall(type, ext, data){
 		this.deferred = $.Deferred();

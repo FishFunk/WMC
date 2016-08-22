@@ -57,6 +57,17 @@
                             <h3 class="panel-title" data-bind="text: date"></h3>
                         </div>
                         <div class="panel-body" data-bind="foreach: appts">
+                            <center>
+                                <button class="btn btn-md btn-default" data-bind="click: $root.OnEditAppointment.bind($root, $data)">Edit</button>
+                                <button class="btn btn-md btn-danger" data-bind="click: $root.OnDeleteAppointment.bind($root, $data._id)">Delete</button>
+                                </center><br>
+                            <label>Address&nbsp;(<span data-bind="text: $data.location.title"></span>)</label>
+                                <br>
+                                <span data-bind="text: $data.location.street"></span><br>
+                                <span data-bind="text: $data.location.city"></span>,&nbsp;
+                                <span data-bind="text: $data.location.state"></span>&nbsp;
+                                <span data-bind="text: $data.location.zip"></span>
+                                <br>
                             <label>Cars</label>
                                 <ul data-bind="foreach: $data.cars">
                                     <li>
@@ -68,13 +79,6 @@
                                         <span data-bind="text: $data.tag"></span>&nbsp;
                                     </li>
                                 </ul>
-                            <label>Address&nbsp;(<span data-bind="text: $data.location.title"></span>)</label>
-                                <br>
-                                <span data-bind="text: $data.location.street"></span><br>
-                                <span data-bind="text: $data.location.city"></span>,&nbsp;
-                                <span data-bind="text: $data.location.state"></span>&nbsp;
-                                <span data-bind="text: $data.location.zip"></span>
-                                <br>
                             <label>Services:&nbsp;</label><span data-bind="text: $data.services"></span><br>
                             <label>Time Range:&nbsp;</label><span data-bind="text: $data.timeRange"></span><br>
                             <label>Desc:&nbsp;</label><span data-bind="text: $data.description"></span><br>
@@ -122,6 +126,7 @@
 
 <!-- spells -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.15.0/jquery.validate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>

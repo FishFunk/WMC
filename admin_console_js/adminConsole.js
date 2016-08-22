@@ -44,13 +44,76 @@ class AdminConsoleVm{
 		}
 
 		var self = this;
-		bootbox.confirm("Are you sure you want to delete expired appointments??", 
+		bootbox.confirm("Are you sure you want to delete expired appointments?", 
 			(bool)=>{
 				if(bool){
 					spinner.Show();
 					webSvc.DeleteExpiredAppointments()
-	        			.fail(err=>console.log(err))
+						.then(()=>self.Load())
+	        			.fail(err=>console.error(err))
 	        			.always(()=>spinner.Hide());
+				}
+			});
+	}
+
+	OnEditAppointment(appointment){
+		var self = this;
+		const html = '<textarea id="edit-appointment-json" style="min-width:500px;min-height:400px;">' + JSON.stringify(appointment, null, 4) + '</textarea>'
+		if(!appointment._id){
+			bootbox.alert("Unable to update - no ID");
+			return;
+		}
+		bootbox.dialog({
+			title: "Edit Appointment",
+			message: html,
+			buttons: {
+				cancel: {
+					label: 'CANCEL',
+					className: 'btn-default',
+					callback: () => {}
+				},
+				submit: {
+					label: 'DONE',
+					className: 'btn-primary',
+					callback: ()=>{
+						try{
+							const newJson = $('#edit-appointment-json').val();
+							const data = JSON.parse(newJson);
+							webSvc.UpdateAppointment(data)
+								.then(()=>{
+									bootbox.alert("Update Successful!");
+									self.Load();
+								})
+								.fail(err =>{
+									console.error(err);
+									bootbox.alert("Update Failed!");
+								});
+						} catch (ex){
+							ex.Message = "Invalid JSON";
+							console.error(ex);
+						}
+					}
+				}
+			}
+		});
+	}
+
+	OnDeleteAppointment(targetId){
+		var self = this;
+		if(!targetId){
+			bootbox.alert("No ID found for this appointment. Unable to delete.");
+			return;
+		}
+		bootbox.confirm("Are you sure you want to delete this appointment?",
+			(bool)=>{
+				if(bool){
+					webSvc.DeleteSingleAppointment(targetId)
+						.then(()=>{
+							self.Load();
+						})
+						.fail(err =>{
+							console.log(err);
+						});
 				}
 			});
 	}
