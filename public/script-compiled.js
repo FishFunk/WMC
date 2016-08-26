@@ -337,54 +337,64 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
     CHARGE_FAILURE_MARKER = "CARD_CHARGE_FAILURE",
     MORNING_TIME_RANGE = {
-      range: "9:00 - 12:00 PM",
-      key: 1,
-      disabled: ko.observable(false)
+  range: "9:00 - 12:00 PM",
+  key: 1,
+  disabled: ko.observable(false)
 },
     AFTERNOON_TIME_RANGE = {
-      range: "12:00 - 3:00 PM",
-      key: 2,
-      disabled: ko.observable(false)
+  range: "12:00 - 3:00 PM",
+  key: 2,
+  disabled: ko.observable(false)
 },
     EVENING_TIME_RANGE = {
-      range: "3:00 - 6:00 PM",
-      key: 3,
-      disabled: ko.observable(false)
+  range: "3:00 - 6:00 PM",
+  key: 3,
+  disabled: ko.observable(false)
 },
     NIGHT_TIME_RANGE = {
-      range: "6:00 - 9:00 PM",
-      key: 4,
-      disabled: ko.observable(false)
+  range: "6:00 - 9:00 PM",
+  key: 4,
+  disabled: ko.observable(false)
 };
 
 var Constants = function () {
-      function Constants() {
-            _classCallCheck(this, Constants);
-      }
+  function Constants() {
+    _classCallCheck(this, Constants);
+  }
 
-      _createClass(Constants, null, [{
-            key: "MORNING_TIME_RANGE",
-            get: function get() {
-                  return MORNING_TIME_RANGE;
-            }
-      }, {
-            key: "AFTERNOON_TIME_RANGE",
-            get: function get() {
-                  return AFTERNOON_TIME_RANGE;
-            }
-      }, {
-            key: "EVENING_TIME_RANGE",
-            get: function get() {
-                  return EVENING_TIME_RANGE;
-            }
-      }, {
-            key: "NIGHT_TIME_RANGE",
-            get: function get() {
-                  return NIGHT_TIME_RANGE;
-            }
-      }]);
+  _createClass(Constants, null, [{
+    key: "MORNING_TIME_RANGE",
+    get: function get() {
+      return MORNING_TIME_RANGE;
+    }
+  }, {
+    key: "AFTERNOON_TIME_RANGE",
+    get: function get() {
+      return AFTERNOON_TIME_RANGE;
+    }
+  }, {
+    key: "EVENING_TIME_RANGE",
+    get: function get() {
+      return EVENING_TIME_RANGE;
+    }
+  }, {
+    key: "NIGHT_TIME_RANGE",
+    get: function get() {
+      return NIGHT_TIME_RANGE;
+    }
+  }, {
+    key: "ASYNC_INTERUPTION_MARKER",
+    get: function get() {
+      return ASYNC_INTERUPTION_MARKER;
+    }
+  }, {
+    key: "CHARGE_FAILURE_MARKER",
+    get: function get() {
+      return CHARGE_FAILURE_MARKER;
+    }
+  }]);
 
-      return Constants;
+  return Constants;
 }();
 "use strict";
 
@@ -1375,7 +1385,7 @@ var OrderFormViewModel = function () {
 			try {
 				var self = this;
 				spinner.Show();
-				async.series([
+				async.waterfall([
 				// TODO: Is this the best order?
 				token ? this._executeCharge.bind(this, token) : function (callback) {
 					// user chose to pay later
@@ -1415,8 +1425,8 @@ var OrderFormViewModel = function () {
 		}
 	}, {
 		key: '_sendEmailConfirmation',
-		value: function _sendEmailConfirmation(callback) {
-			this.webSvc.SendConfirmationEmail(this.storageHelper.LoggedInUser.email, this.storageHelper.LoggedInUser.appointments).then(function () {
+		value: function _sendEmailConfirmation(email, newAppt, callback) {
+			this.webSvc.SendConfirmationEmail(email, newAppt).then(function () {
 				return callback();
 			}).fail(function (err) {
 				return callback(err);
@@ -1428,18 +1438,16 @@ var OrderFormViewModel = function () {
 			var self = this;
 
 			if (this.storageHelper.LoggedInUser) {
-				callback();
+				callback(null, this.storageHelper.LoggedInUser);
 			} else {
 				this.webSvc.GetUserByEmail(this.email()).then(function (usr) {
 					if (usr) {
-						self.storageHelper.LoggedInUser = usr;
-						callback();
+						callback(null, usr);
 					} else {
 						// create new guest user
 						var guestUsr = self._makeGuestUserSchema();
-						self.storageHelper.LoggedInUser = guestUsr;
 						self.webSvc.CreateUser(guestUsr).then(function () {
-							return callback();
+							return callback(null, guestUsr);
 						}).fail(function (err) {
 							return callback(err);
 						});
@@ -1461,9 +1469,7 @@ var OrderFormViewModel = function () {
 		}
 	}, {
 		key: '_updateUserData',
-		value: function _updateUserData(callback) {
-			var currentUsr = this.storageHelper.LoggedInUser;
-
+		value: function _updateUserData(currentUsr, callback) {
 			var newAppt = this._makeAppointmentSchema();
 			currentUsr.appointments != null ? currentUsr.appointments.push(newAppt) : currentUsr.appointments = [newAppt];
 
@@ -1473,10 +1479,8 @@ var OrderFormViewModel = function () {
 			currentUsr.firstName = this.first();
 			currentUsr.lastName = this.last();
 
-			this.storageHelper.LoggedInUser = currentUsr;
-
 			this.webSvc.UpdateUser(currentUsr).then(function () {
-				return callback();
+				return callback(null, currentUsr.email, newAppt);
 			}).fail(function (err) {
 				return callback(err);
 			});
@@ -1775,8 +1779,8 @@ var WebService = function () {
 		}
 	}, {
 		key: 'SendConfirmationEmail',
-		value: function SendConfirmationEmail(email, appts) {
-			return this._executeAjaxCall('POST', "/api/sendConfirmationEmail", { email: email, appointments: appts });
+		value: function SendConfirmationEmail(email, newAppt) {
+			return this._executeAjaxCall('POST', "/api/sendConfirmationEmail", { email: email, newAppt: newAppt });
 		}
 	}, {
 		key: 'UpdateUser',

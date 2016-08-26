@@ -37,4 +37,12 @@ class Constants {
   static get NIGHT_TIME_RANGE(){
     return NIGHT_TIME_RANGE;
   }
+
+  static get ASYNC_INTERUPTION_MARKER(){
+    return ASYNC_INTERUPTION_MARKER;
+  }
+
+  static get CHARGE_FAILURE_MARKER(){
+    return CHARGE_FAILURE_MARKER;
+  }
 }

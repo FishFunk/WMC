@@ -153,9 +153,9 @@ module.exports.sendConfirmationEmail = (req, res)=>{
 		return;
 	}
 
-	if(req.body && req.body.email && req.body.appointments){
+	if(req.body && req.body.email && req.body.newAppt){
 		var userEmail = req.body.email;
-		var appts = req.body.appointments;
+		var newAppt = req.body.newAppt;
 
 		transport.sendMail({
           from: 'WashMyCar <donotreply@washmycarva.com>',
@@ -172,7 +172,7 @@ module.exports.sendConfirmationEmail = (req, res)=>{
 				    <hr>\
 	      			<p>Thanks for your WMC order! We hope you enjoy your soon-to-be sparkling clean vehicle!</p>\
 	      			<legend>Your Appointment Details</legend>'
-	      			+ formatAppts(req.body.appointments) +
+	      			+ formatAppt(newAppt) +
 	      		'</div>\
 	      		</body>\
 	      	</html>'
@@ -189,20 +189,18 @@ module.exports.sendConfirmationEmail = (req, res)=>{
 	}
 };
 
-var formatAppts = (appts)=>{
+var formatAppt = (appt)=>{
 	var apptHtml = "";
 
-	appts.forEach(apt =>{
-	  var dt = new Date(apt.date);
-	  apptHtml  += ul +
-	    li + strong + 'Where: ' + _strong + formatLocation(apt.location) + _li +
-	    li + strong + 'Date: ' + _strong + dt.toLocaleDateString("en-US") + _li + 
-	    li + strong + 'Time: ' + _strong + apt.timeRange + _li + 
-	    li + strong + 'Cars:' + _strong + formatCars(apt.cars) + _li +
-	    li + strong + 'Services:'  + _strong + formatServices(apt.services) + _li +
-	    li + strong + 'Cost: $' + _strong + apt.price.toString() + _li +
-	    _ul + '<hr>'
-	});
+	var dt = new Date(apt.date);
+	apptHtml += ul +
+		li + strong + 'Where: ' + _strong + formatLocation(apt.location) + _li +
+		li + strong + 'Date: ' + _strong + dt.toLocaleDateString("en-US") + _li + 
+		li + strong + 'Time: ' + _strong + apt.timeRange + _li + 
+		li + strong + 'Cars:' + _strong + formatCars(apt.cars) + _li +
+		li + strong + 'Services:'  + _strong + formatServices(apt.services) + _li +
+		li + strong + 'Cost: $' + _strong + apt.price.toString() + _li +
+		_ul + '<hr>';
 
 	return apptHtml;
 }

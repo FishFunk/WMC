@@ -349,7 +349,7 @@ class OrderFormViewModel {
 		{
 			var self = this;
 			spinner.Show();
-			async.series([
+			async.waterfall([
 					// TODO: Is this the best order?
 					token ? 
 						this._executeCharge.bind(this, token) : 
@@ -394,10 +394,8 @@ class OrderFormViewModel {
 		}, 200);
 	}
 
-	_sendEmailConfirmation(callback){
-		this.webSvc.SendConfirmationEmail(
-			this.storageHelper.LoggedInUser.email, 
-			this.storageHelper.LoggedInUser.appointments)
+	_sendEmailConfirmation(email, newAppt, callback){
+		this.webSvc.SendConfirmationEmail(email, newAppt)
 			.then(()=> callback())
 			.fail(err => callback(err));
 	}
@@ -406,19 +404,17 @@ class OrderFormViewModel {
 		var self = this;
 
 		if(this.storageHelper.LoggedInUser){
-			callback();
+			callback(null, this.storageHelper.LoggedInUser);
 		} else {
 			this.webSvc.GetUserByEmail(this.email())
 				.then((usr)=>{
 					if(usr){
-						self.storageHelper.LoggedInUser = usr;
-						callback();
+						callback(null, usr);
 					} else {
 						// create new guest user
 						var guestUsr = self._makeGuestUserSchema();
-						self.storageHelper.LoggedInUser = guestUsr;
 						self.webSvc.CreateUser(guestUsr)
-							.then(()=>callback())
+							.then(()=>callback(null, guestUsr))
 							.fail((err)=>callback(err));
 					}
 				})
@@ -435,9 +431,7 @@ class OrderFormViewModel {
 	      	});
 	}
 
-	_updateUserData(callback){
-		var currentUsr = this.storageHelper.LoggedInUser;
-
+	_updateUserData(currentUsr, callback){
 		var newAppt = this._makeAppointmentSchema();
 		currentUsr.appointments != null ? 
 				currentUsr.appointments.push(newAppt) : currentUsr.appointments = [newAppt];
@@ -448,10 +442,8 @@ class OrderFormViewModel {
 		currentUsr.firstName = this.first();
 		currentUsr.lastName = this.last();
 
-		this.storageHelper.LoggedInUser = currentUsr;
-
 		this.webSvc.UpdateUser(currentUsr)
-			.then(()=>callback())
+			.then(()=>callback(null, currentUsr.email, newAppt))
 			.fail((err) =>callback(err));
 	}
 
