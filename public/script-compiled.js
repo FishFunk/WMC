@@ -309,14 +309,14 @@ var Configuration = function () {
     key: "CAR_SIZES",
     get: function get() {
       return this.settings.CAR_SIZES || [{
-        "multiplier": 1,
-        "size": "Compact (2-4 door)"
+        multiplier: 1,
+        size: "Compact (2-4 door)"
       }, {
-        "multiplier": 1.2,
-        "size": "SUV (5-door)"
+        multiplier: 1.2,
+        size: "SUV (5-door)"
       }, {
-        "multiplier": 1.4,
-        "size": "XXL"
+        multiplier: 1.4,
+        size: "XXL"
       }];
     }
   }, {
@@ -337,7 +337,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
     CHARGE_FAILURE_MARKER = "CARD_CHARGE_FAILURE",
     MORNING_TIME_RANGE = {
-  range: "9:00 - 12:00 PM",
+  range: "9:00 AM - 12:00 PM",
   key: 1,
   disabled: ko.observable(false)
 },
@@ -1108,6 +1108,23 @@ var OrderFormViewModel = function () {
 		this.state = ko.observable("");
 		this.zip = ko.observable(this.storageHelper.ZipCode);
 
+		// Subscriptions
+		this.hideSubscriptionForm = ko.observable(true);
+		this.subIntervals = [1, 2, 3, 4, 5, 6];
+		this.selectedSubInterval = ko.observable(this.subIntervals[1]);
+		this.subSpans = [{
+			days: 1,
+			display: "Day(s)"
+		}, {
+			days: 7,
+			display: "Week(s)"
+		}, {
+			days: 28,
+			display: "Month(s)"
+		}];
+		this.selectedSubSpan = ko.observable(this.subSpans[1]);
+
+		// Coupon
 		this.couponCode = ko.observable("");
 		this.coupon = ko.observable(null);
 
@@ -1141,7 +1158,17 @@ var OrderFormViewModel = function () {
 
 		this.orderSummary = ko.computed(function () {
 			var promoMsg = "";
-			var summary = $.validator.format("<strong>{0} between {1}</strong><hr>", self.dateMoment ? self.dateMoment.format("ddd MMM Do") : "", self.selectedTimeRange().range);
+			var summary = "";
+
+			if (!self.hideSubscriptionForm()) {
+				if (self.dateMoment) {
+					summary = $.validator.format("<strong>{0} every {1} {2} starting {3}</strong><hr>", self.selectedTimeRange().range, self.selectedSubInterval(), self.selectedSubSpan().display, self.dateMoment.format("ddd MMM Do"));
+				}
+			} else {
+				if (self.dateMoment) {
+					summary = $.validator.format("<strong>{0} {1}</strong><hr>", self.dateMoment.format("ddd MMM Do"), self.selectedTimeRange().range);
+				}
+			}
 
 			if (self.coupon()) {
 				if (self.coupon().discountPercentage == 100) {
@@ -1472,6 +1499,22 @@ var OrderFormViewModel = function () {
 		value: function _updateUserData(currentUsr, callback) {
 			var newAppt = this._makeAppointmentSchema();
 			currentUsr.appointments != null ? currentUsr.appointments.push(newAppt) : currentUsr.appointments = [newAppt];
+
+			if (!this.hideSubscriptionForm()) {
+				var startDate = new Date(newAppt.date);
+				var daySpan = this.selectedSubInterval() * this.selectedSubSpan().days;
+				var x = Math.round(365 / daySpan);
+				var daysToAdd = daySpan;
+
+				for (var i = 0; i < x; i++) {
+					var repeatAppt = this._makeAppointmentSchema();
+					var futureDate = new Date(startDate);
+					futureDate.setDate(startDate.getDate() + daysToAdd);
+					repeatAppt.date = futureDate;
+					currentUsr.appointments.push(repeatAppt);
+					daysToAdd += daySpan;
+				}
+			}
 
 			currentUsr.cars = this.cars();
 			currentUsr.phone = this.phone();

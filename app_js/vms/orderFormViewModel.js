@@ -85,6 +85,27 @@ class OrderFormViewModel {
 		this.state = ko.observable("");
 		this.zip = ko.observable(this.storageHelper.ZipCode);
 
+		// Subscriptions
+		this.hideSubscriptionForm = ko.observable(true);
+		this.subIntervals = [1,2,3,4,5,6];
+		this.selectedSubInterval = ko.observable(this.subIntervals[1]);
+		this.subSpans = [
+			{
+				days: 1,
+				display: "Day(s)"
+			},
+			{
+				days: 7,
+				display: "Week(s)"
+			},
+			{
+				days: 28,
+				display: "Month(s)"
+			}
+		];
+		this.selectedSubSpan = ko.observable(this.subSpans[1]);
+
+		// Coupon
 		this.couponCode = ko.observable("");
 		this.coupon = ko.observable(null);
 
@@ -119,9 +140,24 @@ class OrderFormViewModel {
 
 		this.orderSummary = ko.computed(()=>{
 			let promoMsg = "";
-			let summary = $.validator.format("<strong>{0} between {1}</strong><hr>", 
-				self.dateMoment ? self.dateMoment.format("ddd MMM Do") : "",
-				self.selectedTimeRange().range);
+			let summary = "";
+
+			if(!self.hideSubscriptionForm()) {
+				if(self.dateMoment){
+					summary = $.validator.format("<strong>{0} every {1} {2} starting {3}</strong><hr>",
+					self.selectedTimeRange().range,
+					self.selectedSubInterval(),
+					self.selectedSubSpan().display,
+					self.dateMoment.format("ddd MMM Do"));
+				}
+
+			} else {
+				if(self.dateMoment){
+					summary = $.validator.format("<strong>{0} {1}</strong><hr>",
+						self.dateMoment.format("ddd MMM Do"),
+						self.selectedTimeRange().range);
+				}
+			}
 
 			if(self.coupon()){
 				if(self.coupon().discountPercentage == 100){
@@ -435,6 +471,22 @@ class OrderFormViewModel {
 		var newAppt = this._makeAppointmentSchema();
 		currentUsr.appointments != null ? 
 				currentUsr.appointments.push(newAppt) : currentUsr.appointments = [newAppt];
+
+		if(!this.hideSubscriptionForm()){
+			const startDate = new Date(newAppt.date);
+			const daySpan = this.selectedSubInterval() * this.selectedSubSpan().days;
+			const x = Math.round(365 / daySpan);
+			let daysToAdd = daySpan;
+
+			for(let i = 0; i < x; i++){
+				let repeatAppt = this._makeAppointmentSchema();
+				let futureDate = new Date(startDate);
+				futureDate.setDate(startDate.getDate() + daysToAdd);
+				repeatAppt.date = futureDate;
+				currentUsr.appointments.push(repeatAppt);
+				daysToAdd += daySpan;
+			}
+		}
 
 		currentUsr.cars = this.cars();
 		currentUsr.phone = this.phone();
