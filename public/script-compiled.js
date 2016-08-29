@@ -1064,6 +1064,7 @@ var OrderFormViewModel = function () {
 		this.showNewUserAlert = ko.observable(false);
 
 		// Order Details
+		this.addWash = ko.observable(true);
 		this.addShine = ko.observable(false);
 		this.addWax = ko.observable(false);
 		this.addInterior = ko.observable(false);
@@ -1113,7 +1114,7 @@ var OrderFormViewModel = function () {
 
 		this.orderTotal = ko.computed(function () {
 			var total = 0;
-			var serviceCost = parseFloat(self.WASH_COST + (self.addShine() ? self.TIRE_SHINE_COST : 0) + (self.addWax() ? self.WAX_COST : 0) + (self.addInterior() ? self.INTERIOR_COST : 0));
+			var serviceCost = parseFloat((self.addWash() ? self.WASH_COST : 0) + (self.addShine() && self.addWash() ? self.TIRE_SHINE_COST : 0) + (self.addWax() && self.addWash() ? self.WAX_COST : 0) + (self.addInterior() ? self.INTERIOR_COST : 0));
 
 			self.cars().forEach(function (car) {
 				if (car.selected()) {
@@ -1136,7 +1137,7 @@ var OrderFormViewModel = function () {
 				}
 			}
 
-			return Math.floor(total);
+			return total.toFixed(2);
 		});
 
 		this.orderSummary = ko.computed(function () {
@@ -1156,7 +1157,7 @@ var OrderFormViewModel = function () {
 					var carSize = _.find(Configuration.CAR_SIZES, function (obj) {
 						return obj.size == car.size || obj.multiplier == car.multiplier;
 					});
-					summary += $.validator.format("<strong>{5} {6}</strong><br>" + "Exterior Hand Wash<br>{0}{1}{2}{3}{4}<br>", self.addShine() ? "Deep Tire Clean & Shine<br>" : "", self.addWax() ? "Hand Wax & Buff<br>" : "", self.addInterior() ? "Full Interior Cleaning<br>" : "", carSize.size, carSize.multiplier > 1 ? " - additional " + Math.round((carSize.multiplier - 1) * 100).toString() + "%" : "", car.make, car.model);
+					summary += $.validator.format("<strong>{0} {1}</strong><br>{2}{3}{4}{5}{6}{7}<br>", car.make, car.model, self.addWash() ? "Exterior Hand Wash<br>" : "", self.addShine() && self.addWash() ? "Deep Tire Clean & Shine<br>" : "", self.addWax() && self.addWash() ? "Hand Wax & Buff<br>" : "", self.addInterior() ? "Full Interior Cleaning<br>" : "", carSize.size, carSize.multiplier > 1 ? " - additional " + Math.round((carSize.multiplier - 1) * 100).toString() + "%" : "");
 				}
 			});
 
@@ -1267,6 +1268,12 @@ var OrderFormViewModel = function () {
 		key: 'OnSubmit',
 		value: function OnSubmit(payNow) {
 			var self = this;
+
+			if (!this.addWash() && !this.addInterior()) {
+				this.incompleteFormMsg('Interior and/or exterior cleaning must be selected.');
+				$('#incomplete-form-alert').show();
+				return;
+			}
 
 			if (!this.$orderDetailsForm.valid()) {
 				this.incompleteFormMsg('Please select a date of service.');
@@ -1523,6 +1530,7 @@ var OrderFormViewModel = function () {
 			this.incompleteFormMsg("");
 
 			// Order Details
+			this.addWash(true);
 			this.addShine(false);
 			this.addWax(false);
 			this.addInterior(false);
@@ -1712,7 +1720,12 @@ var OrderFormViewModel = function () {
 	}, {
 		key: '_getTimeEstimate',
 		value: function _getTimeEstimate() {
-			var totalTime = Configuration.WASH_DETAILS.time;
+			var totalTime = 0;
+
+			if (this.addWash()) {
+				totalTime += Configuration.WASH_DETAILS.time;
+			}
+
 			if (this.addShine()) {
 				totalTime += Configuration.TIRE_SHINE_DETAILS.time;
 			}
@@ -1727,7 +1740,10 @@ var OrderFormViewModel = function () {
 	}, {
 		key: '_buildServicesArray',
 		value: function _buildServicesArray() {
-			var services = [Configuration.WASH_DETAILS.title];
+			var services = [];
+			if (this.addWash()) {
+				services.push(Configuration.WASH_DETAILS.title);
+			}
 			if (this.addShine()) {
 				services.push(Configuration.TIRE_SHINE_DETAILS.title);
 			}

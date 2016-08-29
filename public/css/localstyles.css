@@ -62,7 +62,7 @@ a.ghost-btn:focus{
 input[readonly] { background-color: white !important; }
 
 .navbar-default{background-color:#222;}
-.navbar-default .navbar-brand{color:#00acea;font-family:"subway";}
+.navbar-default .navbar-brand{color:#00acea;font-family:"subway"; font-size: 2.6em; -webkit-text-fill-color: #00acea; -webkit-text-stroke-width: 1px; -webkit-text-stroke-color: white;}
 .navbar-default .navbar-brand:hover,.navbar-default .navbar-default .navbar-brand:active,.navbar-default .navbar-brand.active{color:#00acea}
 .navbar-default .navbar-collapse{border-color:rgba(255,255,255,.02);}
 .navbar-default .navbar-toggle{background-color:#00acea;border-color:#00acea}
@@ -70,8 +70,9 @@ input[readonly] { background-color: white !important; }
 .navbar-default .navbar-toggle:hover,.navbar-default .navbar-toggle:focus{background-color:#00acea}
 .navbar-default .nav li a{font-family:Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;text-transform:uppercase;font-weight:400;letter-spacing:1px;color:#fff}
 .navbar-default .nav li a:hover,.navbar-default .nav li {color:#00acea;outline:0}.navbar-default .navbar-nav>.active>a{border-radius:0;color:#fff;background-color:#00acea}
-.navbar-default .navbar-nav>.active>a:hover{color:#fff;background-color:#264a85}@media (min-width:768px){.navbar-default{background-color:rgba(34,34,34,0.8);padding:25px 0;-webkit-transition:padding .3s;-moz-transition:padding .3s;transition:padding .3s;border:0}
-.navbar-default .navbar-brand{font-size:2.2em;-webkit-transition:all .3s;-moz-transition:all .3s;transition:all .3s}
+.navbar-default .navbar-nav>.active>a:hover{color:#fff;background-color:#264a85}
+@media (min-width:768px){.navbar-default{background-color:rgba(34,34,34,0.8);padding:25px 0;-webkit-transition:padding .3s;-moz-transition:padding .3s;transition:padding .3s;border:0}
+.navbar-default .navbar-brand{font-size:3.2em;-webkit-transition:all .3s;-moz-transition:all .3s;transition:all .3s}
 .navbar-default .navbar-nav>.active>a{border-radius:3px}.navbar-default.navbar-shrink{background-color:#222;padding:10px 0}
 .navbar-default.navbar-shrink .navbar-brand{font-size:2em}}
 
@@ -243,3 +244,7 @@ select.error, textarea.error, input.error {
 .blue { color: #00acea}
 .dark-blue { color: #264a85}
 /************************/
+
+.strike-text{
+	text-decoration: line-through;
+}

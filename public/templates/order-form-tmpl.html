@@ -10,13 +10,13 @@
         <label class="control-label" for="checkbox">Service Options</label>
         <div class="form-inline">
           <div class="checkbox">
-            <label><input type="checkbox" disabled checked>&nbsp;Exterior Hand Wash</label>&nbsp;(<strong>$<span data-bind="text: WASH_COST"></span></strong>)
+            <label><input type="checkbox" data-bind="checked: addWash">&nbsp;Exterior Hand Wash</label>&nbsp;(<strong>$<span data-bind="text: WASH_COST"></span></strong>)
           </div>
           <div class="checkbox">
-            <label><input type="checkbox" data-bind="checked: addShine">&nbsp;Deep Tire Clean & Shine&nbsp;</label>(<strong>$<span data-bind="text: TIRE_SHINE_COST"></span></strong>)
+            <label data-bind="css: { 'strike-text': !addWash() }"><input type="checkbox" data-bind="checked: addShine, enable: addWash">&nbsp;Deep Tire Clean & Shine&nbsp;</label>(<strong>$<span data-bind="text: TIRE_SHINE_COST"></span></strong>)
           </div>
           <div class="checkbox">
-            <label><input type="checkbox" data-bind="checked: addWax">&nbsp;Hand Wax & Buff</label>&nbsp;(<strong>$<span data-bind="text: WAX_COST"></span></strong>)
+            <label data-bind="css: { 'strike-text': !addWash() }"><input type="checkbox" data-bind="checked: addWax, enable: addWash">&nbsp;Hand Wax & Buff</label>&nbsp;(<strong>$<span data-bind="text: WAX_COST"></span></strong>)
           </div>
           <div class="checkbox">
             <label><input type="checkbox" data-bind="checked: addInterior">&nbsp;Full Interior</label>&nbsp;(<strong>$<span data-bind="text: INTERIOR_COST"></span></strong>)
@@ -188,7 +188,7 @@
           </span>
         </div>
         <center id="invalid-coupon-alert" class="alert alert-danger fade in coupon-alert" role="alert" hidden>
-          <strong>Bad news...</strong>&nbsp;<span>invalid coupon code.</span>
+          <strong>Bad news...</strong>&nbsp;<span>invalid or expired coupon code.</span>
         </center>
         <center id="success-coupon-alert" class="alert alert-info fade in coupon-alert" role="alert" hidden>
           <strong>Nice!</strong>&nbsp;<span>Discount applied.</span>
@@ -204,12 +204,12 @@
         </center>
         <center class="hidden-xs" data-bind="visible: orderTotal() > 0">
           <button data-bind="click: OnFormCancel" class="btn btn-lg btn-default">Cancel</button>
-          <button class="btn btn-lg btn-default" data-bind="click: OnSubmit.bind($data,false)">Pay Later</button>
+          <button class="btn btn-lg btn-default" data-bind="click: OnSubmit.bind($data,false)">Pay Then</button>
           <button class="btn btn-lg btn-primary" data-bind="click: OnSubmit.bind($data,true)">Pay Now</button>
         </center>
         <center class="hidden-sm hidden-md hidden-lg" data-bind="visible: orderTotal() > 0">
           <button data-bind="click: OnFormCancel" class="btn btn-md btn-default">Cancel</button>
-          <button class="btn btn-md btn-default" data-bind="click: OnSubmit.bind($data,false)">Pay Later</button>
+          <button class="btn btn-md btn-default" data-bind="click: OnSubmit.bind($data,false)">Pay Then</button>
           <button class="btn btn-md btn-primary" data-bind="click: OnSubmit.bind($data,true)">Pay Now</button>
         </center>
         <center class="hidden-xs" data-bind="visible: orderTotal() == 0">
