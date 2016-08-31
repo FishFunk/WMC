@@ -19,6 +19,10 @@ const ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
             range: "6:00 - 9:00 PM",
             key: 4,
             disabled: ko.observable(false)
+      },
+      TIME_RANGE_PLACE_HOLDER = {
+        range: "",
+        disabled: ko.observable(true)
       }
 
 class Constants {
@@ -44,5 +48,9 @@ class Constants {
 
   static get CHARGE_FAILURE_MARKER(){
     return CHARGE_FAILURE_MARKER;
+  }
+
+  static get TIME_RANGE_PLACE_HOLDER(){
+    return TIME_RANGE_PLACE_HOLDER;
   }
 }

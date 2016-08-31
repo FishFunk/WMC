@@ -45,12 +45,13 @@ class OrderFormViewModel {
 		this.description = ko.observable("");
 
 		this.timeRangeOptions = [
+			Constants.TIME_RANGE_PLACE_HOLDER,
 			Constants.MORNING_TIME_RANGE,
 			Constants.AFTERNOON_TIME_RANGE,
 			Constants.EVENING_TIME_RANGE,
 			Constants.NIGHT_TIME_RANGE
 		];
-		this.selectedTimeRange = ko.observable(this.timeRangeOptions[0]);
+		this.selectedTimeRange = ko.observable(Constants.TIME_RANGE_PLACE_HOLDER);
 
 		this.dateMoment = null;
 
@@ -123,7 +124,7 @@ class OrderFormViewModel {
 			let promoMsg = "";
 			let summary = $.validator.format("<strong>{0} between {1}</strong><hr>", 
 				self.dateMoment ? self.dateMoment.format("ddd MMM Do") : "",
-				self.selectedTimeRange().range);
+				self.selectedTimeRange().range || "");
 
 			if(self.coupon()){
 				if(self.coupon().discountPercentage == 100){
@@ -246,6 +247,12 @@ class OrderFormViewModel {
 
 		if(!this.$orderDetailsForm.valid()){
 			this.incompleteFormMsg('Please select a date of service.');
+			$('#incomplete-form-alert').show();
+			return;
+		}
+
+		if(!this.selectedTimeRange().range){
+			this.incompleteFormMsg('Please select a valid time range.');
 			$('#incomplete-form-alert').show();
 			return;
 		}
@@ -493,7 +500,7 @@ class OrderFormViewModel {
 		this.showBillingAddress(false);
 
 		this.description = ko.observable("");
-		this.selectedTimeRange(this.timeRangeOptions[0]);
+		this.selectedTimeRange(Constants.TIME_RANGE_PLACE_HOLDER);
 
 		$('#datetimepicker').data("DateTimePicker").clear();
 
@@ -559,13 +566,7 @@ class OrderFormViewModel {
 			(_.reduce(nightAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval) ||
 			(selectedDate == today && hourOfDay >= 20));
 
-		for(let i = 0; i < this.timeRangeOptions.length; i++){
-			const option = this.timeRangeOptions[i];
-			if(!option.disabled()){
-				this.selectedTimeRange(option);
-				break;
-			}
-		}
+		this.selectedTimeRange(Constants.TIME_RANGE_PLACE_HOLDER);
 	}
 
 	_initValidation(){
