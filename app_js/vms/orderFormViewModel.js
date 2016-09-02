@@ -541,6 +541,12 @@ class OrderFormViewModel {
 	}
 
 	_updatePickerAndTimerangeOptions(momentObj){
+		if(Utils.IsHoliday(momentObj)){
+			_.each(this.timeRangeOptions, (o)=>{
+				o.disabled(true);
+			});
+		}
+
 		var hourOfDay = moment().hour();
 		var today = moment().format(Configuration.DATE_FORMAT);
 		var selectedDate = momentObj.format(Configuration.DATE_FORMAT);
