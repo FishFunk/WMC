@@ -69,7 +69,7 @@ class Utils{
 	        }
 	    };
 
-	    const dateObj = moment.toDate();
+	    const dateObj = momentObj.toDate();
 
         const diff = 1+ (0 | (dateObj.getDate() - 1) / 7),
             memorial = (dateObj.getDay() === 1 && (dateObj.getDate() + 7) > 30) ? "5" : null;

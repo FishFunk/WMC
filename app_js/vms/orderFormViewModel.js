@@ -545,6 +545,7 @@ class OrderFormViewModel {
 			_.each(this.timeRangeOptions, (o)=>{
 				o.disabled(true);
 			});
+			return;
 		}
 
 		var hourOfDay = moment().hour();
