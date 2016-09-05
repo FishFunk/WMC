@@ -20,20 +20,28 @@ class Configuration
     return this.settings.MAX_JOB_TIME_PER_INTERVAL || 180;
   }
 
+  get AVG_JOB_DRIVING_TIME(){
+    return this.settings.JOB_SETUP_TIME || 30;
+  }
+
+  get AVG_JOB_SETUP_TIME(){
+    return this.settings.JOB_SETUP_TIME || 10;
+  }
+
   get WASH_DETAILS(){
-    return this.settings.WASH_DETAILS || { price: 19, time: 30, title: "Hand wash"};
+    return this.settings.WASH_DETAILS || { price: 19, time: 25, title: "Hand wash"};
   }
 
   get TIRE_SHINE_DETAILS(){
-    return this.settings.TIRE_SHINE_DETAILS || { price: 20, time: 30, title: "Tire shine"};
+    return this.settings.TIRE_SHINE_DETAILS || { price: 15, time: 20, title: "Tire shine"};
   }
 
   get INTERIOR_DETAILS(){
-    return this.settings.INTERIOR_DETAILS || { price: 40, time: 50, title: "Interior cleaning"};
+    return this.settings.INTERIOR_DETAILS || { price: 40, time: 45, title: "Interior cleaning"};
   }
 
   get WAX_DETAILS(){
-    return this.settings.WAX_DETAILS || {price: 30, time: 50, title: "Hand Wax & Buff"};
+    return this.settings.WAX_DETAILS || {price: 30, time: 40, title: "Hand Wax & Buff"};
   }
 
   get CAR_SIZES(){

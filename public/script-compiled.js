@@ -119,7 +119,7 @@ var Bootstrapper = function () {
 				// Cache Appointment Data
 				webSvc.GetFutureAppointments().then(function (appointments) {
 					var apptsByDate = _.groupBy(appointments, function (x) {
-						return moment(x.date).format(Constants.DATE_FORMAT);
+						return moment(x.date).format(Configuration.DATE_FORMAT);
 					});
 					storageHelper.AppointmentsByDate = apptsByDate;
 					callback();
@@ -286,24 +286,34 @@ var Configuration = function () {
       return this.settings.MAX_JOB_TIME_PER_INTERVAL || 180;
     }
   }, {
+    key: "AVG_JOB_DRIVING_TIME",
+    get: function get() {
+      return this.settings.JOB_SETUP_TIME || 30;
+    }
+  }, {
+    key: "AVG_JOB_SETUP_TIME",
+    get: function get() {
+      return this.settings.JOB_SETUP_TIME || 10;
+    }
+  }, {
     key: "WASH_DETAILS",
     get: function get() {
-      return this.settings.WASH_DETAILS || { price: 19, time: 30, title: "Hand wash" };
+      return this.settings.WASH_DETAILS || { price: 19, time: 25, title: "Hand wash" };
     }
   }, {
     key: "TIRE_SHINE_DETAILS",
     get: function get() {
-      return this.settings.TIRE_SHINE_DETAILS || { price: 20, time: 30, title: "Tire shine" };
+      return this.settings.TIRE_SHINE_DETAILS || { price: 15, time: 20, title: "Tire shine" };
     }
   }, {
     key: "INTERIOR_DETAILS",
     get: function get() {
-      return this.settings.INTERIOR_DETAILS || { price: 40, time: 50, title: "Interior cleaning" };
+      return this.settings.INTERIOR_DETAILS || { price: 40, time: 45, title: "Interior cleaning" };
     }
   }, {
     key: "WAX_DETAILS",
     get: function get() {
-      return this.settings.WAX_DETAILS || { price: 30, time: 50, title: "Hand Wax & Buff" };
+      return this.settings.WAX_DETAILS || { price: 30, time: 40, title: "Hand Wax & Buff" };
     }
   }, {
     key: "CAR_SIZES",
@@ -1619,7 +1629,7 @@ var OrderFormViewModel = function () {
 	}, {
 		key: '_onDatepickerChange',
 		value: function _onDatepickerChange(event) {
-			if (event) {
+			if (event && event.date) {
 				this.dateMoment = event.date;
 				this._updatePickerAndTimerangeOptions(event.date);
 			}
@@ -1783,6 +1793,11 @@ var OrderFormViewModel = function () {
 			if (this.addInterior()) {
 				totalTime += Configuration.INTERIOR_DETAILS.time;
 			}
+
+			totalTime += Configuration.AVG_JOB_SETUP_TIME;
+
+			totalTime += Configuration.AVG_JOB_DRIVING_TIME;
+
 			return totalTime;
 		}
 	}, {

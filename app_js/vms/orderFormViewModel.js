@@ -535,7 +535,7 @@ class OrderFormViewModel {
 	}
 
 	_onDatepickerChange(event){
-		if(event){
+		if(event && event.date){
 			this.dateMoment = event.date;
 			this._updatePickerAndTimerangeOptions(event.date);
 		}
@@ -680,6 +680,11 @@ class OrderFormViewModel {
 		if(this.addInterior()){
 			totalTime += Configuration.INTERIOR_DETAILS.time;
 		}
+
+		totalTime += Configuration.AVG_JOB_SETUP_TIME;
+
+		totalTime += Configuration.AVG_JOB_DRIVING_TIME;
+
 		return totalTime;
 	}
 
