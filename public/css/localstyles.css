@@ -248,3 +248,11 @@ select.error, textarea.error, input.error {
 .strike-text{
 	text-decoration: line-through;
 }
+
+.text-small{
+	font-size: 12px;
+}
+
+.italic{
+	font-style: italic;
+}

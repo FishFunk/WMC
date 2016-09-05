@@ -272,6 +272,7 @@ class OrderFormViewModel {
 
 		if(!this.locations() || this.locations().length === 0){
 			this.incompleteFormMsg('Please add a location.');
+			$('#incomplete-form-alert').show();
 			return;
 		}
 
