@@ -82,7 +82,10 @@
                             <label>Services:&nbsp;</label><span data-bind="text: $data.services"></span><br>
                             <label>Time Range:&nbsp;</label><span data-bind="text: $data.timeRange"></span><br>
                             <label>Desc:&nbsp;</label><span data-bind="text: $data.description"></span><br>
-                            <label>Price:&nbsp;</label>$<span data-bind="text: $data.price"></span>
+                            <label>Price:&nbsp;</label>$<span data-bind="text: $data.price"></span><br>
+                            <label>Prepaid:&nbsp;</label>
+                                <strong data-bind="visible: $data.prepaid">YES</strong>
+                                <strong data-bind="visible: !$data.prepaid">NO</strong>
                             <hr>
                         </div>
                     </div>

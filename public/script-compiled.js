@@ -319,14 +319,14 @@ var Configuration = function () {
     key: "CAR_SIZES",
     get: function get() {
       return this.settings.CAR_SIZES || [{
-        "multiplier": 1,
-        "size": "Compact (2-4 door)"
+        multiplier: 1,
+        size: "Compact (2-4 door)"
       }, {
-        "multiplier": 1.2,
-        "size": "SUV (5-door)"
+        multiplier: 1.2,
+        size: "SUV (5-door)"
       }, {
-        "multiplier": 1.4,
-        "size": "XXL"
+        multiplier: 1.4,
+        size: "XXL"
       }];
     }
   }, {
@@ -347,7 +347,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
     CHARGE_FAILURE_MARKER = "CARD_CHARGE_FAILURE",
     MORNING_TIME_RANGE = {
-  range: "9:00 - 12:00 PM",
+  range: "9:00 AM - 12:00 PM",
   key: 1,
   disabled: ko.observable(false)
 },
@@ -1159,6 +1159,20 @@ var OrderFormViewModel = function () {
 		this.state = ko.observable("");
 		this.zip = ko.observable(this.storageHelper.ZipCode);
 
+		// Subscriptions
+		this.hideSubscriptionForm = ko.observable(true);
+		this.subIntervals = [1, 2, 3];
+		this.selectedSubInterval = ko.observable(this.subIntervals[0]);
+		this.subSpans = [{
+			days: 7,
+			display: "Week(s)"
+		}, {
+			days: 28,
+			display: "Month(s)"
+		}];
+		this.selectedSubSpan = ko.observable(this.subSpans[0]);
+
+		// Coupon
 		this.couponCode = ko.observable("");
 		this.coupon = ko.observable(null);
 
@@ -1177,28 +1191,45 @@ var OrderFormViewModel = function () {
 				}
 			});
 
-			if (self.coupon()) {
-				if (self.coupon().discountPercentage == 100) {
-					// First Time Free Wash Discount
-					total -= self.WASH_COST;
-				} else {
-					var percent = self.coupon().discountPercentage / 100;
-					total = total - total * percent;
-				}
+			return parseFloat(total.toFixed(2));
+		});
+
+		this.discountedTotal = ko.computed(function () {
+			var total = self.orderTotal();
+			if (!self.coupon()) {
+				return total.toFixed(2);
 			}
 
-			return total.toFixed(2);
+			if (self.coupon().discountPercentage == 100) {
+				// First Time Free Wash Discount
+				total -= self.WASH_COST;
+			} else {
+				var percent = self.coupon().discountPercentage / 100;
+				total = total - total * percent;
+			}
+
+			return parseFloat(total.toFixed(2));
 		});
 
 		this.orderSummary = ko.computed(function () {
 			var promoMsg = "";
-			var summary = $.validator.format("<strong>{0} between {1}</strong><hr>", self.dateMoment ? self.dateMoment.format("ddd MMM Do") : "", self.selectedTimeRange().range || "");
+			var summary = "";
+
+			if (!self.hideSubscriptionForm()) {
+				if (self.dateMoment) {
+					summary = $.validator.format("<strong>{0} every {1} {2} starting {3}</strong><hr>", self.selectedTimeRange().range, self.selectedSubInterval(), self.selectedSubSpan().display, self.dateMoment.format("ddd MMM Do"));
+				}
+			} else {
+				if (self.dateMoment) {
+					summary = $.validator.format("<strong>{0} {1}</strong><hr>", self.dateMoment.format("ddd MMM Do"), self.selectedTimeRange().range);
+				}
+			}
 
 			if (self.coupon()) {
 				if (self.coupon().discountPercentage == 100) {
 					promoMsg = "Wow! A free wash! Now that's a sweet deal!";
 				} else {
-					promoMsg = "Promo discount: " + self.couponCode().discountPercentage.toString() + "%";
+					promoMsg = "Promo discount: " + self.coupon().discountPercentage.toString() + "%";
 				}
 			}
 
@@ -1433,12 +1464,27 @@ var OrderFormViewModel = function () {
 			}
 		}
 	}, {
+		key: '_applyCouponDiscount',
+		value: function _applyCouponDiscount(amount) {
+			if (!this.coupon()) {
+				return amount;
+			}
+
+			if (this.coupon().discountPercentage == 100) {
+				// First Time Free Wash Discount
+				return amount -= this.WASH_COST;
+			} else {
+				var percent = this.coupon().discountPercentage / 100;
+				return total - total * percent;
+			}
+		}
+	}, {
 		key: '_openCheckout',
 		value: function _openCheckout() {
 			this.stripeHandler.open({
 				key: "pk_test_luqEThs0vblV173fgAHgPZBG",
 				name: 'WMC Checkout',
-				amount: this.orderTotal() * 100,
+				amount: this.discountedTotal() * 100,
 				zipCode: true,
 				email: this.email()
 			});
@@ -1448,13 +1494,12 @@ var OrderFormViewModel = function () {
 		value: function _completeOrder(token) {
 			try {
 				var self = this;
+				var prepaid = token != null;
+
 				spinner.Show();
-				async.waterfall([
-				// TODO: Is this the best order?
-				token ? this._executeCharge.bind(this, token) : function (callback) {
-					// user chose to pay later
+				async.waterfall([prepaid ? this._executeCharge.bind(this, token) : function (callback) {
 					callback();
-				}, this._verifyUser.bind(this), this._updateUserData.bind(this), this._sendEmailConfirmation.bind(this)], function (possibleError) {
+				}, this._verifyUser.bind(this), this._updateUserData.bind(this, prepaid), this._sendEmailConfirmation.bind(this)], function (possibleError) {
 					if (possibleError === Constants.CHARGE_FAILURE_MARKER) {
 						self.incompleteFormMsg('That card information didn\'t work.');
 						$('#incomplete-form-alert').show();
@@ -1524,7 +1569,7 @@ var OrderFormViewModel = function () {
 	}, {
 		key: '_executeCharge',
 		value: function _executeCharge(token, callback) {
-			this.webSvc.ExecuteCharge(token, this.orderTotal() * 100, this.last()).then(function () {
+			this.webSvc.ExecuteCharge(token, this.discountedTotal() * 100, this.last()).then(function () {
 				return callback();
 			}).fail(function (err) {
 				console.log(err);
@@ -1533,9 +1578,15 @@ var OrderFormViewModel = function () {
 		}
 	}, {
 		key: '_updateUserData',
-		value: function _updateUserData(currentUsr, callback) {
-			var newAppt = this._makeAppointmentSchema();
+		value: function _updateUserData(prepaid, currentUsr, callback) {
+			var newAppt = this._makeAppointmentSchema(prepaid);
 			currentUsr.appointments != null ? currentUsr.appointments.push(newAppt) : currentUsr.appointments = [newAppt];
+
+			if (!this.hideSubscriptionForm()) {
+				var startDate = new Date(newAppt.date);
+				var subscription = this._makeSubscriptionSchema(startDate);
+				currentUsr.subscriptions != null ? currentUsr.subscriptions.push(subscription) : currentUsr.subscriptions = [subscription];
+			}
 
 			currentUsr.cars = this.cars();
 			currentUsr.phone = this.phone();
@@ -1744,7 +1795,7 @@ var OrderFormViewModel = function () {
 		}
 	}, {
 		key: '_makeAppointmentSchema',
-		value: function _makeAppointmentSchema() {
+		value: function _makeAppointmentSchema(prepaid) {
 			var selectedCars = _.filter(this.cars(), function (car) {
 				return car.selected();
 			});
@@ -1754,6 +1805,40 @@ var OrderFormViewModel = function () {
 			return {
 				cars: selectedCars,
 				date: this.dateMoment.toDate(),
+				location: selectedLocation,
+				prepaid: prepaid,
+				price: this.discountedTotal(),
+				services: this._buildServicesArray(),
+				timeEstimate: this._getTimeEstimate(),
+				timeRange: this.selectedTimeRange().range,
+				timeRangeKey: this.selectedTimeRange().key,
+				description: this.description()
+			};
+		}
+	}, {
+		key: '_makeSubscriptionSchema',
+		value: function _makeSubscriptionSchema(startDate) {
+			var selectedCars = _.filter(this.cars(), function (car) {
+				return car.selected();
+			});
+			var selectedLocation = _.find(this.locations(), function (loc) {
+				return loc.selected();
+			});
+			var daySpan = this.selectedSubInterval() * this.selectedSubSpan().days;
+			var x = Math.round(365 / daySpan);
+			var daysToAdd = daySpan;
+			var futureDates = [];
+
+			for (var i = 0; i < x; i++) {
+				var futureDate = new Date(startDate);
+				futureDate.setDate(startDate.getDate() + daysToAdd);
+				futureDates.push(futureDate);
+				daysToAdd += daySpan;
+			}
+
+			return {
+				cars: selectedCars,
+				dates: futureDates,
 				location: selectedLocation,
 				price: this.orderTotal(),
 				services: this._buildServicesArray(),

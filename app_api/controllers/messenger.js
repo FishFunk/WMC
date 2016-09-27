@@ -192,14 +192,17 @@ module.exports.sendConfirmationEmail = (req, res)=>{
 var formatAppt = (appt)=>{
 	var apptHtml = "";
 
-	var dt = new Date(apt.date);
+	var dt = new Date(appt.date);
+	var prepaid = appt.prepaid ? " (Prepaid: YES)" : "(Prepaid: NO)";
+	
 	apptHtml += ul +
 		li + strong + 'Where: ' + _strong + formatLocation(apt.location) + _li +
 		li + strong + 'Date: ' + _strong + dt.toLocaleDateString("en-US") + _li + 
 		li + strong + 'Time: ' + _strong + apt.timeRange + _li + 
 		li + strong + 'Cars:' + _strong + formatCars(apt.cars) + _li +
-		li + strong + 'Services:'  + _strong + formatServices(apt.services) + _li +
-		li + strong + 'Cost: $' + _strong + apt.price.toString() + _li +
+		li + strong + 'Services: '  + _strong + formatServices(apt.services) + _li +
+		li + strong + 'Cost: $' + _strong + apt.price.toString() + prepaid + _li +
+		li + strong + 'Description: ' + _strong + apt.description + _li +
 		_ul + '<hr>';
 
 	return apptHtml;

@@ -24,6 +24,7 @@ input, textarea, select {
   font-size: 14px;
 }
 
+.text-small{font-size: 12px};
 .text-muted{color:#777}
 .text-primary{color:#00acea}
 p{font-size:16px;line-height:1.75}

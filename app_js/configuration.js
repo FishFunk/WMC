@@ -46,17 +46,17 @@ class Configuration
 
   get CAR_SIZES(){
     return this.settings.CAR_SIZES || [
-    {
-        "multiplier" : 1,
-        "size" : "Compact (2-4 door)"
+      {
+        multiplier : 1,
+        size : "Compact (2-4 door)"
       },
       {
-        "multiplier" : 1.2,
-        "size" : "SUV (5-door)"
+        multiplier : 1.2,
+        size : "SUV (5-door)"
       },
       {
-        "multiplier" : 1.4,
-        "size" : "XXL"
+        multiplier : 1.4,
+        size : "XXL"
       }
     ];
   }

@@ -124,28 +124,35 @@ class OrderFormViewModel {
 				}
 			});
 
-			return parseFloat(total.toFixed(2));
+			return Math.floor(total);
 		});
 
 		this.discountedTotal = ko.computed(()=>{
 			var total = self.orderTotal();
 			if(!self.coupon()){
-				return total.toFixed(2);
+				return total;
 			}
 
+<<<<<<< HEAD
+			return total.toFixed(2);
+=======
 			if(self.coupon().discountPercentage == 100){
 				// First Time Free Wash Discount
-				total -= self.WASH_COST;
+				return total -= this.WASH_COST;
 			} else {
 				var percent = self.coupon().discountPercentage / 100;
-				total = total - (total * percent);
+				return total - (total * percent);
 			}
-
-			return parseFloat(total.toFixed(2));
+>>>>>>> subscription
 		});
 
 		this.orderSummary = ko.computed(()=>{
 			let promoMsg = "";
+<<<<<<< HEAD
+			let summary = $.validator.format("<strong>{0} between {1}</strong><hr>", 
+				self.dateMoment ? self.dateMoment.format("ddd MMM Do") : "",
+				self.selectedTimeRange().range || "");
+=======
 			let summary = "";
 
 			if(!self.hideSubscriptionForm()) {
@@ -164,6 +171,7 @@ class OrderFormViewModel {
 						self.selectedTimeRange().range);
 				}
 			}
+>>>>>>> subscription
 
 			if(self.coupon()){
 				if(self.coupon().discountPercentage == 100){
