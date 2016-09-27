@@ -83,8 +83,10 @@ module.exports.getAllAppointments = (req, res)=>{
 			_.each(userSubscriptions, (sub)=>{
 				_.each(sub.dates, (date)=>{
 					var appt = JSON.parse(JSON.stringify(sub));
+					appt._id = null;
 					appt.dates = null;
 					appt.date = date;
+					appt.prepaid = false;
 					userAppointments.push(appt);
 				});
 			});

@@ -1027,6 +1027,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var OrderFormViewModel = function () {
 	function OrderFormViewModel(storageHelper, webSvc) {
+		var _this = this;
+
 		_classCallCheck(this, OrderFormViewModel);
 
 		var self = this;
@@ -1140,17 +1142,22 @@ var OrderFormViewModel = function () {
 				}
 			});
 
-			if (self.coupon()) {
-				if (self.coupon().discountPercentage == 100) {
-					// First Time Free Wash Discount
-					total -= self.WASH_COST;
-				} else {
-					var percent = self.coupon().discountPercentage / 100;
-					total = total - total * percent;
-				}
+			return Math.floor(total);
+		});
+
+		this.discountedTotal = ko.computed(function () {
+			var total = self.orderTotal();
+			if (!self.coupon()) {
+				return total;
 			}
 
-			return Math.floor(total);
+			if (self.coupon().discountPercentage == 100) {
+				// First Time Free Wash Discount
+				return total -= _this.WASH_COST;
+			} else {
+				var percent = self.coupon().discountPercentage / 100;
+				return total - total * percent;
+			}
 		});
 
 		this.orderSummary = ko.computed(function () {
@@ -1171,7 +1178,7 @@ var OrderFormViewModel = function () {
 				if (self.coupon().discountPercentage == 100) {
 					promoMsg = "Wow! A free wash! Now that's a sweet deal!";
 				} else {
-					promoMsg = "Promo discount: " + self.couponCode().discountPercentage.toString() + "%";
+					promoMsg = "Promo discount: " + self.coupon().discountPercentage.toString() + "%";
 				}
 			}
 
@@ -1393,12 +1400,27 @@ var OrderFormViewModel = function () {
 			}
 		}
 	}, {
+		key: '_applyCouponDiscount',
+		value: function _applyCouponDiscount(amount) {
+			if (!this.coupon()) {
+				return amount;
+			}
+
+			if (this.coupon().discountPercentage == 100) {
+				// First Time Free Wash Discount
+				return amount -= this.WASH_COST;
+			} else {
+				var percent = this.coupon().discountPercentage / 100;
+				return total - total * percent;
+			}
+		}
+	}, {
 		key: '_openCheckout',
 		value: function _openCheckout() {
 			this.stripeHandler.open({
 				key: "pk_test_luqEThs0vblV173fgAHgPZBG",
 				name: 'WMC Checkout',
-				amount: this.orderTotal() * 100,
+				amount: this.discountedTotal() * 100,
 				zipCode: true,
 				email: this.email()
 			});
@@ -1483,7 +1505,7 @@ var OrderFormViewModel = function () {
 	}, {
 		key: '_executeCharge',
 		value: function _executeCharge(token, callback) {
-			this.webSvc.ExecuteCharge(token, this.orderTotal() * 100, this.last()).then(function () {
+			this.webSvc.ExecuteCharge(token, this.discountedTotal() * 100, this.last()).then(function () {
 				return callback();
 			}).fail(function (err) {
 				console.log(err);
@@ -1719,7 +1741,7 @@ var OrderFormViewModel = function () {
 				date: this.dateMoment.toDate(),
 				location: selectedLocation,
 				prepaid: prepaid,
-				price: this.orderTotal(),
+				price: this.discountedTotal(),
 				services: this._buildServicesArray(),
 				timeEstimate: this._getTimeEstimate(),
 				timeRange: this.selectedTimeRange().range,

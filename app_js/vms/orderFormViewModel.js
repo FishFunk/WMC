@@ -121,17 +121,22 @@ class OrderFormViewModel {
 				}
 			});
 
-			if(self.coupon()){
-				if(self.coupon().discountPercentage == 100){
-					// First Time Free Wash Discount
-					total -= self.WASH_COST;
-				} else {
-					var percent = self.coupon().discountPercentage / 100;
-					total = total - (total * percent);
-				}
+			return Math.floor(total);
+		});
+
+		this.discountedTotal = ko.computed(()=>{
+			var total = self.orderTotal();
+			if(!self.coupon()){
+				return total;
 			}
 
-			return Math.floor(total);
+			if(self.coupon().discountPercentage == 100){
+				// First Time Free Wash Discount
+				return total -= this.WASH_COST;
+			} else {
+				var percent = self.coupon().discountPercentage / 100;
+				return total - (total * percent);
+			}
 		});
 
 		this.orderSummary = ko.computed(()=>{
@@ -159,7 +164,7 @@ class OrderFormViewModel {
 				if(self.coupon().discountPercentage == 100){
 					promoMsg = "Wow! A free wash! Now that's a sweet deal!"
 				} else {
-					promoMsg = "Promo discount: " + self.couponCode().discountPercentage.toString() + "%";
+					promoMsg = "Promo discount: " + self.coupon().discountPercentage.toString() + "%";
 				}
 			}
 
@@ -366,11 +371,25 @@ class OrderFormViewModel {
 		}
 	}
 
+	_applyCouponDiscount(amount){
+		if(!this.coupon()){
+			return amount;
+		}
+
+		if(this.coupon().discountPercentage == 100){
+			// First Time Free Wash Discount
+			return amount -= this.WASH_COST;
+		} else {
+			var percent = this.coupon().discountPercentage / 100;
+			return total - (total * percent);
+		}
+	}
+
 	_openCheckout(){
 		this.stripeHandler.open({
 			key: "pk_test_luqEThs0vblV173fgAHgPZBG",
 			name: 'WMC Checkout',
-			amount: this.orderTotal() * 100,
+			amount: this.discountedTotal() * 100,
 			zipCode: true,
 			email: this.email()
 	    });
@@ -455,7 +474,7 @@ class OrderFormViewModel {
 	}
 
 	_executeCharge(token, callback){
-      	this.webSvc.ExecuteCharge(token, this.orderTotal() * 100, this.last())
+      	this.webSvc.ExecuteCharge(token, this.discountedTotal() * 100, this.last())
 	      	.then(()=>callback())
 	      	.fail((err)=>{
 	      		console.log(err);
@@ -666,7 +685,7 @@ class OrderFormViewModel {
 			date: this.dateMoment.toDate(),
 			location: selectedLocation,
 			prepaid: prepaid,
-			price: this.orderTotal(),
+			price: this.discountedTotal(),
 			services: this._buildServicesArray(),
 			timeEstimate: this._getTimeEstimate(),
 			timeRange: this.selectedTimeRange().range,

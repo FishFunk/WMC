@@ -37,10 +37,6 @@ var AdminConsoleVm = function () {
 						self.days.push(new Day(key, dict[key]));
 					}
 				}
-
-				//self.days(_.sortBy(self.days(), (day)=> day.date));
-
-				console.log(self.days());
 			}).fail(function (err) {
 				return console.log(err);
 			}).always(function () {

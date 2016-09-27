@@ -173,7 +173,7 @@
       <div class="row">
         <legend class="col-xs-12">Set It And Forget It</legend>
         <center>
-          <p class="text-muted">* Subscriptions are good for one year *</p>
+          <p class="text-muted text-small">* Subscriptions are good for one year *</p>
           <label class="radio-inline"><input type="radio" name="subcribe" data-bind="checked: hideSubscriptionForm, checkedValue: true">&nbsp;No thanks, this time only</label>
           <label class="radio-inline"><input type="radio" name="subcribe" data-bind="checked: hideSubscriptionForm, checkedValue: false">&nbsp;Yes! Repeat order every...</label>
         </center>
@@ -200,7 +200,7 @@
       </div>
       <div class="panel-body">
         <p data-bind="html: orderSummary"></p>
-        <p>Total: $<strong data-bind="text: orderTotal"></strong></p>
+        <p>Total: $<strong data-bind="text: discountedTotal"></strong></p>
       </div>
       <div class="panel-footer">
         <div class="input-group" data-bind="visible: !coupon()">
