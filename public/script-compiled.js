@@ -1110,19 +1110,16 @@ var OrderFormViewModel = function () {
 
 		// Subscriptions
 		this.hideSubscriptionForm = ko.observable(true);
-		this.subIntervals = [1, 2, 3, 4, 5, 6];
-		this.selectedSubInterval = ko.observable(this.subIntervals[1]);
+		this.subIntervals = [1, 2, 3];
+		this.selectedSubInterval = ko.observable(this.subIntervals[0]);
 		this.subSpans = [{
-			days: 1,
-			display: "Day(s)"
-		}, {
 			days: 7,
 			display: "Week(s)"
 		}, {
 			days: 28,
 			display: "Month(s)"
 		}];
-		this.selectedSubSpan = ko.observable(this.subSpans[1]);
+		this.selectedSubSpan = ko.observable(this.subSpans[0]);
 
 		// Coupon
 		this.couponCode = ko.observable("");
@@ -1411,13 +1408,12 @@ var OrderFormViewModel = function () {
 		value: function _completeOrder(token) {
 			try {
 				var self = this;
+				var prepaid = token != null;
+
 				spinner.Show();
-				async.waterfall([
-				// TODO: Is this the best order?
-				token ? this._executeCharge.bind(this, token) : function (callback) {
-					// user chose to pay later
+				async.waterfall([prepaid ? this._executeCharge.bind(this, token) : function (callback) {
 					callback();
-				}, this._verifyUser.bind(this), this._updateUserData.bind(this), this._sendEmailConfirmation.bind(this)], function (possibleError) {
+				}, this._verifyUser.bind(this), this._updateUserData.bind(this, prepaid), this._sendEmailConfirmation.bind(this)], function (possibleError) {
 					if (possibleError === Constants.CHARGE_FAILURE_MARKER) {
 						self.incompleteFormMsg('That card information didn\'t work.');
 						$('#incomplete-form-alert').show();
@@ -1496,24 +1492,14 @@ var OrderFormViewModel = function () {
 		}
 	}, {
 		key: '_updateUserData',
-		value: function _updateUserData(currentUsr, callback) {
-			var newAppt = this._makeAppointmentSchema();
+		value: function _updateUserData(prepaid, currentUsr, callback) {
+			var newAppt = this._makeAppointmentSchema(prepaid);
 			currentUsr.appointments != null ? currentUsr.appointments.push(newAppt) : currentUsr.appointments = [newAppt];
 
 			if (!this.hideSubscriptionForm()) {
 				var startDate = new Date(newAppt.date);
-				var daySpan = this.selectedSubInterval() * this.selectedSubSpan().days;
-				var x = Math.round(365 / daySpan);
-				var daysToAdd = daySpan;
-
-				for (var i = 0; i < x; i++) {
-					var repeatAppt = this._makeAppointmentSchema();
-					var futureDate = new Date(startDate);
-					futureDate.setDate(startDate.getDate() + daysToAdd);
-					repeatAppt.date = futureDate;
-					currentUsr.appointments.push(repeatAppt);
-					daysToAdd += daySpan;
-				}
+				var subscription = this._makeSubscriptionSchema(startDate);
+				currentUsr.subscriptions != null ? currentUsr.subscriptions.push(subscription) : currentUsr.subscriptions = [subscription];
 			}
 
 			currentUsr.cars = this.cars();
@@ -1721,7 +1707,7 @@ var OrderFormViewModel = function () {
 		}
 	}, {
 		key: '_makeAppointmentSchema',
-		value: function _makeAppointmentSchema() {
+		value: function _makeAppointmentSchema(prepaid) {
 			var selectedCars = _.filter(this.cars(), function (car) {
 				return car.selected();
 			});
@@ -1731,6 +1717,40 @@ var OrderFormViewModel = function () {
 			return {
 				cars: selectedCars,
 				date: this.dateMoment.toDate(),
+				location: selectedLocation,
+				prepaid: prepaid,
+				price: this.orderTotal(),
+				services: this._buildServicesArray(),
+				timeEstimate: this._getTimeEstimate(),
+				timeRange: this.selectedTimeRange().range,
+				timeRangeKey: this.selectedTimeRange().key,
+				description: this.description()
+			};
+		}
+	}, {
+		key: '_makeSubscriptionSchema',
+		value: function _makeSubscriptionSchema(startDate) {
+			var selectedCars = _.filter(this.cars(), function (car) {
+				return car.selected();
+			});
+			var selectedLocation = _.find(this.locations(), function (loc) {
+				return loc.selected();
+			});
+			var daySpan = this.selectedSubInterval() * this.selectedSubSpan().days;
+			var x = Math.round(365 / daySpan);
+			var daysToAdd = daySpan;
+			var futureDates = [];
+
+			for (var i = 0; i < x; i++) {
+				var futureDate = new Date(startDate);
+				futureDate.setDate(startDate.getDate() + daysToAdd);
+				futureDates.push(futureDate);
+				daysToAdd += daySpan;
+			}
+
+			return {
+				cars: selectedCars,
+				dates: futureDates,
 				location: selectedLocation,
 				price: this.orderTotal(),
 				services: this._buildServicesArray(),

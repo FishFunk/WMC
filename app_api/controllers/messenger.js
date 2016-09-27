@@ -198,8 +198,9 @@ var formatAppt = (appt)=>{
 		li + strong + 'Date: ' + _strong + dt.toLocaleDateString("en-US") + _li + 
 		li + strong + 'Time: ' + _strong + apt.timeRange + _li + 
 		li + strong + 'Cars:' + _strong + formatCars(apt.cars) + _li +
-		li + strong + 'Services:'  + _strong + formatServices(apt.services) + _li +
-		li + strong + 'Cost: $' + _strong + apt.price.toString() + _li +
+		li + strong + 'Services: '  + _strong + formatServices(apt.services) + _li +
+		li + strong + 'Cost: $' + _strong + apt.price.toString() + "(paid" + _li +
+		li + strong + 'Description: ' + _strong + apt.description + _li +
 		_ul + '<hr>';
 
 	return apptHtml;

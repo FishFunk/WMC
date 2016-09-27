@@ -18,6 +18,7 @@ class AdminConsoleVm{
 		spinner.Show();
 		webSvc.GetAllAppointments()
 	        .then(appts=>{
+	        	appts = _.sortBy(appts, (a)=> a.date);
 	        	var dict = {};
 	            _.each(appts, (a)=>{
 	                a.date = moment(a.date).format("MM/DD/YYYY");
@@ -29,10 +30,6 @@ class AdminConsoleVm{
 				        self.days.push(new Day(key, dict[key]));
 				    }
 				}
-
-				self.days(_.sortBy(self.days(), (day)=> day.date));
-
-				console.log(self.days());
 	        })
 	        .fail(err=>console.log(err))
 	        .always(()=>spinner.Hide());

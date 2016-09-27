@@ -14,6 +14,7 @@ module.exports.updateUser = (req, res)=>{
 	{
 		Usr.update({email: req.body.email.trim().toLowerCase()},
 		{
+			subscriptions: req.body.subscriptions,
 			appointments: req.body.appointments,
 			cars: req.body.cars,
 			phone: req.body.phone,
@@ -36,38 +37,59 @@ module.exports.updateUser = (req, res)=>{
 
 module.exports.getFutureApptDatesAndTimes = (req, res)=>{
 	Usr.find()
-	   .select('appointments.date appointments.timeEstimate appointments.timeRange appointments.timeRangeKey')
+	   .select('appointments.date appointments.timeEstimate appointments.timeRange appointments.timeRangeKey \
+	   		subscriptions.dates subscriptions.timeEstimate subscriptions.timeRange subscriptions.timeRangeKey')
 	   .exec((err, docs)=>{
 		if(err){
 			console.error(err);
 			sendJsonResponse(res, internalErrorCode, "DB Failure - getFutureAppointments", err);
 		} else {
 			var now = new Date();
-			var futureAppts = [];
-			var userAppointmentArrs = _.map(docs, (d)=>{ return d.appointments });
-			_.each(userAppointmentArrs, (arr)=>{
-				_.each(arr, (appt)=>{
-					if(appt.date > now){
-						futureAppts.push(appt);
-					}
+
+			var userAppointments = _.flatten(_.map(docs, (d)=>{ return d.appointments }));
+			var userSubscriptions = _.flatten(_.map(docs, (d)=>{ return d.subscriptions }));
+
+			_.each(userSubscriptions, (sub)=>{
+				_.each(sub.dates, (date)=>{
+					userAppointments.push({
+						date: date,
+						timeEstimate: sub.timeEstimate,
+						timeRange: sub.timeRange,
+						timeRangeKey: sub.timeRangeKey
+					});
 				});
 			});
+
+			var result = _.filter(userAppointments, (appt)=> {
+				return appt.date > now;
+			});
 			
-			sendJsonResponse(res, readSuccessCode, "Success", futureAppts);
+			sendJsonResponse(res, readSuccessCode, "Success", result);
 		}
 	});
 };
 
 module.exports.getAllAppointments = (req, res)=>{
 	Usr.find()
-	   .select('appointments')
+	   .select('appointments subscriptions')
 	   .exec((err, docs)=>{
 		if(err){
 			console.error(err);
 			sendJsonResponse(res, internalErrorCode, "DB Failure - getAllAppointments", err);
 		} else {
-			var userAppointmentArrs = _.map(docs, (d)=>{ return d.appointments });
-			sendJsonResponse(res, readSuccessCode, "Success", _.flatten(userAppointmentArrs));
+			var userAppointments = _.flatten(_.map(docs, (d)=>{ return d.appointments }));
+			var userSubscriptions = _.flatten(_.map(docs, (d)=>{ return d.subscriptions }));
+
+			_.each(userSubscriptions, (sub)=>{
+				_.each(sub.dates, (date)=>{
+					var appt = JSON.parse(JSON.stringify(sub));
+					appt.dates = null;
+					appt.date = date;
+					userAppointments.push(appt);
+				});
+			});
+
+			sendJsonResponse(res, readSuccessCode, "Success", userAppointments);
 		}
 	});
 };
@@ -129,6 +151,7 @@ module.exports.createNewUser = (req, res)=>{
 	if(req.body && req.body.email)
 	{
 		Usr.create({
+			subscriptions: [],
 			appointments: [],
 			cars: [],
 			email: req.body.email.trim().toLowerCase(),

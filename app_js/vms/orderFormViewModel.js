@@ -87,13 +87,9 @@ class OrderFormViewModel {
 
 		// Subscriptions
 		this.hideSubscriptionForm = ko.observable(true);
-		this.subIntervals = [1,2,3,4,5,6];
-		this.selectedSubInterval = ko.observable(this.subIntervals[1]);
+		this.subIntervals = [1,2,3];
+		this.selectedSubInterval = ko.observable(this.subIntervals[0]);
 		this.subSpans = [
-			{
-				days: 1,
-				display: "Day(s)"
-			},
 			{
 				days: 7,
 				display: "Week(s)"
@@ -103,7 +99,7 @@ class OrderFormViewModel {
 				display: "Month(s)"
 			}
 		];
-		this.selectedSubSpan = ko.observable(this.subSpans[1]);
+		this.selectedSubSpan = ko.observable(this.subSpans[0]);
 
 		// Coupon
 		this.couponCode = ko.observable("");
@@ -384,17 +380,17 @@ class OrderFormViewModel {
 		try
 		{
 			var self = this;
+			var prepaid = token != null;
+
 			spinner.Show();
 			async.waterfall([
-					// TODO: Is this the best order?
-					token ? 
+					prepaid ? 
 						this._executeCharge.bind(this, token) : 
 						callback=>{
-							// user chose to pay later
 							callback();
 						},
 					this._verifyUser.bind(this),
-					this._updateUserData.bind(this),
+					this._updateUserData.bind(this, prepaid),
 					this._sendEmailConfirmation.bind(this)
 				],
 				possibleError=>{
@@ -467,25 +463,16 @@ class OrderFormViewModel {
 	      	});
 	}
 
-	_updateUserData(currentUsr, callback){
-		var newAppt = this._makeAppointmentSchema();
+	_updateUserData(prepaid, currentUsr, callback){
+		var newAppt = this._makeAppointmentSchema(prepaid);
 		currentUsr.appointments != null ? 
 				currentUsr.appointments.push(newAppt) : currentUsr.appointments = [newAppt];
 
 		if(!this.hideSubscriptionForm()){
 			const startDate = new Date(newAppt.date);
-			const daySpan = this.selectedSubInterval() * this.selectedSubSpan().days;
-			const x = Math.round(365 / daySpan);
-			let daysToAdd = daySpan;
-
-			for(let i = 0; i < x; i++){
-				let repeatAppt = this._makeAppointmentSchema();
-				let futureDate = new Date(startDate);
-				futureDate.setDate(startDate.getDate() + daysToAdd);
-				repeatAppt.date = futureDate;
-				currentUsr.appointments.push(repeatAppt);
-				daysToAdd += daySpan;
-			}
+			const subscription = this._makeSubscriptionSchema(startDate);
+			currentUsr.subscriptions != null ? 
+				currentUsr.subscriptions.push(subscription) : currentUsr.subscriptions = [subscription];
 		}
 
 		currentUsr.cars = this.cars();
@@ -671,12 +658,41 @@ class OrderFormViewModel {
 		}
 	}
 
-	_makeAppointmentSchema(){
+	_makeAppointmentSchema(prepaid){
 		const selectedCars = _.filter(this.cars(), (car)=> car.selected());
 		const selectedLocation = _.find(this.locations(), (loc)=> loc.selected());
 		return {
 			cars: selectedCars,
 			date: this.dateMoment.toDate(),
+			location: selectedLocation,
+			prepaid: prepaid,
+			price: this.orderTotal(),
+			services: this._buildServicesArray(),
+			timeEstimate: this._getTimeEstimate(),
+			timeRange: this.selectedTimeRange().range,
+			timeRangeKey: this.selectedTimeRange().key,
+			description: this.description()
+		}
+	}
+
+	_makeSubscriptionSchema(startDate){
+		const selectedCars = _.filter(this.cars(), (car)=> car.selected());
+		const selectedLocation = _.find(this.locations(), (loc)=> loc.selected());
+		const daySpan = this.selectedSubInterval() * this.selectedSubSpan().days;
+		const x = Math.round(365 / daySpan);
+		let daysToAdd = daySpan;
+		let futureDates = [];
+
+		for(let i = 0; i < x; i++){
+			let futureDate = new Date(startDate);
+			futureDate.setDate(startDate.getDate() + daysToAdd);
+			futureDates.push(futureDate);
+			daysToAdd += daySpan;
+		}
+
+		return {
+			cars: selectedCars,
+			dates: futureDates,
 			location: selectedLocation,
 			price: this.orderTotal(),
 			services: this._buildServicesArray(),
