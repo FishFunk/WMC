@@ -1076,6 +1076,15 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var OrderFormViewModel = function () {
+	_createClass(OrderFormViewModel, [{
+		key: 'SelectedCars',
+		get: function get() {
+			return _.filter(this.cars(), function (car) {
+				return car.selected();
+			});
+		}
+	}]);
+
 	function OrderFormViewModel(storageHelper, webSvc) {
 		_classCallCheck(this, OrderFormViewModel);
 
@@ -1180,15 +1189,11 @@ var OrderFormViewModel = function () {
 			var total = 0;
 			var serviceCost = parseFloat((self.addWash() ? self.WASH_COST : 0) + (self.addShine() && self.addWash() ? self.TIRE_SHINE_COST : 0) + (self.addWax() && self.addWash() ? self.WAX_COST : 0) + (self.addInterior() ? self.INTERIOR_COST : 0));
 
-			self.cars().forEach(function (car) {
-				if (car.selected()) {
-					var carSize = _.find(Configuration.CAR_SIZES, function (obj) {
-						return obj.size == car.size || obj.multiplier == car.multiplier;
-					});
-					if (carSize) {
-						total += serviceCost * carSize.multiplier;
-					}
-				}
+			_.each(self.SelectedCars, function (car) {
+				var carSize = _.find(self.carSizes, function (s) {
+					return s.size == car.size || s.multiplier == car.multiplier;
+				});
+				total += carSize.multiplier * serviceCost;
 			});
 
 			return parseFloat(total.toFixed(2));
@@ -1201,9 +1206,21 @@ var OrderFormViewModel = function () {
 			}
 
 			if (self.coupon().discountPercentage == 100) {
-				// First Time Free Wash Discount
-				total -= self.WASH_COST;
+				// special case 100% free coupons
+				total = 0;
+			} else if (self.coupon().discountPercentage > 25) {
+				// normal coupons above 25% apply to the wash cost only
+				if (self.addWash() && self.SelectedCars.length > 0) {
+					var percent = self.coupon().discountPercentage / 100;
+					_.each(self.SelectedCars, function (car) {
+						var carSize = _.find(self.carSizes, function (s) {
+							return s.size == car.size || s.multiplier == car.multiplier;
+						});
+						total -= self.WASH_COST * carSize.multiplier * percent;
+					});
+				}
 			} else {
+				// normal coupons 25% and below apply to the full order value
 				var percent = self.coupon().discountPercentage / 100;
 				total = total - total * percent;
 			}
@@ -1374,10 +1391,7 @@ var OrderFormViewModel = function () {
 				return;
 			}
 
-			var selectedCars = _.filter(this.cars(), function (car) {
-				return car.selected();
-			});
-			if (selectedCars.length === 0) {
+			if (this.SelectedCars.length === 0) {
 				this.incompleteFormMsg('Please select at least one vehicle to service.');
 				$('#incomplete-form-alert').show();
 				return;
@@ -1796,9 +1810,7 @@ var OrderFormViewModel = function () {
 	}, {
 		key: '_makeAppointmentSchema',
 		value: function _makeAppointmentSchema(prepaid) {
-			var selectedCars = _.filter(this.cars(), function (car) {
-				return car.selected();
-			});
+			var selectedCars = this.SelectedCars;
 			var selectedLocation = _.find(this.locations(), function (loc) {
 				return loc.selected();
 			});
@@ -1818,9 +1830,7 @@ var OrderFormViewModel = function () {
 	}, {
 		key: '_makeSubscriptionSchema',
 		value: function _makeSubscriptionSchema(startDate) {
-			var selectedCars = _.filter(this.cars(), function (car) {
-				return car.selected();
-			});
+			var selectedCars = this.SlectedCars;
 			var selectedLocation = _.find(this.locations(), function (loc) {
 				return loc.selected();
 			});

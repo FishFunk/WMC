@@ -1,4 +1,9 @@
 class OrderFormViewModel {
+
+	get SelectedCars(){
+		return _.filter(this.cars(), (car)=> car.selected());
+	}
+
 	constructor(storageHelper, webSvc){
 		var self = this;
 
@@ -115,13 +120,9 @@ class OrderFormViewModel {
 					(self.addWax() && self.addWash() ? self.WAX_COST : 0) + 
 					(self.addInterior() ? self.INTERIOR_COST : 0));
 
-			self.cars().forEach((car)=>{
-				if(car.selected()){
-					var carSize = _.find(Configuration.CAR_SIZES, (obj) => obj.size == car.size || obj.multiplier == car.multiplier);
-					if(carSize){
-						total += serviceCost * carSize.multiplier;
-					}
-				}
+			_.each(self.SelectedCars, (car)=>{
+				var carSize = _.find(self.carSizes, (s)=> s.size == car.size || s.multiplier == car.multiplier);
+				total += carSize.multiplier * serviceCost;
 			});
 
 			return parseFloat(total.toFixed(2));
@@ -134,9 +135,19 @@ class OrderFormViewModel {
 			}
 
 			if(self.coupon().discountPercentage == 100){
-				// First Time Free Wash Discount
-				total -= self.WASH_COST;
+				// special case 100% free coupons
+				total = 0;
+			} else if (self.coupon().discountPercentage > 25) {
+				// normal coupons above 25% apply to the wash cost only
+				if(self.addWash() && self.SelectedCars.length > 0){
+					var percent = self.coupon().discountPercentage / 100;
+					_.each(self.SelectedCars, (car)=>{
+						var carSize = _.find(self.carSizes, (s)=> s.size == car.size || s.multiplier == car.multiplier);
+						total -= (self.WASH_COST * carSize.multiplier * percent);
+					});
+				}
 			} else {
+				// normal coupons 25% and below apply to the full order value
 				var percent = self.coupon().discountPercentage / 100;
 				total = total - (total * percent);
 			}
@@ -302,8 +313,7 @@ class OrderFormViewModel {
 			return;
 		}
 		
-		var selectedCars = _.filter(this.cars(), (car)=> car.selected());
-		if(selectedCars.length === 0){
+		if(this.SelectedCars.length === 0){
 			this.incompleteFormMsg('Please select at least one vehicle to service.');
 			$('#incomplete-form-alert').show();
 			return;
@@ -698,7 +708,7 @@ class OrderFormViewModel {
 	}
 
 	_makeAppointmentSchema(prepaid){
-		const selectedCars = _.filter(this.cars(), (car)=> car.selected());
+		const selectedCars = this.SelectedCars;
 		const selectedLocation = _.find(this.locations(), (loc)=> loc.selected());
 		return {
 			cars: selectedCars,
@@ -715,7 +725,7 @@ class OrderFormViewModel {
 	}
 
 	_makeSubscriptionSchema(startDate){
-		const selectedCars = _.filter(this.cars(), (car)=> car.selected());
+		const selectedCars = this.SlectedCars;
 		const selectedLocation = _.find(this.locations(), (loc)=> loc.selected());
 		const daySpan = this.selectedSubInterval() * this.selectedSubSpan().days;
 		const x = Math.round(365 / daySpan);

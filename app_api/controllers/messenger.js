@@ -115,7 +115,7 @@ module.exports.sendCouponCode = (couponCode, email)=>{
 		transport.sendMail({
 	          from: 'WashMyCar <donotreply@washmycarva.com>',
 	          to: email,
-	          subject: 'Your WashMyCar 100% Off Coupon!',
+	          subject: 'Your WashMyCar 50% Off Coupon!',
 		      html:
 		      	'<html style="font-family: sans-serif; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">\
 		      		<body>\
@@ -125,8 +125,8 @@ module.exports.sendCouponCode = (couponCode, email)=>{
 					    </div>\
 					    <hr>\
 		      			<p>Thanks for joining WashMyCar! \
-		      			Apply the coupon below when checking out and enjoy your <strong>first wash completely free!</strong> \
-		      			But hurry! This discount is only good for the next 12 hours. \
+		      			Apply the coupon below when checking out and enjoy your <strong>first wash 50% off!</strong> \
+		      			But hurry! This discount is only valid for the next 12 hours. \
 		      			We look forward to servicing you!</p> \
 		      			<u>Coupon Code:</u><h4>' + couponCode + '</h4> \
 		      		</div>\
@@ -196,13 +196,13 @@ var formatAppt = (appt)=>{
 	var prepaid = appt.prepaid ? " (Prepaid: YES)" : "(Prepaid: NO)";
 	
 	apptHtml += ul +
-		li + strong + 'Where: ' + _strong + formatLocation(apt.location) + _li +
+		li + strong + 'Where: ' + _strong + formatLocation(appt.location) + _li +
 		li + strong + 'Date: ' + _strong + dt.toLocaleDateString("en-US") + _li + 
-		li + strong + 'Time: ' + _strong + apt.timeRange + _li + 
-		li + strong + 'Cars:' + _strong + formatCars(apt.cars) + _li +
-		li + strong + 'Services: '  + _strong + formatServices(apt.services) + _li +
-		li + strong + 'Cost: $' + _strong + apt.price.toString() + prepaid + _li +
-		li + strong + 'Description: ' + _strong + apt.description + _li +
+		li + strong + 'Time: ' + _strong + appt.timeRange + _li + 
+		li + strong + 'Cars:' + _strong + formatCars(appt.cars) + _li +
+		li + strong + 'Services: '  + _strong + formatServices(appt.services) + _li +
+		li + strong + 'Cost: $' + _strong + appt.price.toString() + prepaid + _li +
+		li + strong + 'Description: ' + _strong + appt.description + _li +
 		_ul + '<hr>';
 
 	return apptHtml;
