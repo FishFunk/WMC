@@ -2,10 +2,17 @@ class AdminConsoleVm{
 	constructor(){
 		this.loginVm = new LoginViewModel(this);
 		this.days = ko.observableArray();
+		this.coupons = ko.observableArray();
+		this.display = ko.observable("appointments");
+		this.newCoupon = ko.observable(this._makeCouponSchema());
 	}
 
 	get LoginViewModel(){
 		return this.loginVm;
+	}
+
+	get NewCoupon(){
+		return this.newCoupon;
 	}
 
 	Load(){
@@ -16,6 +23,48 @@ class AdminConsoleVm{
 		var self = this;
 		self.days([]);
 		spinner.Show();
+
+		async.series([
+			self.InitializeDatePickers.bind(self),
+			self.LoadAppointments.bind(self),
+			self.LoadCoupons.bind(self)
+			],
+			possibleError=>{
+				if(possibleError){
+					console.error(possibleError);
+				}
+				spinner.Hide();
+			});
+	}
+
+	InitializeDatePickers(callback){
+		var self = this;
+		try{
+			const options = {
+				minDate: moment().subtract(1, 'days'),
+				format: "MM/DD/YY",
+				allowInputToggle: true,
+				focusOnShow: false,
+				ignoreReadonly: true,
+				showClear: true,
+				showClose: true
+			};
+
+			$('#coupon-start-date').datetimepicker(options)
+				.on('dp.change', self._couponStartDateChange.bind(self));
+
+			$('#coupon-end-date').datetimepicker(options)
+				.on('dp.change', self._couponEndDateChange.bind(self));
+
+			callback();
+		}
+		catch(ex){
+			callback(ex);
+		}
+	}
+
+	LoadAppointments(callback){
+		var self = this;
 		webSvc.GetAllAppointments()
 	        .then(appts=>{
 	        	appts = _.sortBy(appts, (a)=> a.date);
@@ -30,9 +79,21 @@ class AdminConsoleVm{
 				        self.days.push(new Day(key, dict[key]));
 				    }
 				}
+				callback();
 	        })
-	        .fail(err=>console.log(err))
-	        .always(()=>spinner.Hide());
+	        .fail((err)=>callback(err));		
+	}
+
+	LoadCoupons(callback){
+		var self = this;
+		webSvc.GetAllCoupons()
+			.then(result =>{
+				self.coupons(result);
+				callback();
+			})
+			.fail(err=>{
+				callback(err);
+			});
 	}
 
 	DeleteOld(){
@@ -97,6 +158,10 @@ class AdminConsoleVm{
 
 	OnDeleteAppointment(targetId){
 		var self = this;
+		if(!this.loginVm.VerifyUser){
+			return;
+		}
+
 		if(!targetId){
 			bootbox.alert("No ID found for this appointment. Unable to delete.");
 			return;
@@ -113,5 +178,91 @@ class AdminConsoleVm{
 						});
 				}
 			});
+	}
+
+	OnDeleteCoupon(targetId){
+		var self = this;
+		
+		if(!this.loginVm.VerifyUser){
+			return;
+		}
+		
+		if(!targetId){
+			bootbox.alert("No ID found for this coupon. Unable to delete.");
+			return;
+		}
+
+		bootbox.confirm("Are you sure you want to delete this coupon?",
+			(bool)=>{
+				if(bool){
+					webSvc.DeleteSingleCoupon(targetId)
+						.then(()=>{
+							self.Load();
+						})
+						.fail(err =>{
+							console.log(err);
+						});
+				}
+			});
+	}
+
+	OnCreateNewCoupon(){
+		if(!this.loginVm.VerifyUser){
+			return;
+		}
+
+		$('#coupon-modal').modal('show');
+	}
+
+	OnSubmitNewCoupon(){
+		var self = this;
+		const coupon = this.newCoupon();
+		if(!coupon.startDate || coupon.code.length < 5){
+			bootbox.alert("Invalid coupon");
+			return;
+		}
+
+		webSvc.CreateCoupon(coupon)
+			.then(()=>{
+				const msg = "Coupon created successfully!";
+				bootbox.alert(msg);
+				console.log(msg);
+				$('#coupon-modal').modal('hide');
+				self.newCoupon(self._makeCouponSchema());
+				self.LoadCoupons((possibleError)=>{
+					if(possibleError){
+						console.error(possibleError);
+					}
+				});
+			})
+			.fail(err=>{
+				const msg = "Error creating coupon.";
+				bootbox.alert(msg);
+				console.error(err);
+			});
+	}
+
+	_couponStartDateChange(e){
+		if(e && e.date){
+			const momentObj = e.date;
+			this.newCoupon().startDate = momentObj.toDate();	
+		}
+	}
+
+	_couponEndDateChange(e){
+		if(e && e.date){
+			const momentObj = e.date;
+			this.newCoupon().endDate = momentObj.toDate();
+		}
+	}
+
+	_makeCouponSchema(){
+		return {
+			startDate: new Date(),
+			endDate: null,
+			discountPercentage: 0,
+			code: '',
+			onlyUseOnce: false
+		}
 	}
 }

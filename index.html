@@ -6,10 +6,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Web app for WashMyCar LLC">
+    <meta name="description" content="The future of car wash and detailing services. WashMyCar, LLC is a small business based out of northern Virginia that brings quality and eco-friendly services to you. Pick and choose between a premium wash, wheel detail, wax and buff, and complete interior cleaning. Call, email, or make an appointment online through the mobile web app.">
     <meta name="author" content="Daniel Fishman">
 
-    <title>WMC</title>
+    <title>WashMyCar</title>
 
     <!-- Bootstrap -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -137,35 +137,43 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12 text-center">
-                        <h2 class="section-heading">Service Add-Ons</h2>
-                        <h3 class="section-subheading text-muted">Show your automobile some love with our premium service add-ons.</h3>
+                        <h2 class="section-heading">Services</h2>
                     </div>
                 </div>
                 <div class="row text-center">
-                    <div class="col-md-4">
+                   <div class="col-md-6">
+                        <div class="circle">
+                            <span data-bind="html: WashPriceHtml"></span>
+                        </div>
+                        <h4 class="service-heading">Ultimate Exterior Hand Wash</h4>
+                        <p class="text-muted">Exterior wash includes removing grit and grime off of the entire exterior then spot cleaning any bonded materials using detail spray and claybar. We offer both a waterless or low water pressure wash method - both of which are eco-friendly!</p>
+                    </div>
+                   <div class="col-md-6">
+                        <div class="circle">
+                            <span data-bind="html: InteriorPriceHtml"></span>
+                        </div>
+                        <h4 class="service-heading">Interior</h4>
+                        <p class="text-muted">A clean interior means happy passengers. Add this service and we'll vacuum, spot remove stains, clean windows, and wipe down the dash, seats, door jambs, and trim!</p>
+                    </div>
+                </div>
+                <div class="row text-center">
+                    <div class="col-md-6">
                         <div class="circle">
                            <span data-bind="html: TireShinePriceHtml"></span>
                         </div>
                         <h4 class="service-heading">Wheel Detail</h4>
                         <p class="text-muted">Make your car look new again with a deep clean of your tires, rims, and wheel wells plus a hand applied gel coating that protects your tires from harmful UV rays and provides a beautiful shine.</p>
                    </div>
-                   <div class="col-md-4">
-                    <div class="circle">
-                        <span data-bind="html: InteriorPriceHtml"></span>
+                    <div class="col-md-6">
+                        <div class="circle">
+                        	<span data-bind="html: WaxPriceHtml"></span>
+                        </div>
+                        <h4 class="service-heading">Hand Wax & Buff</h4>
+                        <p class="text-muted">With this package we'll hand apply top of the line wax to your vehicle's body which provides extra shine and protection! We recommend waxing your vehicles every 3 to 6 months.</p>
                     </div>
-                    <h4 class="service-heading">Interior</h4>
-                    <p class="text-muted">A clean interior means happy passengers. Add this service and we'll vacuum, spot remove stains, clean windows, and wipe down the dash, seats, door jambs, and trim!</p>
-                </div>
-                <div class="col-md-4">
-                    <div class="circle">
-                    	<span data-bind="html: WaxPriceHtml"></span>
-                    </div>
-                    <h4 class="service-heading">Hand Wax & Buff</h4>
-                    <p class="text-muted">With this package we'll hand apply top of the line wax to your vehicle's body which provides extra shine and protection! We recommend waxing your vehicles every 3 to 6 months.</p>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
     <!-- Contact Section -->
     <section id="contact">

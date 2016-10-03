@@ -9,6 +9,7 @@ class MainViewModel {
 		
 		// observables
 		this.WASH_COST = Configuration.WASH_DETAILS.price;
+		this.WashPriceHtml = "<sup>$</sup>"+this.WASH_COST;
 		this.TireShinePriceHtml = "<sup>$</sup>"+Configuration.TIRE_SHINE_DETAILS.price;
 		this.InteriorPriceHtml = "<sup>$</sup>"+Configuration.INTERIOR_DETAILS.price;
 		this.WaxPriceHtml = "<sup>$</sup>"+Configuration.WAX_DETAILS.price;

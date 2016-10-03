@@ -12,9 +12,11 @@ router.post('/createNewUser', ctrlUsers.createNewUser);
 router.post('/getUserByEmail', ctrlUsers.getUserByEmail);
 router.post('/getUserByEmailAndPwd', ctrlUsers.getUserByEmailAndPwd);
 router.post('/updateAppointment', ctrlUsers.updateAppointment);
+router.post('/createCoupon', ctrlCoupon.createCoupon);
 
 router.get('/getFutureApptDatesAndTimes', ctrlUsers.getFutureApptDatesAndTimes);
 router.get('/getAllAppointments', ctrlUsers.getAllAppointments);
+router.get('/getAllCoupons', ctrlCoupon.getAllCoupons);
 
 router.put('/updateUser', ctrlUsers.updateUser);
 
@@ -25,6 +27,7 @@ router.post('/forgotPassword', ctrlMsgs.forgotPassword);
 
 router.delete('/deleteExpiredAppointments', ctrlUsers.deleteExpiredAppointments);
 router.delete('/deleteSingleAppointment/:id?', ctrlUsers.deleteSingleAppointment);
+router.delete('/deleteSingleCoupon/:id?', ctrlCoupon.deleteSingleCoupon);
 
 router.post('/verifyAdmin', ctrlAdmin.verifyAdmin);
 

@@ -36,62 +36,23 @@
     </head>
 
     <body id="page-top" class="container">
-        <section style="margin-top: -80px !important;">
-            <div class="row">
-                <div class="col-xs-12 text-center">
-                    <h2>Admin Console</h2>
-                </div>
+        <div class="row">
+            <div class="col-xs-12 text-center">
+                <h2>Admin Console</h2>
             </div>
-            <div class="row">
-                <div class="col-xs-12 text-center">
-                    <button class="btn btn-lg btn-primary" data-bind="click: Load">Refresh</button>
-                    <button class="btn btn-lg ghost-btn black" data-bind="click: DeleteOld">Delete Old</button>
-                </div>
+        </div>
+        <div class="row">
+            <div class="text-center">
+                <label class="radio-inline"><input type="radio" name="display" value="appointments" data-bind="checked: display"/>Appointments</label>
+                <label class="radio-inline"><input type="radio" name="display" value="coupons" data-bind="checked: display"/>Coupons</label>
             </div>
-            <hr>
-            <div data-bind="foreach: days">
-                <div id="day-templ" class="col-sm-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading text-center">
-                            <h2 class="panel-title" data-bind="text: day"></h2>
-                            <h3 class="panel-title" data-bind="text: date"></h3>
-                        </div>
-                        <div class="panel-body" data-bind="foreach: appts">
-                            <center>
-                                <button class="btn btn-md btn-default" data-bind="click: $root.OnEditAppointment.bind($root, $data)">Edit</button>
-                                <button class="btn btn-md btn-danger" data-bind="click: $root.OnDeleteAppointment.bind($root, $data._id)">Delete</button>
-                                </center><br>
-                            <label>Address&nbsp;(<span data-bind="text: $data.location.title"></span>)</label>
-                                <br>
-                                <span data-bind="text: $data.location.street"></span><br>
-                                <span data-bind="text: $data.location.city"></span>,&nbsp;
-                                <span data-bind="text: $data.location.state"></span>&nbsp;
-                                <span data-bind="text: $data.location.zip"></span>
-                                <br>
-                            <label>Cars</label>
-                                <ul data-bind="foreach: $data.cars">
-                                    <li>
-                                        <span data-bind="text: $data.year"></span>&nbsp;
-                                        <span data-bind="text: $data.color"></span>&nbsp;
-                                        <span data-bind="text: $data.make"></span>&nbsp;
-                                        <span data-bind="text: $data.model"></span>&nbsp;
-                                        <span data-bind="text: $data.size"></span>&nbsp;
-                                        <span data-bind="text: $data.tag"></span>&nbsp;
-                                    </li>
-                                </ul>
-                            <label>Services:&nbsp;</label><span data-bind="text: $data.services"></span><br>
-                            <label>Time Range:&nbsp;</label><span data-bind="text: $data.timeRange"></span><br>
-                            <label>Desc:&nbsp;</label><span data-bind="text: $data.description"></span><br>
-                            <label>Price:&nbsp;</label>$<span data-bind="text: $data.price"></span><br>
-                            <label>Prepaid:&nbsp;</label>
-                                <strong data-bind="visible: $data.prepaid">YES</strong>
-                                <strong data-bind="visible: !$data.prepaid">NO</strong>
-                            <hr>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        </div>
+        <div class="row">
+            <br>
+            <div data-bind="template: { name: 'appointment-template', data: $root }, visible: display() == 'appointments'"></div>
+            <div data-bind="template: { name: 'coupon-template', data: $root }, visible: display() == 'coupons'"></div>
+        </div>
+    </body>
 
 <div id="login-modal" class="modal fade" role="dialog" data-bind="with: LoginViewModel">
     <div class="modal-dialog">
@@ -123,6 +84,68 @@
     </div>
 </div>
 
+<div id="coupon-modal" class="modal fade" role="dialog" data-bind="with: NewCoupon">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title text-center">New Coupon</h3>
+            </div>
+            <div class="modal-body">
+                <form id="coupon-form" data-bind="submit: $root.OnSubmitNewCoupon.bind($root)">
+                    <div class="row">
+                        <div class="form-group col-xs-12">
+                            <div class="col-sm-6">
+                              <label class="control-label">Start Date</label>
+                              <div class='input-group date' id='coupon-start-date'>
+                                <input name="date" type='text' class="form-control" readonly/>
+                                <span class="input-group-addon">
+                                  <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                              </div>
+                            </div>
+                            <div class="col-sm-6">
+                              <label class="control-label">End Date</label>
+                              <div class='input-group date' id='coupon-end-date'>
+                                <input name="date" type='text' class="form-control" readonly/>
+                                <span class="input-group-addon">
+                                  <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                              </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                                <label>Code:&nbsp;</label><input class="form-control" data-bind="value: $data.code" placeholder="XXXXXX" maxlength="12">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                                <label>Percentage:&nbsp;</label>
+                                <select data-bind="options: [5,10,15,20,25,30,35,40,45,50,60,70,80,90,100],
+                                                   value: $data.discountPercentage">
+                                </select>%
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                                <label>One Time Use:&nbsp;</label>
+                                <select data-bind="options: [true,false],
+                                                   value: $data.onlyUseOnce">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row text-center">
+                        <button type="submit" class="btn btn-lg btn-primary">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="page-load-spinner" class="loading-spinner-overlay">
     <div id="spinner-container" class="loading-spinner"></div>
 </div>
@@ -137,9 +160,92 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.string/3.3.4/underscore.string.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/async/2.0.1/async.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
 
 <!-- Compiled App Script -->
 <script src="admin-console-compiled.min.js"></script>
+
+<!-- Templates -->
+<script type="text/html" id="appointment-template">
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <button class="btn btn-lg btn-primary" data-bind="click: Load">Refresh</button>
+            <button class="btn btn-lg ghost-btn black" data-bind="click: DeleteOld">Delete Old</button>
+        </div>
+    </div>
+    <hr>
+    <div data-bind="foreach: days">
+        <div id="day-templ" class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading text-center">
+                    <h2 class="panel-title" data-bind="text: day"></h2>
+                    <h3 class="panel-title" data-bind="text: date"></h3>
+                </div>
+                <div class="panel-body" data-bind="foreach: appts">
+                    <center>
+                        <button class="btn btn-md btn-default" data-bind="click: $root.OnEditAppointment.bind($root, $data)">Edit</button>
+                        <button class="btn btn-md btn-danger" data-bind="click: $root.OnDeleteAppointment.bind($root, $data._id)">Delete</button>
+                        </center><br>
+                    <label>Address&nbsp;(<span data-bind="text: $data.location.title"></span>)</label>
+                        <br>
+                        <span data-bind="text: $data.location.street"></span><br>
+                        <span data-bind="text: $data.location.city"></span>,&nbsp;
+                        <span data-bind="text: $data.location.state"></span>&nbsp;
+                        <span data-bind="text: $data.location.zip"></span>
+                        <br>
+                    <label>Cars</label>
+                        <ul data-bind="foreach: $data.cars">
+                            <li>
+                                <span data-bind="text: $data.year"></span>&nbsp;
+                                <span data-bind="text: $data.color"></span>&nbsp;
+                                <span data-bind="text: $data.make"></span>&nbsp;
+                                <span data-bind="text: $data.model"></span>&nbsp;
+                                <span data-bind="text: $data.size"></span>&nbsp;
+                                <span data-bind="text: $data.tag"></span>&nbsp;
+                            </li>
+                        </ul>
+                    <label>Services:&nbsp;</label><span data-bind="text: $data.services"></span><br>
+                    <label>Time Range:&nbsp;</label><span data-bind="text: $data.timeRange"></span><br>
+                    <label>Desc:&nbsp;</label><span data-bind="text: $data.description"></span><br>
+                    <label>Price:&nbsp;</label>$<span data-bind="text: $data.price"></span><br>
+                    <label>Prepaid:&nbsp;</label>
+                        <strong data-bind="visible: $data.prepaid">YES</strong>
+                        <strong data-bind="visible: !$data.prepaid">NO</strong>
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="coupon-template">
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <button class="btn btn-lg btn-primary" data-bind="click: Load">Refresh</button>
+            <button class="btn btn-lg ghost-btn black">Delete Old</button>
+            <button class="btn btn-lg btn-success" data-bind="click: OnCreateNewCoupon">Create New</button>
+        </div>
+    </div>
+    <hr>
+    <div data-bind="foreach: coupons">
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading text-center">
+                    <span class="panel-title" data-bind="text: moment($data.startDate).format('LL')"></span> - 
+                    <span class="panel-title" data-bind="text: $data.endDate ? moment($data.endDate).format('LL') : '??'"></span>
+                </div>
+                <center>
+                    <button class="btn btn-md btn-danger" data-bind="click: $root.OnDeleteCoupon.bind($root, $data._id)">Delete</button>
+                </center>
+                <br>
+                <label>Code:&nbsp;</label><span data-bind="text: $data.code"></span><br>
+                <label>Percentage:&nbsp;</label><span data-bind="text: $data.discountPercentage"></span><br>
+                <label>One Time Only:&nbsp;</label><span data-bind="text: $data.onlyUseOnce"></span><br>
+            </div>
+        </div>
+    </div>
+</script>
 
 </body>
 

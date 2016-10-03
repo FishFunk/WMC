@@ -6,7 +6,7 @@
     </div>
     <div class="row">
       <legend class="col-xs-12">Order Details</legend>
-      <div class="form-group col-sm-12">
+      <div class="form-group col-xs-12">
         <label class="control-label" for="checkbox">Service Options</label>
         <div class="form-inline">
           <div class="checkbox">
@@ -30,6 +30,11 @@
     </div>
     <div class="row">
       <form id="order-details-form" data-toggle="validator" role="form" autocomplete="off">
+        <div class="form-group col-sm-4" data-bind="visible: addWash">
+          <label class="control-label">Wash Type</label>
+          <select id="wash-type-select" class="form-control" name="washType" data-bind="options: ['', 'Pressure Wash', 'Waterless'], value: washType">
+          </select>
+        </div>
         <div class="form-group col-sm-4">
           <label class="control-label">Date</label>
           <div class='input-group date' id='datetimepicker'>
@@ -41,7 +46,7 @@
         </div>
         <div class="form-group col-sm-4">
           <label class="control-label" for="select">Time Range</label>
-          <select class="form-control" data-bind="foreach: timeRangeOptions, value: selectedTimeRange">
+          <select class="form-control" data-bind="foreach: timeRangeOptions, value: selectedTimeRange" name="timeRange">
             <option data-bind="text: $data.range, value: $data, attr: { disabled: $data.disabled }"></option>
           </select>
         </div>
@@ -227,21 +232,21 @@
         <center id="incomplete-form-alert" class="alert alert-danger fade in" role="alert" hidden>
           <strong>Whoops!</strong>&nbsp;<span data-bind="text: incompleteFormMsg"></span>
         </center>
-        <center class="hidden-xs" data-bind="visible: orderTotal() > 0">
+        <center class="hidden-xs" data-bind="visible: discountedTotal() > 0">
           <button data-bind="click: OnFormCancel" class="btn btn-lg btn-default">Cancel</button>
           <button class="btn btn-lg btn-default" data-bind="click: OnSubmit.bind($data,false)">Pay Then</button>
           <button class="btn btn-lg btn-primary" data-bind="click: OnSubmit.bind($data,true)">Pay Now</button>
         </center>
-        <center class="hidden-sm hidden-md hidden-lg" data-bind="visible: orderTotal() > 0">
+        <center class="hidden-sm hidden-md hidden-lg" data-bind="visible: discountedTotal() > 0">
           <button data-bind="click: OnFormCancel" class="btn btn-md btn-default">Cancel</button>
           <button class="btn btn-md btn-default" data-bind="click: OnSubmit.bind($data,false)">Pay Then</button>
           <button class="btn btn-md btn-primary" data-bind="click: OnSubmit.bind($data,true)">Pay Now</button>
         </center>
-        <center class="hidden-xs" data-bind="visible: orderTotal() == 0">
+        <center class="hidden-xs" data-bind="visible: discountedTotal() == 0">
           <button data-bind="click: OnFormCancel" class="btn btn-lg btn-default">Cancel</button>
           <button class="btn btn-lg btn-primary" data-bind="click: OnSubmit.bind($data,false)">WashMyCar!</button>
         </center>
-        <center class="hidden-sm hidden-md hidden-lg" data-bind="visible: orderTotal() == 0">
+        <center class="hidden-sm hidden-md hidden-lg" data-bind="visible: discountedTotal() == 0">
           <button data-bind="click: OnFormCancel" class="btn btn-md btn-default">Cancel</button>
           <button class="btn btn-md btn-primary" data-bind="click: OnSubmit.bind($data,false)">WashMyCar!</button>
         </center>

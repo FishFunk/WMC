@@ -20,12 +20,24 @@ class WebService {
 		return this._executeAjaxCall('DELETE', "/api/deleteSingleAppointment?id=" + id);
 	}
 
+	DeleteSingleCoupon(id){
+		return this._executeAjaxCall('DELETE', "/api/deleteSingleCoupon?id=" + id);
+	}
+
 	UpdateAppointment(appt){
 		return this._executeAjaxCall('POST', "/api/updateAppointment", { appt: appt });
 	}
 
 	GetSystemSettings(){
 		return this._executeAjaxCall('GET', "/api/getSystemSettings");
+	}
+
+	GetAllCoupons(){
+		return this._executeAjaxCall('GET', '/api/getAllCoupons');
+	}
+
+	CreateCoupon(coupon){
+		return this._executeAjaxCall('POST', '/api/createCoupon', {coupon: coupon});
 	}
 
 	// 'data' is an optional param

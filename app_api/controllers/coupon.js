@@ -9,11 +9,67 @@ const createSuccessCode = 201;
 const readSuccessCode = 200;
 const noContentSuccessCode = 204;
 
+module.exports.getAllCoupons = (req, res)=>{
+	try{
+		Coupon.find({},
+			(err, docs) =>{
+				if(err){
+					console.error(err);
+					sendJsonResponse(res, internalErrorCode, "DB Failure - getAllCoupons", err);
+				}
+				else {
+					sendJsonResponse(res, readSuccessCode, "Success", docs);
+				}
+			});
+	}
+	catch(ex){
+		console.error(ex);
+		sendJsonResponse(res, internalErrorCode, "Exception thrown - getAllCoupons", ex);
+	}
+};
+
+module.exports.createCoupon = (req, res)=>{
+	if(req.body && req.body.coupon){
+		Coupon.create(req.body.coupon, 
+			(err, coupon)=>{
+				if(err){
+					console.error(err);
+					sendJsonResponse(res, internalErrorCode, "DB Failure - createCoupon", err);
+				} else {
+					sendJsonResponse(res, createSuccessCode, "Coupon added", coupon);
+				}
+			});
+	} else {
+		sendJsonResponse(res, badRequestCode, "Invalid request body");
+	}
+};
+
+module.exports.deleteSingleCoupon = (req, res)=>{
+	const id = req.query.id;
+	if(id){
+		Coupon.remove({ '_id' : id},
+			(err)=>{
+				if(err){
+					console.error(err);
+					sendJsonResponse(res, internalErrorCode, "DB Failure - deleteSingleAppointment", err);
+				} else {
+					sendJsonResponse(res, noContentSuccessCode, "Success");
+				}
+			});
+	} else {
+		sendJsonResponse(res, badRequestCode, "No ID param");
+	}
+};
+
 module.exports.verifyCoupon = (req, res)=>{
 	if(req.body && req.body.code)
 	{
 		var today = new Date();
-		Coupon.findOne({code: req.body.code, startDate: { $lte: today}, endDate: { $gte: today} }, 
+		today.setHours(23,59,59,999);
+		console.log(today);
+		console.log(req.body.code);
+		Coupon.findOne( { $or: [{code: req.body.code, startDate: { $lte: today }, endDate:  null },
+			{code: req.body.code, startDate: { $lte: today }, endDate: { $gte: today } }] },
 			(err, coupon)=>{
 			if(err){
 				console.error(err);

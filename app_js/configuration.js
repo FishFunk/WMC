@@ -29,15 +29,15 @@ class Configuration
   }
 
   get WASH_DETAILS(){
-    return this.settings.WASH_DETAILS || { price: 19, time: 25, title: "Hand wash"};
+    return this.settings.WASH_DETAILS || { price: 19, time: 25, title: "Exterior Hand Wash"};
   }
 
   get TIRE_SHINE_DETAILS(){
-    return this.settings.TIRE_SHINE_DETAILS || { price: 15, time: 20, title: "Tire shine"};
+    return this.settings.TIRE_SHINE_DETAILS || { price: 15, time: 20, title: "Wheel Detail"};
   }
 
   get INTERIOR_DETAILS(){
-    return this.settings.INTERIOR_DETAILS || { price: 40, time: 45, title: "Interior cleaning"};
+    return this.settings.INTERIOR_DETAILS || { price: 40, time: 45, title: "Interior Cleaning"};
   }
 
   get WAX_DETAILS(){

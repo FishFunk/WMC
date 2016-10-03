@@ -298,17 +298,17 @@ var Configuration = function () {
   }, {
     key: "WASH_DETAILS",
     get: function get() {
-      return this.settings.WASH_DETAILS || { price: 19, time: 25, title: "Hand wash" };
+      return this.settings.WASH_DETAILS || { price: 19, time: 25, title: "Exterior Hand Wash" };
     }
   }, {
     key: "TIRE_SHINE_DETAILS",
     get: function get() {
-      return this.settings.TIRE_SHINE_DETAILS || { price: 15, time: 20, title: "Tire shine" };
+      return this.settings.TIRE_SHINE_DETAILS || { price: 15, time: 20, title: "Wheel Detail" };
     }
   }, {
     key: "INTERIOR_DETAILS",
     get: function get() {
-      return this.settings.INTERIOR_DETAILS || { price: 40, time: 45, title: "Interior cleaning" };
+      return this.settings.INTERIOR_DETAILS || { price: 40, time: 45, title: "Interior Cleaning" };
     }
   }, {
     key: "WAX_DETAILS",
@@ -1028,6 +1028,7 @@ var MainViewModel = function () {
 
 		// observables
 		this.WASH_COST = Configuration.WASH_DETAILS.price;
+		this.WashPriceHtml = "<sup>$</sup>" + this.WASH_COST;
 		this.TireShinePriceHtml = "<sup>$</sup>" + Configuration.TIRE_SHINE_DETAILS.price;
 		this.InteriorPriceHtml = "<sup>$</sup>" + Configuration.INTERIOR_DETAILS.price;
 		this.WaxPriceHtml = "<sup>$</sup>" + Configuration.WAX_DETAILS.price;
@@ -1123,6 +1124,7 @@ var OrderFormViewModel = function () {
 		this.showNewUserAlert = ko.observable(false);
 
 		// Order Details
+		this.washType = ko.observable('');
 		this.addWash = ko.observable(true);
 		this.addShine = ko.observable(false);
 		this.addWax = ko.observable(false);
@@ -1229,7 +1231,6 @@ var OrderFormViewModel = function () {
 		});
 
 		this.orderSummary = ko.computed(function () {
-			var promoMsg = "";
 			var summary = "";
 
 			if (!self.hideSubscriptionForm()) {
@@ -1238,28 +1239,31 @@ var OrderFormViewModel = function () {
 				}
 			} else {
 				if (self.dateMoment) {
-					summary = $.validator.format("<strong>{0} {1}</strong><hr>", self.dateMoment.format("ddd MMM Do"), self.selectedTimeRange().range);
+					summary = $.validator.format("<strong>{0} {1}</strong><br>", self.dateMoment.format("ddd MMM Do"), self.selectedTimeRange().range);
 				}
 			}
 
+			var selectedCars = self.SelectedCars;
+			if (selectedCars.length > 0) {
+				summary += self._buildServicesSummary() + "<hr>";
+			}
+
+			selectedCars.forEach(function (car) {
+				var carSize = _.find(Configuration.CAR_SIZES, function (obj) {
+					return obj.size == car.size || obj.multiplier == car.multiplier;
+				});
+				summary += $.validator.format("<strong>{0} {1}</strong><br>{2}{3}<br>", car.make, car.model, carSize.size, carSize.multiplier > 1 ? " - additional " + Math.round((carSize.multiplier - 1) * 100).toString() + "%" : "");
+			});
+
 			if (self.coupon()) {
-				if (self.coupon().discountPercentage == 100) {
-					promoMsg = "Wow! A free wash! Now that's a sweet deal!";
+				var promoMsg = "";
+				if (self.coupon().discountPercentage == 50) {
+					promoMsg = "Wow! 50% discount per wash! Now that's a sweet deal!";
 				} else {
 					promoMsg = "Promo discount: " + self.coupon().discountPercentage.toString() + "%";
 				}
+				summary += promoMsg;
 			}
-
-			self.cars().forEach(function (car) {
-				if (car.selected()) {
-					var carSize = _.find(Configuration.CAR_SIZES, function (obj) {
-						return obj.size == car.size || obj.multiplier == car.multiplier;
-					});
-					summary += $.validator.format("<strong>{0} {1}</strong><br>{2}{3}{4}{5}{6}{7}<br>", car.make, car.model, self.addWash() ? "Exterior Hand Wash<br>" : "", self.addShine() && self.addWash() ? "Deep Tire Clean & Shine<br>" : "", self.addWax() && self.addWash() ? "Hand Wax & Buff<br>" : "", self.addInterior() ? "Full Interior Cleaning<br>" : "", carSize.size, carSize.multiplier > 1 ? " - additional " + Math.round((carSize.multiplier - 1) * 100).toString() + "%" : "");
-				}
-			});
-
-			summary += promoMsg;
 
 			return summary;
 		});
@@ -1374,13 +1378,7 @@ var OrderFormViewModel = function () {
 			}
 
 			if (!this.$orderDetailsForm.valid()) {
-				this.incompleteFormMsg('Please select a date of service.');
-				$('#incomplete-form-alert').show();
-				return;
-			}
-
-			if (!this.selectedTimeRange().range) {
-				this.incompleteFormMsg('Please select a valid time range.');
+				this.incompleteFormMsg('Please fill in required order details.');
 				$('#incomplete-form-alert').show();
 				return;
 			}
@@ -1662,6 +1660,7 @@ var OrderFormViewModel = function () {
 			this.selectedTimeRange(Constants.TIME_RANGE_PLACE_HOLDER);
 
 			$('#datetimepicker').data("DateTimePicker").clear();
+			$('#wash-type-select').prop('selectedIndex', 0);
 
 			// Car Info
 			this.showAddVehicleForm(false);
@@ -1747,9 +1746,21 @@ var OrderFormViewModel = function () {
 	}, {
 		key: '_initValidation',
 		value: function _initValidation() {
+			var self = this;
+			$.validator.addMethod("washTypeSelected", function (value, element, arg) {
+				return self.addWash() && self.washType().length > 0;
+			}, "Please select a wash type!");
+
+			$.validator.addMethod("timeRangeSelected", function (value, element, arg) {
+				var range = self.selectedTimeRange().range;
+				return range != null && range.length > 0;
+			}, "Please select a time range!");
+
 			this.$orderDetailsForm.validate({
 				rules: {
-					date: "required"
+					date: "required",
+					washType: "washTypeSelected",
+					timeRange: "timeRangeSelected"
 				},
 				errorPlacement: function errorPlacement() {}
 			});
@@ -1900,7 +1911,7 @@ var OrderFormViewModel = function () {
 		value: function _buildServicesArray() {
 			var services = [];
 			if (this.addWash()) {
-				services.push(Configuration.WASH_DETAILS.title);
+				services.push(Configuration.WASH_DETAILS.title + " (" + this.washType() + ")");
 			}
 			if (this.addShine()) {
 				services.push(Configuration.TIRE_SHINE_DETAILS.title);
@@ -1912,6 +1923,26 @@ var OrderFormViewModel = function () {
 				services.push(Configuration.INTERIOR_DETAILS.title);
 			}
 			return services;
+		}
+	}, {
+		key: '_buildServicesSummary',
+		value: function _buildServicesSummary() {
+			var summary = "";
+			if (this.addWash()) {
+				var washType = this.washType() ? "(" + this.washType() + ")" : "";
+				summary += Configuration.WASH_DETAILS.title + " " + washType + "<br>";
+			}
+			if (this.addShine()) {
+				summary += Configuration.TIRE_SHINE_DETAILS.title + "<br>";
+			}
+			if (this.addWax()) {
+				summary += Configuration.WAX_DETAILS.title + "<br>";
+			}
+			if (this.addInterior()) {
+				summary += Configuration.INTERIOR_DETAILS.title + "<br>";
+			}
+
+			return summary;
 		}
 	}]);
 
