@@ -193,7 +193,7 @@ var formatAppt = (appt)=>{
 	var apptHtml = "";
 
 	var dt = new Date(appt.date);
-	var prepaid = appt.prepaid ? " (Prepaid: YES)" : "(Prepaid: NO)";
+	var prepaid = appt.prepaid ? " (Prepaid: YES)" : " (Prepaid: NO)";
 	
 	apptHtml += ul +
 		li + strong + 'Where: ' + _strong + formatLocation(appt.location) + _li +
