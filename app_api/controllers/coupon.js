@@ -65,9 +65,6 @@ module.exports.verifyCoupon = (req, res)=>{
 	if(req.body && req.body.code)
 	{
 		var today = new Date();
-		today.setHours(23,59,59,999);
-		console.log(today);
-		console.log(req.body.code);
 		Coupon.findOne( { $or: [{code: req.body.code, startDate: { $lte: today }, endDate:  null },
 			{code: req.body.code, startDate: { $lte: today }, endDate: { $gte: today } }] },
 			(err, coupon)=>{
