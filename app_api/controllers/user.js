@@ -69,25 +69,40 @@ module.exports.getFutureApptDatesAndTimes = (req, res)=>{
 	});
 };
 
+// Used by admin console only
 module.exports.getAllAppointments = (req, res)=>{
 	Usr.find()
-	   .select('appointments subscriptions')
+	   .select('firstName lastName phone email appointments subscriptions')
 	   .exec((err, docs)=>{
 		if(err){
 			console.error(err);
 			sendJsonResponse(res, internalErrorCode, "DB Failure - getAllAppointments", err);
 		} else {
-			var userAppointments = _.flatten(_.map(docs, (d)=>{ return d.appointments }));
-			var userSubscriptions = _.flatten(_.map(docs, (d)=>{ return d.subscriptions }));
+			var userAppointments = [];
 
-			_.each(userSubscriptions, (sub)=>{
-				_.each(sub.dates, (date)=>{
-					var appt = JSON.parse(JSON.stringify(sub));
-					appt._id = null;
-					appt.dates = null;
-					appt.date = date;
-					appt.prepaid = false;
+			_.each(docs, (doc)=>{
+				_.each(doc.appointments, (appt)=>{
+					// Add user info to appointment
+					appt.firstName = doc.firstName;
+					appt.lastName = doc.lastName;
+					appt.phone = doc.phone;
+					appt.email = doc.email;
 					userAppointments.push(appt);
+				});
+
+				_.each(doc.subscriptions, (sub)=>{
+					_.each(sub.dates, (date)=>{
+						var appt = JSON.parse(JSON.stringify(sub));
+						appt.firstName = doc.firstName;
+						appt.lastName = doc.lastName;
+						appt.phone = doc.phone;
+						appt.email = doc.email;
+						appt._id = null;
+						appt.dates = null;
+						appt.date = date;
+						appt.prepaid = false;
+						userAppointments.push(appt);
+					});
 				});
 			});
 

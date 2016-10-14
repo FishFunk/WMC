@@ -187,7 +187,9 @@
                         <button class="btn btn-md btn-default" data-bind="click: $root.OnEditAppointment.bind($root, $data)">Edit</button>
                         <button class="btn btn-md btn-danger" data-bind="click: $root.OnDeleteAppointment.bind($root, $data._id)">Delete</button>
                         </center><br>
-                    <label>Address&nbsp;(<span data-bind="text: $data.location.title"></span>)</label>
+                    <label>Name:&nbsp;</label><span data-bind="text: $data.firstName + ' ' + $data.lastName"></span><br>
+                    <label>Phone:&nbsp;</label><span data-bind="text: $data.phone"></span><br>
+                    <label>Email:&nbsp;</label><span data-bind="text: $data.email"></span><br>
                         <br>
                         <span data-bind="text: $data.location.street"></span><br>
                         <span data-bind="text: $data.location.city"></span>,&nbsp;
@@ -223,7 +225,6 @@
     <div class="row">
         <div class="col-xs-12 text-center">
             <button class="btn btn-lg btn-primary" data-bind="click: Load">Refresh</button>
-            <button class="btn btn-lg ghost-btn black">Delete Old</button>
             <button class="btn btn-lg btn-success" data-bind="click: OnCreateNewCoupon">Create New</button>
         </div>
     </div>
