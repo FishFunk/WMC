@@ -1,5 +1,5 @@
 var token = "sk_test_b82cXGA1mx4nejrVn0AK6sxV";
-if(process.env.NODE_ENV === 'production')
+if(process.env.NODE_ENV == 'production')
 {
 	token = "sk_live_kwp9bgtUP5QdHOiEHq4ChhLG";
 }
