@@ -1084,6 +1084,11 @@ var OrderFormViewModel = function () {
 				return car.selected();
 			});
 		}
+	}, {
+		key: 'StripeKey',
+		get: function get() {
+			return environment == 'production' ? 'pk_live_aULtlGy6YPvc94K5Hjvqwokg' : 'pk_test_luqEThs0vblV173fgAHgPZBG';
+		}
 	}]);
 
 	function OrderFormViewModel(storageHelper, webSvc) {
@@ -1093,7 +1098,7 @@ var OrderFormViewModel = function () {
 
 		// Configure Stripe
 		this.stripeHandler = StripeCheckout.configure({
-			key: environment == 'production' ? 'pk_live_aULtlGy6YPvc94K5Hjvqwokg' : 'pk_test_luqEThs0vblV173fgAHgPZBG',
+			key: self.StripeKey,
 			image: '/img/square_logo.png',
 			locale: 'auto',
 			token: this._completeOrder.bind(this)
@@ -1494,7 +1499,7 @@ var OrderFormViewModel = function () {
 		key: '_openCheckout',
 		value: function _openCheckout() {
 			this.stripeHandler.open({
-				key: "pk_test_luqEThs0vblV173fgAHgPZBG",
+				key: this.StripeKey,
 				name: 'WMC Checkout',
 				amount: this.discountedTotal() * 100,
 				zipCode: true,
