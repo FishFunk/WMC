@@ -89,7 +89,7 @@ module.exports.forgotPassword = (req, res)=>{
 					    <hr>\
 					    <p>If you didn\'t request to retrieve your password, please contact us immediately!</p>\
 					    Phone: <a href="tel:' + hrefPhone + '">' + displayPhone + '</a>\
-					    Email: <a href="mailto:'+ contactEmail + '">' + contactEmail + '!</a>\
+					    Email: <a href="mailto:'+ contactEmail + '">' + contactEmail + '</a>\
 					  </div>\
 					</body>\
 					</html>'
