@@ -83,11 +83,12 @@ module.exports.getAllAppointments = (req, res)=>{
 			_.each(docs, (doc)=>{
 				_.each(doc.appointments, (appt)=>{
 					// Add user info to appointment
-					appt.firstName = doc.firstName;
-					appt.lastName = doc.lastName;
-					appt.phone = doc.phone;
-					appt.email = doc.email;
-					userAppointments.push(appt);
+					var apptCopy = JSON.parse(JSON.stringify(appt));
+					apptCopy.firstName = doc.firstName;
+					apptCopy.lastName = doc.lastName;
+					apptCopy.phone = doc.phone;
+					apptCopy.email = doc.email;
+					userAppointments.push(apptCopy);
 				});
 
 				_.each(doc.subscriptions, (sub)=>{
