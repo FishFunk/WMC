@@ -1735,16 +1735,16 @@ var OrderFormViewModel = function () {
 
 			Constants.MORNING_TIME_RANGE.disabled(_.reduce(morningAppts, function (total, appt) {
 				return total + appt.timeEstimate;
-			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 11);
+			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 9);
 			Constants.AFTERNOON_TIME_RANGE.disabled(_.reduce(afternoonAppts, function (total, appt) {
 				return total + appt.timeEstimate;
-			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 14);
+			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 12);
 			Constants.EVENING_TIME_RANGE.disabled(_.reduce(eveningAppts, function (total, appt) {
 				return total + appt.timeEstimate;
-			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 17);
+			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 15);
 			Constants.NIGHT_TIME_RANGE.disabled(_.reduce(nightAppts, function (total, appt) {
 				return total + appt.timeEstimate;
-			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 20);
+			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 18);
 
 			this.selectedTimeRange(Constants.TIME_RANGE_PLACE_HOLDER);
 		}

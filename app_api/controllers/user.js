@@ -14,8 +14,8 @@ module.exports.updateUser = (req, res)=>{
 	{
 		Usr.update({email: req.body.email.trim().toLowerCase()},
 		{
-			subscriptions: req.body.subscriptions,
-			appointments: req.body.appointments,
+			subscriptions: req.body.subscriptions || [],
+			appointments: req.body.appointments || [],
 			cars: req.body.cars,
 			phone: req.body.phone,
 			firstName: req.body.firstName,
@@ -45,19 +45,21 @@ module.exports.getFutureApptDatesAndTimes = (req, res)=>{
 			sendJsonResponse(res, internalErrorCode, "DB Failure - getFutureAppointments", err);
 		} else {
 			var now = new Date();
-
 			var userAppointments = _.flatten(_.map(docs, (d)=>{ return d.appointments }));
 			var userSubscriptions = _.flatten(_.map(docs, (d)=>{ return d.subscriptions }));
-
 			_.each(userSubscriptions, (sub)=>{
-				_.each(sub.dates, (date)=>{
-					userAppointments.push({
-						date: date,
-						timeEstimate: sub.timeEstimate,
-						timeRange: sub.timeRange,
-						timeRangeKey: sub.timeRangeKey
+				if(sub && sub.dates){
+					_.each(sub.dates, (date)=>{
+						if(date){
+							userAppointments.push({
+								date: date,
+								timeEstimate: sub.timeEstimate,
+								timeRange: sub.timeRange,
+								timeRangeKey: sub.timeRangeKey
+							});
+						}
 					});
-				});
+				}
 			});
 
 			var result = _.filter(userAppointments, (appt)=> {

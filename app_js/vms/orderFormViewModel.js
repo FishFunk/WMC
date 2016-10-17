@@ -632,16 +632,16 @@ class OrderFormViewModel {
 
 		Constants.MORNING_TIME_RANGE.disabled(
 			(_.reduce(morningAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval) ||
-			(selectedDate == today && hourOfDay >= 11));
+			(selectedDate == today && hourOfDay >= 9));
 		Constants.AFTERNOON_TIME_RANGE.disabled(
 			(_.reduce(afternoonAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval) ||
-			(selectedDate == today && hourOfDay >= 14));
+			(selectedDate == today && hourOfDay >= 12));
 		Constants.EVENING_TIME_RANGE.disabled(
 			(_.reduce(eveningAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval) ||
-			(selectedDate == today && hourOfDay >= 17));
+			(selectedDate == today && hourOfDay >= 15));
 		Constants.NIGHT_TIME_RANGE.disabled(
 			(_.reduce(nightAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval) ||
-			(selectedDate == today && hourOfDay >= 20));
+			(selectedDate == today && hourOfDay >= 18));
 
 		this.selectedTimeRange(Constants.TIME_RANGE_PLACE_HOLDER);
 	}
