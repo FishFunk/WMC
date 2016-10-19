@@ -1064,6 +1064,7 @@ var MainViewModel = function () {
 				this.storageHelper.ZipCode = this.zip();
 			} else {
 				dialogPresenter.ShowBadZip();
+				this.zip("");
 			}
 		}
 	}]);
@@ -1630,6 +1631,14 @@ var OrderFormViewModel = function () {
 				_.each(cars, function (car) {
 					return car.selected = ko.observable(false);
 				});
+
+				if (locations.length > 0) {
+					locations[0].selected(true);
+				}
+
+				if (cars.length > 0) {
+					cars[0].selected(true);
+				}
 
 				this.locations(locations);
 				this.cars(cars);

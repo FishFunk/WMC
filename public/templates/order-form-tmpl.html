@@ -8,15 +8,15 @@
       <legend class="col-xs-12">Order Details</legend>
       <div class="form-group col-xs-12">
         <label class="control-label" for="checkbox">Service Options</label>
-        <div class="form-inline">
+        <div class="form-group">
           <div class="checkbox">
-            <label><input type="checkbox" data-bind="checked: addWash">&nbsp;Exterior Hand Wash</label>&nbsp;(<strong>$<span data-bind="text: WASH_COST"></span></strong>)
+            <label><input type="checkbox" data-bind="checked: addWash">&nbsp;Ultimate Exterior Hand Wash</label>&nbsp;(<strong>$<span data-bind="text: WASH_COST"></span></strong>)
           </div>
           <div class="checkbox">
             <label data-bind="css: { 'strike-text': !addWash() }"><input type="checkbox" data-bind="checked: addShine, enable: addWash">&nbsp;Wheel Detail&nbsp;</label>(<strong>$<span data-bind="text: TIRE_SHINE_COST"></span></strong>)
           </div>
           <div class="checkbox">
-            <label data-bind="css: { 'strike-text': !addWash() }"><input type="checkbox" data-bind="checked: addWax, enable: addWash">&nbsp;Hand Wax & Buff</label>&nbsp;(<strong>$<span data-bind="text: WAX_COST"></span></strong>)
+            <label data-bind="css: { 'strike-text': !addWash() }"><input type="checkbox" data-bind="checked: addWax, enable: addWash">&nbsp;Hand Wax</label>&nbsp;(<strong>$<span data-bind="text: WAX_COST"></span></strong>)
           </div>
           <div class="checkbox">
             <label><input type="checkbox" data-bind="checked: addInterior">&nbsp;Interior Cleaning</label>&nbsp;(<strong>$<span data-bind="text: INTERIOR_COST"></span></strong>)
@@ -61,39 +61,35 @@
     </div>
     <div class="row">
       <legend class="col-xs-12">Vehicles</legend>
-      <div data-bind="template: { name: 'vehicle-tmpl', foreach: cars}"></div>
+      <div class="col-xs-12">
+        <div data-bind="template: { name: 'vehicle-tmpl', foreach: cars}"></div>
+      </div>
     </div>
     <div class="row" data-bind="visible: showAddVehicleForm">
       <form id="add-vehicle-form" data-toggle="validator" role="form" data-bind="submit: OnSaveNewVehicle" autocomplete="off">
-        <div class="form-group">
-          <label class="col-sm-1 control-label">Make</label>
-          <div class="col-sm-5">
-            <input data-bind="value: make" name="make" placeholder="Volkswagen" class="form-control" maxlength="30">
-          </div>
-          <label class="col-sm-1 control-label">Model</label>
-          <div class="col-sm-5">
-            <input data-bind="value: model" name="model" placeholder="Golf" class="form-control" maxlength="30">
-          </div>
+        <div class="form-group col-sm-6">
+          <label class="control-label">Make</label>
+          <input data-bind="value: make" name="make" placeholder="Volkswagen" class="form-control" maxlength="30">
         </div>
-        <div class="form-group">
-          <label class="col-sm-1 control-label">Color</label>
-          <div class="col-sm-5">
-            <input data-bind="value: color" name="color" maxlength="12" placeholder="Silver" class="form-control">
-          </div>
-          <label class="col-sm-1 control-label">Tag*</label>
-          <div class="col-sm-5">
-            <input data-bind="value: tag" name="tag" maxlength="12" placeholder="000-0000" class="form-control">
-          </div>
+        <div class="form-group col-sm-6">
+          <label class="control-label">Model</label>
+          <input data-bind="value: model" name="model" placeholder="Golf" class="form-control" maxlength="30">
         </div>
-        <div class="form-group">
-          <label class="col-sm-1 control-label">Year</label>
-          <div class="col-sm-5">
-            <select data-bind="options: carYears, value: carYear" class="form-control"></select>
-          </div>
-          <label class="control-label col-sm-1" for="select">Size</label>
-          <div class="col-sm-5">
-            <select data-bind="options: carSizes, optionsText: 'size', value: selectedCarSize" class="form-control"></select>
-          </div>
+        <div class="form-group col-sm-6">
+          <label class="control-label">Color</label>
+          <input data-bind="value: color" name="color" maxlength="12" placeholder="Silver" class="form-control">
+        </div>
+        <div class="form-group col-sm-6">
+          <label class="control-label">Tag (Optional)</label>
+          <input data-bind="value: tag" name="tag" maxlength="12" placeholder="000-0000" class="form-control">
+        </div>
+        <div class="form-group col-sm-6">
+          <label class="control-label">Year</label>
+          <select data-bind="options: carYears, value: carYear" class="form-control"></select>
+        </div>
+        <div class="form-group col-sm-6">
+          <label class="control-label" for="select">Size</label>
+          <select data-bind="options: carSizes, optionsText: 'size', value: selectedCarSize" class="form-control"></select>
         </div>
         <div class="text-center">
           <button data-bind="click: OnCancelNewVehicle" class="btn btn-default buffer-top">Cancel&nbsp;<span class="fa fa-times"></span></button>
@@ -108,35 +104,31 @@
     </div>
     <div class="row">
       <legend class="col-xs-12">Location</legend>
-      <div data-bind="template: { name: 'location-tmpl', foreach: locations}"></div>
+      <div class="col-xs-12">
+        <div data-bind="template: { name: 'location-tmpl', foreach: locations}"></div>
+      </div>
     </div>
     <div class="row" data-bind="visible: showAddLocationForm">
       <form id="add-location-form" data-toggle="validator" role="form" data-bind="submit: OnSaveNewLocation" autocomplete="off">
-        <div class="form-group">
-          <label class="col-sm-1 control-label">Street</label>
-          <div class="col-sm-11">
-            <input data-bind="value: street" name="street" placeholder="Street" class="form-control" maxlength="40">
-          </div>
+        <div class="form-group col-sm-6">
+          <label class="control-label">Street</label>
+          <input data-bind="value: street" name="street" placeholder="Maple St." class="form-control" maxlength="40">
         </div>
-        <div class="form-group">
-          <label class="col-sm-1 control-label">City</label>
-          <div class="col-sm-11">
-            <input data-bind="value: city" name="city" placeholder="City" class="form-control" maxlength="40">
-          </div>
+        <div class="form-group col-sm-6">
+          <label class="control-label">City</label>
+          <input data-bind="value: city" name="city" placeholder="Sugartown" class="form-control" maxlength="40">
         </div>
-        <div class="form-group">
-          <label class="col-sm-1 control-label">State</label>
-          <div class="col-sm-3">
-            <input data-bind="value: state" name="state" maxlength="2" placeholder="XX" class="form-control">
-          </div>
-          <label class="col-sm-1 control-label">Zip</label>
-          <div class="col-sm-3">
-            <input data-bind="value: zip" name="zip" type="tel" pattern="[0-9]*" maxlength="9" placeholder="Postal Code" class="form-control">
-          </div>
-          <label class="col-sm-1 control-label">Type</label>
-          <div class="col-sm-3">
-            <select class="form-control" data-bind="options: locationTitleOptions, value: title"></select>
-          </div>
+        <div class="form-group col-sm-4">
+          <label class="control-label">State</label>
+          <input data-bind="value: state" name="state" maxlength="2" placeholder="XX" class="form-control">
+        </div>
+        <div class="form-group col-sm-4">
+          <label class="control-label">Zip</label>
+          <input data-bind="value: zip" name="zip" type="tel" pattern="[0-9]*" maxlength="9" placeholder="00000" class="form-control">
+        </div>
+        <div class="form-group col-sm-4">
+          <label class="control-label">Type</label>
+          <select class="form-control" data-bind="options: locationTitleOptions, value: title"></select>
         </div>
         <div class="text-center">
           <button data-bind="click: OnCancelNewLocation" class="btn btn-default buffer-top">Cancel&nbsp;<span class="fa fa-times"></span></button>
@@ -152,27 +144,21 @@
     <form id="contact-details-form" data-toggle="validator" role="form" autocomplete="off">
       <div class="row">
         <legend class="col-xs-12">Contact</legend>
-        <div class="form-group">
-          <label class="col-sm-1 control-label">First Name</label>
-          <div class="col-sm-5">
-            <input data-bind="value: first" name="first" maxlength="30" class="form-control">
-          </div>
-          <label class="col-sm-1 control-label">Last Name</label>
-          <div class="col-sm-5">
-            <input data-bind="value: last" name="last" maxlength="30" class="form-control">
-          </div>
+        <div class="form-group col-sm-6">
+          <label class="control-label">First Name</label>
+          <input data-bind="value: first" name="first" maxlength="30" class="form-control" placeholder="Johnny">
         </div>
-      </div>
-      <div class="row">
-        <div class="form-group">
-          <label class="col-sm-1 control-label">Email</label>
-          <div class="col-sm-5">
-            <input data-bind="value: email, disable: disableEmailInput" name="email" type="email" maxlength="45" placeholder="johnny@appleseed.com" class="form-control">
-          </div>
-          <label class="col-sm-1 control-label">Phone</label>
-          <div class="col-sm-5">
-            <input id="phone" data-bind="value: phone" name="phone" type="tel" pattern="[0-9]*" class="form-control" maxlength="30">
-          </div>
+        <div class="form-group col-sm-6">
+          <label class="control-label">Last Name</label>
+          <input data-bind="value: last" name="last" maxlength="30" class="form-control" placeholder="Appleseed">
+        </div>
+        <div class="form-group col-sm-6">
+          <label class="control-label">Email</label>
+          <input data-bind="value: email, disable: disableEmailInput" name="email" type="email" maxlength="45" placeholder="jappleseed@email.com" class="form-control">
+        </div>
+        <div class="form-group col-sm-6">
+          <label class="control-label">Phone</label>
+          <input id="phone" data-bind="value: phone" name="phone" type="tel" pattern="[0-9]*" class="form-control" maxlength="30" placeholder="(999) 999-9999">
         </div>
       </div>
     </form>
@@ -180,7 +166,7 @@
     <form id="subscription-form" data-toggle="validator" role="form" autocomplete="off">
       <div class="row">
         <legend class="col-xs-12">Set It And Forget It</legend>
-        <center>
+        <center class="pinch">
           <p class="text-muted text-small">* Subscriptions are good for one year *</p>
           <label class="radio-inline"><input type="radio" name="subcribe" data-bind="checked: hideSubscriptionForm, checkedValue: true">&nbsp;No thanks, this time only</label>
           <label class="radio-inline"><input type="radio" name="subcribe" data-bind="checked: hideSubscriptionForm, checkedValue: false">&nbsp;Yes! Repeat order every...</label>
@@ -233,21 +219,22 @@
           <strong>Whoops!</strong>&nbsp;<span data-bind="text: incompleteFormMsg"></span>
         </center>
         <center class="hidden-xs" data-bind="visible: discountedTotal() > 0">
-          <button data-bind="click: OnFormCancel" class="btn btn-lg btn-default">Cancel</button>
+          <button data-bind="click: OnFormCancel" class="btn btn-lg btn-danger">Cancel</button>
           <button class="btn btn-lg btn-default" data-bind="click: OnSubmit.bind($data,false)">Pay Then</button>
           <button class="btn btn-lg btn-primary" data-bind="click: OnSubmit.bind($data,true)">Pay Now</button>
         </center>
         <center class="hidden-sm hidden-md hidden-lg" data-bind="visible: discountedTotal() > 0">
-          <button data-bind="click: OnFormCancel" class="btn btn-md btn-default">Cancel</button>
           <button class="btn btn-md btn-default" data-bind="click: OnSubmit.bind($data,false)">Pay Then</button>
           <button class="btn btn-md btn-primary" data-bind="click: OnSubmit.bind($data,true)">Pay Now</button>
+          <br>
+          <button data-bind="click: OnFormCancel" class="btn btn-sm btn-danger buffer-top">Cancel</button>
         </center>
         <center class="hidden-xs" data-bind="visible: discountedTotal() == 0">
-          <button data-bind="click: OnFormCancel" class="btn btn-lg btn-default">Cancel</button>
+          <button data-bind="click: OnFormCancel" class="btn btn-lg btn-danger">Cancel</button>
           <button class="btn btn-lg btn-primary" data-bind="click: OnSubmit.bind($data,false)">WashMyCar!</button>
         </center>
         <center class="hidden-sm hidden-md hidden-lg" data-bind="visible: discountedTotal() == 0">
-          <button data-bind="click: OnFormCancel" class="btn btn-md btn-default">Cancel</button>
+          <button data-bind="click: OnFormCancel" class="btn btn-md btn-danger">Cancel</button>
           <button class="btn btn-md btn-primary" data-bind="click: OnSubmit.bind($data,false)">WashMyCar!</button>
         </center>
       </div>

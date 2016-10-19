@@ -42,6 +42,7 @@ class MainViewModel {
 			this.storageHelper.ZipCode = this.zip();
 		} else {
 			dialogPresenter.ShowBadZip();
+			this.zip("");
 		}
 	}
 }

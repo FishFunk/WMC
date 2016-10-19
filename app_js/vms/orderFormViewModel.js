@@ -539,6 +539,14 @@ class OrderFormViewModel {
 			_.each(locations, (loc)=> loc.selected = ko.observable(false));
 			_.each(cars, (car)=> car.selected = ko.observable(false));
 
+			if(locations.length > 0){
+				locations[0].selected(true);
+			}
+
+			if(cars.length > 0){
+				cars[0].selected(true);
+			}
+
 			this.locations(locations);
 			this.cars(cars);
 			this.email(usr.email || "");
