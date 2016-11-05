@@ -35,8 +35,8 @@
 
     <body id="page-top" class="index">
         <!-- Navigation -->
-        <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="container">
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container-fluid">
                 <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header page-scroll">
                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -61,19 +61,17 @@
                             <a class="nav-link" href="#" data-toggle="modal" data-target="#contact-modal">Contact</a>
                         </li>
                     </ul>
-                </div>
-                <!-- /.navbar-collapse -->
-            </div>
-            <!-- /.container-fluid -->
+                </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
         </nav>
 
         <!-- Header -->
         <header>
-            <div class="container">
+            <div class="container dim">
                 <div class="intro-text">
                     <div class="intro-heading">Your Personal Car Wash Service</div>
-                    <h3>Save time and keep your car looking great.</h3>
-                    <h3>Starting at only $<span data-bind="text: WASH_COST"></span>!</h3>
+<!--                     <h3>Save time and keep your car looking great.</h3>
+                    <h3>Starting at only $<span data-bind="text: WASH_COST"></span>!</h3> -->
                     <br>
                     <button class="btn btn-xl ghost-btn" data-toggle="modal" type="button" data-target="#login-modal">Schedule Now!</button>
                     <br><br><br><br><br><br>
@@ -144,7 +142,7 @@
                             <span data-bind="html: WashPriceHtml"></span>
                         </div>
                         <h4 class="service-heading">Ultimate Exterior Hand Wash</h4>
-                        <p class="text-muted">Exterior wash includes removing grit and grime off of the entire exterior then spot cleaning any bonded materials using detail spray and claybar. We offer both a waterless or low water pressure wash method - both of which are eco-friendly!</p>
+                        <p class="text-muted">We use an eco-friendly waterless hand washing technique guranteed to safely remove any contaminants from the surface of your vehicle!</p>
                     </div>
                    <div class="col-md-6">
                         <div class="circle">
@@ -175,10 +173,10 @@
 
     <!-- Contact Section -->
     <section id="contact">
-        <div id="contact-container" class="container">
+        <div class="container dim">
             <div class="row">
                 <div class="col-xs-12 text-center">
-                    <h4 class="section-heading">We look forward to making your car sparkle!</h4>
+                    <h4 class="section-heading">Save time and keep your car looking great.</h4>
                 </div>
             </div>
             <div class="row">
@@ -186,8 +184,7 @@
                     <button class="btn btn-xl ghost-btn" type="button" data-toggle="modal" data-target="#login-modal">Schedule Now!</button>
                 </div>
             </div>
-          </div>
-      </div>
+        </div>
     </section>
 
 <footer>
@@ -199,26 +196,26 @@
         </div>
         <hr>
         <div class="row">
-<!--             <div class="col-sm-6">
+            <div class="col-sm-4">
                 <ul class="list-inline social-buttons">
-                    <li><a href=""><i class="fa fa-twitter"></i></a>
-                    </li>
+                    <!-- <li><a href=""><i class="fa fa-twitter"></i></a>
+                    </li> -->
                     <li><a target="_blank" href="https://www.facebook.com/washmycarva"><i class="fa fa-facebook"></i></a>
                     </li>
-                    <li><a href="#"><i class="fa fa-instagram"></i></a>
+                    <!-- <li><a href="#"><i class="fa fa-instagram"></i></a> -->
                     </li>
                 </ul>
-            </div> -->
-            <center>
+            </div>
+            <div class="col-sm-4">
                 <span class="copyright">All Rights Reserved</span><br>
                 <span class="copyright">WashMyCar LLC, 2016</span>
-            </center>
-<!--             <div class="col-sm-4">
+            </div>
+            <div class="col-sm-4">
                 <ul class="list-inline quicklinks">
-                    <li><a href="#">Legal Stuff</a></li>
+                    <!-- <li><a href="#">Legal Stuff</a></li> -->
                     <li><a href="#" data-toggle="modal" data-target="#contact-modal">Contact Us</a></li>
                 </ul>
-            </div> -->
+            </div>
         </div>
     </div>
 </footer>

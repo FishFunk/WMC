@@ -45,7 +45,6 @@ class OrderFormViewModel {
 		this.showNewUserAlert = ko.observable(false);
 
 		// Order Details
-		this.washType = ko.observable('');
 		this.addWash = ko.observable(true);
 		this.addShine = ko.observable(false);
 		this.addWax = ko.observable(false);
@@ -656,9 +655,6 @@ class OrderFormViewModel {
 
 	_initValidation(){
 		var self = this;
-		$.validator.addMethod("washTypeSelected", (value, element, arg)=>{
-			return self.addWash() && self.washType().length > 0;
-		}, "Please select a wash type!");
 		
 		$.validator.addMethod("timeRangeSelected", (value, element, arg)=>{
 			const range = self.selectedTimeRange().range;
@@ -669,7 +665,6 @@ class OrderFormViewModel {
 		this.$orderDetailsForm.validate({
 			rules:{
 				date: "required",
-				washType: "washTypeSelected",
 				timeRange: "timeRangeSelected"
 			},
 			errorPlacement: function(){}
@@ -810,7 +805,7 @@ class OrderFormViewModel {
 	_buildServicesArray(){
 		var services = [];
 		if(this.addWash()){
-			services.push(Configuration.WASH_DETAILS.title + " (" + this.washType() + ")");
+			services.push(Configuration.WASH_DETAILS.title);
 		}
 		if(this.addShine()){
 			services.push(Configuration.TIRE_SHINE_DETAILS.title);
@@ -827,8 +822,7 @@ class OrderFormViewModel {
 	_buildServicesSummary(){
 		var summary = "";
 		if(this.addWash()){
-			const washType = this.washType() ? "(" + this.washType() + ")" : "";
-			summary += Configuration.WASH_DETAILS.title + " " + washType + "<br>";
+			summary += Configuration.WASH_DETAILS.title + "<br>";
 		}
 		if(this.addShine()){
 			summary += Configuration.TIRE_SHINE_DETAILS.title + "<br>";

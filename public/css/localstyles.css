@@ -1,3 +1,8 @@
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
 body.modal-open{
 	overflow: hidden;
 	position: fixed;
@@ -78,7 +83,7 @@ input[readonly] { background-color: white !important; }
 .navbar-default .navbar-nav>.active>a{border-radius:3px}.navbar-default.navbar-shrink{background-color:#222;padding:10px 0}
 .navbar-default.navbar-shrink .navbar-brand{font-size:2em}}
 
-header{background-image:url(../img/sponge.jpg);background-repeat:none;background-attachment:scroll;background-position:center center;-webkit-background-size:cover;-moz-background-size:cover;background-size:cover;-o-background-size:cover;text-align:center;color:#fff}
+header{background-image:url(../img/towel.jpg);background-repeat:none;background-attachment:scroll;background-position:center center;-webkit-background-size:cover;-moz-background-size:cover;background-size:cover;-o-background-size:cover;text-align:center;color:#fff}
 header .intro-text{padding-top:100px;padding-bottom:50px;text-shadow: 1px 1px 1px black;}
 header .intro-text .intro-lead-in{font-family:"Droid Serif","Helvetica Neue",Helvetica,Arial,sans-serif;font-style:italic;font-size:22px;line-height:22px;margin-bottom:25px}
 header .intro-text .intro-heading{font-family:"subway";text-transform:uppercase;font-weight:700;font-size:46px;line-height:50px;margin-bottom:25px;letter-spacing:2px}
@@ -93,11 +98,8 @@ section h3.section-subheading{font-size:16px;font-family:"Droid Serif","Helvetic
 
 @media (min-width:768px){section{padding:150px 0}}.service-heading{margin:15px 0;text-transform:none}
 
-section#contact{background-color:#222;background-image:url(../img/auto-detail.jpg);background-position:center;background-repeat:no-repeat}
+section#contact{background-image:url(../img/wheel-detail.jpg);background-repeat:none;background-attachment:scroll;background-position:center center;-webkit-background-size:cover;-moz-background-size:cover;background-size:cover;-o-background-size:cover;text-align:center;color:#fff}
 section#contact .section-heading{color:#fff}
-section#contact .form-group{margin-bottom:25px}
-section#contact .form-group input,section#contact .form-group textarea{padding:20px}section#contact .form-group input.form-control{height:auto}
-section#contact .form-group textarea.form-control{height:236px}section#contact .form-control:focus{border-color:#00acea;box-shadow:none}
 section#contact ::-webkit-input-placeholder{font-family:Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;text-transform:uppercase;font-weight:700;color:#bbb}
 section#contact :-moz-placeholder{font-family:Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;text-transform:uppercase;font-weight:700;color:#bbb}
 section#contact ::-moz-placeholder{font-family:Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;text-transform:uppercase;font-weight:700;color:#bbb}
@@ -210,9 +212,9 @@ select.error, textarea.error, input.error {
 	color:red;
 }
 
-#contact-container{
+.dim{
 	width:100%;
-	background-color: rgba(0,0,0,0.4);
+	background-color: rgba(0,0,0,0.3);
 	padding: 10px;
 }
 
