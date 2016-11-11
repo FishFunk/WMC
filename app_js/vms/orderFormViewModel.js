@@ -70,15 +70,8 @@ class OrderFormViewModel {
 		this.make = ko.observable("");
 		this.model = ko.observable("");
 		this.color = ko.observable("");
-		this.tag = ko.observable("");
 		this.carSizes = Configuration.CAR_SIZES;
 		this.selectedCarSize = ko.observable(this.carSizes[0]);
-		this.carYears = [];
-		var year = new Date().getFullYear() + 1;
-		for (var i = 0; i < 25; i++) {
-		    this.carYears.push((year - i).toString());
-		}
-		this.carYear = ko.observable(this.carYears[1]);
 
 		// Contact Info
 		this.first = ko.observable("");
@@ -93,7 +86,6 @@ class OrderFormViewModel {
 		this.title = ko.observable(this.locationTitleOptions[0]);
 		this.street = ko.observable("");
 		this.city = ko.observable("");
-		this.state = ko.observable("");
 		this.zip = ko.observable(this.storageHelper.ZipCode);
 
 		// Subscriptions
@@ -141,6 +133,9 @@ class OrderFormViewModel {
 			if(self.coupon().discountPercentage == 100){
 				// special case 100% free coupons
 				total = 0;
+			} else if (self.coupon().discountPercentage == 99){
+				// special case 99% for testing
+				total = 0.01;
 			} else if (self.coupon().discountPercentage > 25) {
 				// normal coupons above 25% apply to the wash cost only
 				if(self.addWash() && self.SelectedCars.length > 0){
@@ -587,9 +582,7 @@ class OrderFormViewModel {
 		this.make("");
 		this.model("");
 		this.color("");
-		this.tag("");
 		this.selectedCarSize(this.carSizes[0]);
-		this.carYear(this.carYears[1]);
 
 		// Contact Info
 		this.first("");
@@ -603,7 +596,6 @@ class OrderFormViewModel {
 		this.title(this.locationTitleOptions[0]);
 		this.street("");
 		this.city("");
-		this.state("");
 		this.zip("");
 
 		this.couponCode("");
@@ -696,7 +688,6 @@ class OrderFormViewModel {
 			rules:{
 				street: "required",
 				city: "required",
-				state: "required",
 				zip: "required"
 			}
 		});
@@ -716,8 +707,6 @@ class OrderFormViewModel {
 			make: this.make(),
 			model: this.model(),
 			size: this.selectedCarSize().size,
-			tag: this.tag(),
-			year: parseInt(this.carYear()),
 			selected: ko.observable(false)
 		}
 	}
@@ -770,7 +759,6 @@ class OrderFormViewModel {
 	_makeLocationSchema(){
 		return {
 			city: this.city(),
-			state: this.state(),
 			street: this.street(),
 			title: this.title(),
 			zip: this.zip(),

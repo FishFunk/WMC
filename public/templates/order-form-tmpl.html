@@ -75,14 +75,6 @@
           <input data-bind="value: color" name="color" maxlength="12" placeholder="Silver" class="form-control">
         </div>
         <div class="form-group col-sm-6">
-          <label class="control-label">Tag (Optional)</label>
-          <input data-bind="value: tag" name="tag" maxlength="12" placeholder="000-0000" class="form-control">
-        </div>
-        <div class="form-group col-sm-6">
-          <label class="control-label">Year</label>
-          <select data-bind="options: carYears, value: carYear" class="form-control"></select>
-        </div>
-        <div class="form-group col-sm-6">
           <label class="control-label" for="select">Size</label>
           <select data-bind="options: carSizes, optionsText: 'size', value: selectedCarSize" class="form-control"></select>
         </div>
@@ -107,21 +99,17 @@
       <form id="add-location-form" data-toggle="validator" role="form" data-bind="submit: OnSaveNewLocation" autocomplete="off">
         <div class="form-group col-sm-6">
           <label class="control-label">Street</label>
-          <input data-bind="value: street" name="street" placeholder="Maple St." class="form-control" maxlength="40">
+          <input data-bind="value: street" name="street" placeholder="1234 Maple St." class="form-control" maxlength="40">
         </div>
         <div class="form-group col-sm-6">
           <label class="control-label">City</label>
           <input data-bind="value: city" name="city" placeholder="Sugartown" class="form-control" maxlength="40">
         </div>
-        <div class="form-group col-sm-4">
-          <label class="control-label">State</label>
-          <input data-bind="value: state" name="state" maxlength="2" placeholder="XX" class="form-control">
-        </div>
-        <div class="form-group col-sm-4">
+        <div class="form-group col-sm-6">
           <label class="control-label">Zip</label>
-          <input data-bind="value: zip" name="zip" type="tel" pattern="[0-9]*" maxlength="9" placeholder="00000" class="form-control">
+          <input data-bind="value: zip" name="zip" type="tel" pattern="[0-9]*" maxlength="9" placeholder="12345" class="form-control">
         </div>
-        <div class="form-group col-sm-4">
+        <div class="form-group col-sm-6">
           <label class="control-label">Type</label>
           <select class="form-control" data-bind="options: locationTitleOptions, value: title"></select>
         </div>

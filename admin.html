@@ -200,12 +200,10 @@
                     <label>Cars</label>
                         <ul data-bind="foreach: $data.cars">
                             <li>
-                                <span data-bind="text: $data.year"></span>&nbsp;
-                                <span data-bind="text: $data.color"></span>&nbsp;
                                 <span data-bind="text: $data.make"></span>&nbsp;
                                 <span data-bind="text: $data.model"></span>&nbsp;
+                                <span data-bind="text: $data.color"></span>&nbsp;
                                 <span data-bind="text: $data.size"></span>&nbsp;
-                                <span data-bind="text: $data.tag"></span>&nbsp;
                             </li>
                         </ul>
                     <label>Services:&nbsp;</label><span data-bind="text: $data.services"></span><br>

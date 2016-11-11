@@ -4,14 +4,11 @@ var carSchema = new mongoose.Schema({
 	color: {type: String, required: true},
 	make: {type: String, required: true},
 	model: {type: String, required: true},
-	size: String, // 2-door, SUV, etc.
-	tag: String, // License plate
-	year: {type: Number, required: true}
+	size: String // 2-door, SUV, etc.
 });
 
 var locationSchema = new mongoose.Schema({
 	city: {type: String, required: true},
-	state: {type: String, required: true},
 	street: {type: String, required: true},	
 	title: String, // Home, work, etc.
 	zip: {type: String, required: true}
