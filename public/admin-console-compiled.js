@@ -422,24 +422,41 @@ var Day = function Day(date, appts) {
 	this.date = date;
 	this.appts = appts;
 };
-"use strict";
+'use strict';
 
 var spinner = null;
 var webSvc = null;
 var Configuration;
 
 window.jQuery(document).ready(function ($) {
-	spinner = new LoadingSpinner();
-	webSvc = new WebService();
+    spinner = new LoadingSpinner();
+    webSvc = new WebService();
 
-	webSvc.GetSystemSettings().then(function (settings) {
-		Configuration = new Configuration(settings);
-		var vm = new AdminConsoleVm();
-		ko.applyBindings(vm);
-		vm.Load();
-	}).fail(function (err) {
-		return console.log(error);
-	});
+    function reposition() {
+        var modal = $(this),
+            dialog = modal.find('.modal-dialog');
+        modal.css('display', 'block');
+
+        // Dividing by two centers the modal exactly, but dividing by three
+        // or four works better for larger screens.
+        dialog.css("margin-top", Math.max(0, ($(window).height() - dialog.height()) / 2));
+    }
+
+    // Reposition when a modal is shown
+    $('.modal').on('show.bs.modal', reposition);
+    // Reposition when the window is resized
+    $(window).on('resize', function () {
+        $('.modal:visible').each(reposition);
+    });
+
+    webSvc.GetSystemSettings().then(function (settings) {
+        Configuration = new Configuration(settings);
+        var vm = new AdminConsoleVm();
+        ko.applyBindings(vm);
+        vm.Load();
+    }).fail(function (err) {
+        return console.log(error);
+    });
 });
 "use strict";
 

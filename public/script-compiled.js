@@ -459,7 +459,6 @@ var DialogPresenter = function () {
 'use strict';
 
 window.jQuery(document).ready(function ($) {
-
 	try {
 		// Initialize Application
 		Bootstrapper.Run().then(function () {
