@@ -189,7 +189,7 @@ module.exports.createNewUser = (req, res)=>{
 			} else {
 				if(!usr.isGuest){
 					console.log("New user created. Sending one time coupon");
-					crtlCoupon.createTempCoupon(usr.email);
+					crtlCoupon.createOneTimeCoupon(usr.email);
 					sendJsonResponse(res, createSuccessCode, "Success", usr);
 				} else {
 					console.log("Guest user created");

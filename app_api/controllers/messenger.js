@@ -126,8 +126,8 @@ module.exports.sendCouponCode = (couponCode, email)=>{
 					    <hr>\
 		      			<p>Thanks for joining WashMyCar! \
 		      			Apply the coupon below when checking out and enjoy your <strong>first wash 50% off!</strong> \
-		      			But hurry! This discount is only valid for the next 12 hours. \
-		      			We look forward to servicing you!</p> \
+		      			We look forward to servicing you! \
+		      			Discount is valid for 7 days.</p> \
 		      			<u>Coupon Code:</u><h4>' + couponCode + '</h4> \
 		      		</div>\
 		      		</body>\

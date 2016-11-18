@@ -95,10 +95,10 @@ module.exports.verifyCoupon = (req, res)=>{
 };
 
 // Not exposed to API - used by user.js
-module.exports.createTempCoupon = (email)=>{
+module.exports.createOneTimeCoupon = (email)=>{
 	var now = new Date();
 	var end = new Date();
-	end.setHours(now.getHours() + 12);
+	end.setDate(now.getDate() + 7);
 
 	const couponCode = generateRandomCouponCode();
 
@@ -112,14 +112,14 @@ module.exports.createTempCoupon = (email)=>{
 			onlyUseOnce: true
 		}, (err, coupon)=>{
 			if(err){
-				console.log("DB Failure - createTempCoupon");
+				console.log("DB Failure - createOneTimeCoupon");
 				console.error(err);
 			} else {
 				ctrlMsgs.sendCouponCode(couponCode, email);
 			}
 		});
 	} else {
-		console.log("No email provided - createTempCoupon");
+		console.log("No email provided - createOneTimeCoupon");
 	}
 }
 
@@ -129,7 +129,7 @@ var generateRandomCouponCode = ()=>{
 	'K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
 	'1','2','3','4','5','6','7','8','9','0'];
 
-	const sample = _.sample(chars, 7);
+	const sample = _.sample(chars, 6);
 
 	_.each(sample, (char)=>{
 		code += char;
