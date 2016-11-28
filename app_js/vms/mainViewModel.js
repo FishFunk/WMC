@@ -14,6 +14,11 @@ class MainViewModel {
 		this.InteriorPriceHtml = "<sup>$</sup>"+Configuration.INTERIOR_DETAILS.price;
 		this.WaxPriceHtml = "<sup>$</sup>"+Configuration.WAX_DETAILS.price;
 
+		this.WASH_TITLE = Configuration.WASH_DETAILS.title;
+		this.TIRE_SHINE_TITLE = Configuration.TIRE_SHINE_DETAILS.title;
+		this.WAX_TITLE = Configuration.WAX_DETAILS.title;
+		this.INTERIOR_TITLE = Configuration.INTERIOR_DETAILS.title;
+
 		this.LogInViewModel = logInVm;
 		this.OrderFormViewModel = orderFormVm;
 		// observables

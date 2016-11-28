@@ -39,6 +39,11 @@ class OrderFormViewModel {
 		this.WAX_COST = Configuration.WAX_DETAILS.price;
 		this.WASH_COST = Configuration.WASH_DETAILS.price;
 
+		this.TIRE_SHINE_TITLE = Configuration.TIRE_SHINE_DETAILS.title;
+		this.INTERIOR_TITLE = Configuration.INTERIOR_DETAILS.title;
+		this.WAX_TITLE = Configuration.WAX_DETAILS.title;
+		this.WASH_TITLE = Configuration.WASH_DETAILS.title;
+
 		this.disableEmailInput = ko.observable(false);
 		this.incompleteFormMsg = ko.observable("");
 
@@ -57,8 +62,8 @@ class OrderFormViewModel {
 			Constants.TIME_RANGE_PLACE_HOLDER,
 			Constants.MORNING_TIME_RANGE,
 			Constants.AFTERNOON_TIME_RANGE,
-			Constants.EVENING_TIME_RANGE,
-			Constants.NIGHT_TIME_RANGE
+			Constants.EVENING_TIME_RANGE
+			//Constants.NIGHT_TIME_RANGE
 		];
 		this.selectedTimeRange = ko.observable(Constants.TIME_RANGE_PLACE_HOLDER);
 

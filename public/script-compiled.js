@@ -288,7 +288,7 @@ var Configuration = function () {
   }, {
     key: "AVG_JOB_DRIVING_TIME",
     get: function get() {
-      return this.settings.JOB_SETUP_TIME || 30;
+      return this.settings.AVG_JOB_DRIVING_TIME || 30;
     }
   }, {
     key: "AVG_JOB_SETUP_TIME",
@@ -298,12 +298,12 @@ var Configuration = function () {
   }, {
     key: "WASH_DETAILS",
     get: function get() {
-      return this.settings.WASH_DETAILS || { price: 19, time: 25, title: "Exterior Hand Wash" };
+      return this.settings.WASH_DETAILS || { price: 22, time: 30, title: "Exterior Hand Wash" };
     }
   }, {
     key: "TIRE_SHINE_DETAILS",
     get: function get() {
-      return this.settings.TIRE_SHINE_DETAILS || { price: 15, time: 20, title: "Wheel Detail" };
+      return this.settings.TIRE_SHINE_DETAILS || { price: 8, time: 15, title: "Tire Shine" };
     }
   }, {
     key: "INTERIOR_DETAILS",
@@ -313,7 +313,7 @@ var Configuration = function () {
   }, {
     key: "WAX_DETAILS",
     get: function get() {
-      return this.settings.WAX_DETAILS || { price: 30, time: 40, title: "Hand Wax & Buff" };
+      return this.settings.WAX_DETAILS || { price: 30, time: 40, title: "Hand Wax" };
     }
   }, {
     key: "CAR_SIZES",
@@ -323,10 +323,10 @@ var Configuration = function () {
         size: "Compact (2-4 door)"
       }, {
         multiplier: 1.2,
-        size: "SUV (5-door)"
+        size: "Mid-Size"
       }, {
         multiplier: 1.4,
-        size: "XXL"
+        size: "Large (SUV)"
       }];
     }
   }, {
@@ -698,8 +698,6 @@ var Utils = function () {
 					'01/01': "New Year's Day",
 					'07/04': "Independence Day",
 					'11/11': "Veteran's Day",
-					'11/28': "Thanksgiving Day",
-					'11/29': "Day after Thanksgiving",
 					'12/24': "Christmas Eve",
 					'12/25': "Christmas Day",
 					'12/31': "New Year's Eve"
@@ -1033,6 +1031,11 @@ var MainViewModel = function () {
 		this.InteriorPriceHtml = "<sup>$</sup>" + Configuration.INTERIOR_DETAILS.price;
 		this.WaxPriceHtml = "<sup>$</sup>" + Configuration.WAX_DETAILS.price;
 
+		this.WASH_TITLE = Configuration.WASH_DETAILS.title;
+		this.TIRE_SHINE_TITLE = Configuration.TIRE_SHINE_DETAILS.title;
+		this.WAX_TITLE = Configuration.WAX_DETAILS.title;
+		this.INTERIOR_TITLE = Configuration.INTERIOR_DETAILS.title;
+
 		this.LogInViewModel = logInVm;
 		this.OrderFormViewModel = orderFormVm;
 		// observables
@@ -1124,6 +1127,11 @@ var OrderFormViewModel = function () {
 		this.WAX_COST = Configuration.WAX_DETAILS.price;
 		this.WASH_COST = Configuration.WASH_DETAILS.price;
 
+		this.TIRE_SHINE_TITLE = Configuration.TIRE_SHINE_DETAILS.title;
+		this.INTERIOR_TITLE = Configuration.INTERIOR_DETAILS.title;
+		this.WAX_TITLE = Configuration.WAX_DETAILS.title;
+		this.WASH_TITLE = Configuration.WASH_DETAILS.title;
+
 		this.disableEmailInput = ko.observable(false);
 		this.incompleteFormMsg = ko.observable("");
 
@@ -1138,7 +1146,9 @@ var OrderFormViewModel = function () {
 
 		this.description = ko.observable("");
 
-		this.timeRangeOptions = [Constants.TIME_RANGE_PLACE_HOLDER, Constants.MORNING_TIME_RANGE, Constants.AFTERNOON_TIME_RANGE, Constants.EVENING_TIME_RANGE, Constants.NIGHT_TIME_RANGE];
+		this.timeRangeOptions = [Constants.TIME_RANGE_PLACE_HOLDER, Constants.MORNING_TIME_RANGE, Constants.AFTERNOON_TIME_RANGE, Constants.EVENING_TIME_RANGE
+		//Constants.NIGHT_TIME_RANGE
+		];
 		this.selectedTimeRange = ko.observable(Constants.TIME_RANGE_PLACE_HOLDER);
 
 		this.dateMoment = null;

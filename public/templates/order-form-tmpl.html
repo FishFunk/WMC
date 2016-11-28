@@ -10,16 +10,16 @@
         <label class="control-label" for="checkbox">Service Options</label>
         <div class="form-group">
           <div class="checkbox">
-            <label><input type="checkbox" data-bind="checked: addWash">&nbsp;Ultimate Exterior Hand Wash</label>&nbsp;(<strong>$<span data-bind="text: WASH_COST"></span></strong>)
+            <label><input type="checkbox" data-bind="checked: addWash">&nbsp;<span data-bind="text: WASH_TITLE"></span></label>&nbsp;(<strong>$<span data-bind="text: WASH_COST"></span></strong>)
           </div>
           <div class="checkbox">
-            <label data-bind="css: { 'strike-text': !addWash() }"><input type="checkbox" data-bind="checked: addShine, enable: addWash">&nbsp;Wheel Detail&nbsp;</label>(<strong>$<span data-bind="text: TIRE_SHINE_COST"></span></strong>)
+            <label data-bind="css: { 'strike-text': !addWash() }"><input type="checkbox" data-bind="checked: addShine, enable: addWash">&nbsp;<span data-bind="text: TIRE_SHINE_TITLE"></span>&nbsp;</label>(<strong>$<span data-bind="text: TIRE_SHINE_COST"></span></strong>)
           </div>
           <div class="checkbox">
-            <label data-bind="css: { 'strike-text': !addWash() }"><input type="checkbox" data-bind="checked: addWax, enable: addWash">&nbsp;Hand Wax</label>&nbsp;(<strong>$<span data-bind="text: WAX_COST"></span></strong>)
+            <label data-bind="css: { 'strike-text': !addWash() }"><input type="checkbox" data-bind="checked: addWax, enable: addWash">&nbsp;<span data-bind="text: WAX_TITLE"></span></label>&nbsp;(<strong>$<span data-bind="text: WAX_COST"></span></strong>)
           </div>
           <div class="checkbox">
-            <label><input type="checkbox" data-bind="checked: addInterior">&nbsp;Interior Cleaning</label>&nbsp;(<strong>$<span data-bind="text: INTERIOR_COST"></span></strong>)
+            <label><input type="checkbox" data-bind="checked: addInterior">&nbsp;<span data-bind="text: INTERIOR_TITLE"></span></label>&nbsp;(<strong>$<span data-bind="text: INTERIOR_COST"></span></strong>)
           </div>
           <div data-bind="visible: addInterior" class="alert alert-info alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>

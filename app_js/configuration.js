@@ -21,7 +21,7 @@ class Configuration
   }
 
   get AVG_JOB_DRIVING_TIME(){
-    return this.settings.JOB_SETUP_TIME || 30;
+    return this.settings.AVG_JOB_DRIVING_TIME || 30;
   }
 
   get AVG_JOB_SETUP_TIME(){
@@ -29,11 +29,11 @@ class Configuration
   }
 
   get WASH_DETAILS(){
-    return this.settings.WASH_DETAILS || { price: 19, time: 25, title: "Exterior Hand Wash"};
+    return this.settings.WASH_DETAILS || { price: 22, time: 30, title: "Exterior Hand Wash"};
   }
 
   get TIRE_SHINE_DETAILS(){
-    return this.settings.TIRE_SHINE_DETAILS || { price: 15, time: 20, title: "Wheel Detail"};
+    return this.settings.TIRE_SHINE_DETAILS || { price: 8, time: 15, title: "Tire Shine"};
   }
 
   get INTERIOR_DETAILS(){
@@ -41,7 +41,7 @@ class Configuration
   }
 
   get WAX_DETAILS(){
-    return this.settings.WAX_DETAILS || {price: 30, time: 40, title: "Hand Wax & Buff"};
+    return this.settings.WAX_DETAILS || {price: 30, time: 40, title: "Hand Wax"};
   }
 
   get CAR_SIZES(){
@@ -52,11 +52,11 @@ class Configuration
       },
       {
         multiplier : 1.2,
-        size : "SUV (5-door)"
+        size : "Mid-Size"
       },
       {
         multiplier : 1.4,
-        size : "XXL"
+        size : "Large (SUV)"
       }
     ];
   }
