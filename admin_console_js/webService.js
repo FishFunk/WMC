@@ -40,6 +40,14 @@ class WebService {
 		return this._executeAjaxCall('POST', '/api/createCoupon', {coupon: coupon});
 	}
 
+	SendEmail(to, from, subject, msg){
+		return this._executeAjaxCall('POST', '/api/sendEmail', {to: to, from: from, subject: subject, msg: msg});
+	}
+	
+	GetUserEmails(){
+		return this._executeAjaxCall('GET', '/api/getUserEmails');
+	}
+
 	// 'data' is an optional param
 	_executeAjaxCall(type, ext, data){
 		this.deferred = $.Deferred();

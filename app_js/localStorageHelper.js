@@ -1,9 +1,11 @@
 class LocalStorageHelper{
 	constructor(storageType){
-		if(typeof(Storage) === "undefined") {
-			console.info("No local storage available.");
-		} else {
+		try {
+			this.storageType.test = "test";
 			this.storageType = storageType;
+		} catch (ex) {
+			console.info("No local storage available. Using memory...");
+			this.storageType = {};
 		}
 	}
 

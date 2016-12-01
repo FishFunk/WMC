@@ -189,6 +189,49 @@ module.exports.sendConfirmationEmail = (req, res)=>{
 	}
 };
 
+// Used by admin console only
+module.exports.sendEmail = (req, res)=>{
+	if(DEBUG_MODE){
+		sendJsonResponse(res, noContentSuccessCode, 'DEBUG MODE - Email(s) sent!');
+		return;
+	}
+
+	if(req.body && req.body.to && req.body.from && req.body.subject && req.body.msg){
+		var to = req.body.to;
+		var from = req.body.from;
+		var msg = req.body.msg;
+		var subject = req.body.subject
+
+		transport.sendMail({
+          from: 'WashMyCar ' + from,
+          to: to,
+          bcc: [process.env.BCC_EMAIL_1, process.env.BCC_EMAIL_2],
+          subject: subject,
+	      html:
+	      	'<html style="font-family: sans-serif; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">\
+	      		<body>\
+				<div style="padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto;">\
+				    <div style="text-align: center;">\
+				    <img src="' + logoUrl + '" style="width:150px;">\
+				    </div>\
+				    <hr>\
+	      			<p>' + msg + '</p>\
+	      		</div>\
+	      		</body>\
+	      	</html>'
+        },(err, responseStatus)=>{
+		  if (err) {
+		    sendJsonResponse(res, internalErrorCode, 'Failed to send email(s)', err);
+		    console.log(err);
+		  } else {
+		    sendJsonResponse(res, noContentSuccessCode, 'Email(s) sent');
+		  }
+        });
+	} else {
+		sendJsonResponse(res, badRequestCode, "Bad request body");
+	}
+}
+
 var formatAppt = (appt)=>{
 	var apptHtml = "";
 

@@ -13,6 +13,13 @@ var AdminConsoleVm = function () {
 		this.coupons = ko.observableArray();
 		this.display = ko.observable("appointments");
 		this.newCoupon = ko.observable(this._makeCouponSchema());
+
+		this.emailSubject = ko.observable("");
+		this.emailMessage = ko.observable("");
+		this.senderEmails = ko.observableArray(["donotreply@washmycarva.com", "daniel.fishman@washmycarva.com", "dinko.badic@washmycarva.com", "contact@washmycarva.com"]);
+		this.userEmails = ko.observableArray([]);
+		this.fromEmail = ko.observable(this.senderEmails()[0]);
+		this.selectedUserEmails = ko.observableArray([]);
 	}
 
 	_createClass(AdminConsoleVm, [{
@@ -26,7 +33,7 @@ var AdminConsoleVm = function () {
 			self.days([]);
 			spinner.Show();
 
-			async.series([self.InitializeDatePickers.bind(self), self.LoadAppointments.bind(self), self.LoadCoupons.bind(self)], function (possibleError) {
+			async.series([self.InitializeDatePickers.bind(self), self.LoadAppointments.bind(self), self.LoadCoupons.bind(self), self.LoadEmails.bind(self)], function (possibleError) {
 				if (possibleError) {
 					console.error(possibleError);
 				}
@@ -87,6 +94,17 @@ var AdminConsoleVm = function () {
 			var self = this;
 			webSvc.GetAllCoupons().then(function (result) {
 				self.coupons(result);
+				callback();
+			}).fail(function (err) {
+				callback(err);
+			});
+		}
+	}, {
+		key: "LoadEmails",
+		value: function LoadEmails(callback) {
+			var self = this;
+			webSvc.GetUserEmails().then(function (result) {
+				self.userEmails(result);
 				callback();
 			}).fail(function (err) {
 				callback(err);
@@ -234,6 +252,27 @@ var AdminConsoleVm = function () {
 				var msg = "Error creating coupon.";
 				bootbox.alert(msg);
 				console.error(err);
+			});
+		}
+	}, {
+		key: "OnSendEmail",
+		value: function OnSendEmail() {
+			var _this = this;
+
+			if (this.selectedUserEmails().length == 0 || !this.fromEmail() || !this.emailMessage() || !this.emailSubject()) {
+				bootbox.alert("Fill out all the fields!");
+				return;
+			}
+
+			bootbox.confirm("Are you sure you're ready to send this message?", function (confirm) {
+				if (confirm) {
+					webSvc.SendEmail(_this.selectedUserEmails(), _this.fromEmail(), _this.emailSubject(), _this.emailMessage()).then(function () {
+						bootbox.alert("Email sent!");
+					}).fail(function (error) {
+						console.error(error);
+						bootbox.alert("Failed to send email(s)");
+					});
+				}
 			});
 		}
 	}, {
@@ -623,6 +662,16 @@ var WebService = function () {
 		key: 'CreateCoupon',
 		value: function CreateCoupon(coupon) {
 			return this._executeAjaxCall('POST', '/api/createCoupon', { coupon: coupon });
+		}
+	}, {
+		key: 'SendEmail',
+		value: function SendEmail(to, from, subject, msg) {
+			return this._executeAjaxCall('POST', '/api/sendEmail', { to: to, from: from, subject: subject, msg: msg });
+		}
+	}, {
+		key: 'GetUserEmails',
+		value: function GetUserEmails() {
+			return this._executeAjaxCall('GET', '/api/getUserEmails');
 		}
 
 		// 'data' is an optional param

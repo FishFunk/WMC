@@ -39,12 +39,14 @@
             <div class="text-center">
                 <label class="radio-inline"><input type="radio" name="display" value="appointments" data-bind="checked: display"/>Appointments</label>
                 <label class="radio-inline"><input type="radio" name="display" value="coupons" data-bind="checked: display"/>Coupons</label>
+                <label class="radio-inline"><input type="radio" name="display" value="email" data-bind="checked: display"/>Email</label>
             </div>
         </div>
         <div class="row">
             <br>
             <div data-bind="template: { name: 'appointment-template', data: $root }, visible: display() == 'appointments'"></div>
             <div data-bind="template: { name: 'coupon-template', data: $root }, visible: display() == 'coupons'"></div>
+            <div data-bind="template: { name: 'email-template', data: $root }, visible: display() == 'email'"></div>
         </div>
     </div>
 
@@ -236,6 +238,30 @@
                 <label>Percentage:&nbsp;</label><span data-bind="text: $data.discountPercentage"></span><br>
                 <label>One Time Only:&nbsp;</label><span data-bind="text: $data.onlyUseOnce"></span><br>
             </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="email-template">
+    <div class="row">
+        <div class="col-xs-6 col-xs-offset-3 container">
+            <div class="form-group">
+                <label>From: </label>
+                <select data-bind="options: senderEmails, value: fromEmail"></select>
+            </div>
+            <div class="form-group">
+                <label>To: </label>
+                <select data-bind="options: userEmails, selectedOptions: selectedUserEmails" multiple="true"></select>
+            </div>
+            <div class="form-group">
+                <label>Subject:</label>&nbsp;<input type="text" data-bind="value: emailSubject">
+            </div>
+            <div class="form-group">
+                <textarea placeholder="Type message here..." data-bind="value: emailMessage" style="min-width: 450px; min-height: 250px;"></textarea>
+            </div>
+        </div>
+        <div class="col-xs-12 text-center">
+            <button class="btn btn-lg btn-primary" data-bind="click: OnSendEmail">Send</button>
         </div>
     </div>
 </script>

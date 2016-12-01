@@ -114,6 +114,7 @@ module.exports.getAllAppointments = (req, res)=>{
 	});
 };
 
+// Used by admin console only
 module.exports.deleteExpiredAppointments = (req, res)=>{
 	var now = new Date();
  	now.setDate(now.getDate()-1);
@@ -129,6 +130,7 @@ module.exports.deleteExpiredAppointments = (req, res)=>{
 	});
 };
 
+// Used by admin console only
 module.exports.deleteSingleAppointment = (req, res)=>{
 	const id = req.query.id;
 	if(id){
@@ -146,6 +148,7 @@ module.exports.deleteSingleAppointment = (req, res)=>{
 	}
 };
 
+// Used by admin console only
 module.exports.updateAppointment = (req, res)=>{
 	try{
 		if(req.body && req.body.appt){
@@ -165,6 +168,27 @@ module.exports.updateAppointment = (req, res)=>{
 		console.error(ex);
 		sendJsonResponse(res, internalErrorCode, 'Failure updating appointment');
 	}
+};
+
+// Used by admin console only
+module.exports.getUserEmails = (req, res)=>{
+	try{
+		Usr.find()
+		   .select('email')
+		   .exec((err, docs)=>{
+		   		if(err) {
+					console.error(err);
+					sendJsonResponse(res, internalErrorCode, "DB Failure - getUsersEmails", err);
+				} else {
+					var emails = _.map(docs, (d)=> { return d.email });
+					sendJsonResponse(res, readSuccessCode, "Success", emails);
+				}
+		   });
+	}
+   catch(ex){
+		console.error(ex);
+		sendJsonResponse(res, internalErrorCode, 'Failure getting user emails');
+   }
 };
 
 module.exports.createNewUser = (req, res)=>{

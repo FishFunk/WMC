@@ -5,6 +5,18 @@ class AdminConsoleVm{
 		this.coupons = ko.observableArray();
 		this.display = ko.observable("appointments");
 		this.newCoupon = ko.observable(this._makeCouponSchema());
+		
+		this.emailSubject = ko.observable("");
+		this.emailMessage = ko.observable("");
+		this.senderEmails = ko.observableArray([
+			    "donotreply@washmycarva.com",
+                "daniel.fishman@washmycarva.com",
+                "dinko.badic@washmycarva.com",
+                "contact@washmycarva.com"
+			]);
+		this.userEmails = ko.observableArray([]);
+		this.fromEmail = ko.observable(this.senderEmails()[0]);
+		this.selectedUserEmails = ko.observableArray([]);
 	}
 
 	get LoginViewModel(){
@@ -25,9 +37,10 @@ class AdminConsoleVm{
 		spinner.Show();
 
 		async.series([
-			self.InitializeDatePickers.bind(self),
-			self.LoadAppointments.bind(self),
-			self.LoadCoupons.bind(self)
+				self.InitializeDatePickers.bind(self),
+				self.LoadAppointments.bind(self),
+				self.LoadCoupons.bind(self),
+				self.LoadEmails.bind(self)
 			],
 			possibleError=>{
 				if(possibleError){
@@ -89,6 +102,18 @@ class AdminConsoleVm{
 		webSvc.GetAllCoupons()
 			.then(result =>{
 				self.coupons(result);
+				callback();
+			})
+			.fail(err=>{
+				callback(err);
+			});
+	}
+
+	LoadEmails(callback){
+		var self = this;
+		webSvc.GetUserEmails()
+			.then(result =>{
+				self.userEmails(result);
 				callback();
 			})
 			.fail(err=>{
@@ -239,6 +264,27 @@ class AdminConsoleVm{
 				const msg = "Error creating coupon.";
 				bootbox.alert(msg);
 				console.error(err);
+			});
+	}
+
+	OnSendEmail(){
+		if(this.selectedUserEmails().length == 0 || !this.fromEmail() || !this.emailMessage() || !this.emailSubject()){
+			bootbox.alert("Fill out all the fields!");
+			return;
+		}
+
+		bootbox.confirm("Are you sure you're ready to send this message?",
+			(confirm)=>{
+				if(confirm){
+					webSvc.SendEmail(this.selectedUserEmails(), this.fromEmail(), this.emailSubject(), this.emailMessage())
+						.then(()=>{
+							bootbox.alert("Email sent!");
+						})
+						.fail(error => {
+							console.error(error);
+							bootbox.alert("Failed to send email(s)");
+						});
+				}
 			});
 	}
 
