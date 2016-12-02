@@ -871,7 +871,7 @@ var LogInViewModel = function () {
 				var self = this;
 				spinner.Show();
 				this.webSvc.ForgotPassword(this.email()).then(function () {
-					self.loginFormMsg("Nice! Check your email ;)");
+					self.loginFormMsg("Nice! All signed up ;)");
 					self.$loginFormInfo.show();
 					self._resetForms();
 					self.ShowCreateAcct(false);
