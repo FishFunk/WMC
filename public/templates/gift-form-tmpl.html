@@ -60,7 +60,11 @@
         <center id="incomplete-gift-alert" class="alert alert-danger fade in" role="alert" hidden>
           <strong>Whoops!</strong>&nbsp;<span data-bind="text: incompleteGiftMsg"></span>
         </center>
-        <center data-bind="visible: orderTotal() > 0">
+        <center class="hidden-sm hidden-md hidden-lg" data-bind="visible: orderTotal() > 0">
+          <button data-bind="click: OnFormCancel" class="btn btn-md btn-danger">Cancel</button>
+          <button class="btn btn-md btn-primary" data-bind="click: OnSubmit">Finish & Pay</button>
+        </center>
+        <center class="hidden-xs">
           <button data-bind="click: OnFormCancel" class="btn btn-lg btn-danger">Cancel</button>
           <button class="btn btn-lg btn-primary" data-bind="click: OnSubmit">Finish & Pay</button>
         </center>
