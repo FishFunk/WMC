@@ -190,7 +190,7 @@
           <strong>Bad news...</strong>&nbsp;<span>invalid or expired coupon code.</span>
         </center>
         <center id="success-coupon-alert" class="alert alert-info fade in coupon-alert" role="alert" hidden>
-          <strong>Nice!</strong>&nbsp;Discount applied.&nbsp;$<span data-bind="text: discountRemaining"></span> remaining.
+          <strong>Nice!</strong>&nbsp;Discount applied.&nbsp;$<span data-bind="text: discountRemaining"></span> remaining.&nbsp;<span data-bind="visible: coupon() && coupon().onlyUseOnce">This can not be used again.</span>
         </center>
       </div>
     </div> <!--.panel-->

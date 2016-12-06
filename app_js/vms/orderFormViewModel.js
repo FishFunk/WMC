@@ -144,7 +144,7 @@ class OrderFormViewModel {
 				return 0;
 			}
 
-			var value = parseFloat(self.coupon().amount - self.orderTotal());
+			var value = parseFloat(self.coupon().amount - self.orderTotal()).toFixed(2);
 
 			return value < 0 ? 0 : value;
 		});
