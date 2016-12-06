@@ -50,16 +50,16 @@ class GiftFormViewModel {
 		this.zip = ko.observable(this.storageHelper.ZipCode);
 
 		this.orderTotal = ko.computed(()=>{
-			let total = 0;
-			let serviceCost = parseFloat(
+			let total = 0.00;
+			let serviceCost = 
 					(self.addWash() ? self.WASH_COST : 0) +
 					(self.addShine() && self.addWash()? self.TIRE_SHINE_COST : 0) + 
 					(self.addWax() && self.addWash() ? self.WAX_COST : 0) + 
-					(self.addInterior() ? self.INTERIOR_COST : 0));
+					(self.addInterior() ? self.INTERIOR_COST : 0);
 
 			total += self.selectedCarSize().multiplier * serviceCost;
 
-			return parseFloat(total.toFixed(2));
+			return total.toFixed(2);
 		});
 
 		this.orderSummary = ko.computed(()=>{
@@ -181,7 +181,8 @@ class GiftFormViewModel {
 	}
 
 	_executeCharge(token, callback){
-      	this.webSvc.ExecuteCharge(token, this.orderTotal() * 100)
+		const total = parseInt(this.orderTotal() * 100);
+      	this.webSvc.ExecuteCharge(token, total)
 	      	.then(()=>callback())
 	      	.fail((err)=>{
 	      		console.log(err);

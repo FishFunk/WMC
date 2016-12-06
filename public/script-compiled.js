@@ -797,12 +797,12 @@ var GiftFormViewModel = function () {
 		this.zip = ko.observable(this.storageHelper.ZipCode);
 
 		this.orderTotal = ko.computed(function () {
-			var total = 0;
-			var serviceCost = parseFloat((self.addWash() ? self.WASH_COST : 0) + (self.addShine() && self.addWash() ? self.TIRE_SHINE_COST : 0) + (self.addWax() && self.addWash() ? self.WAX_COST : 0) + (self.addInterior() ? self.INTERIOR_COST : 0));
+			var total = 0.00;
+			var serviceCost = (self.addWash() ? self.WASH_COST : 0) + (self.addShine() && self.addWash() ? self.TIRE_SHINE_COST : 0) + (self.addWax() && self.addWash() ? self.WAX_COST : 0) + (self.addInterior() ? self.INTERIOR_COST : 0);
 
 			total += self.selectedCarSize().multiplier * serviceCost;
 
-			return parseFloat(total.toFixed(2));
+			return total.toFixed(2);
 		});
 
 		this.orderSummary = ko.computed(function () {
@@ -926,7 +926,8 @@ var GiftFormViewModel = function () {
 	}, {
 		key: '_executeCharge',
 		value: function _executeCharge(token, callback) {
-			this.webSvc.ExecuteCharge(token, this.orderTotal() * 100).then(function () {
+			var total = parseInt(this.orderTotal() * 100);
+			this.webSvc.ExecuteCharge(token, total).then(function () {
 				return callback();
 			}).fail(function (err) {
 				console.log(err);
@@ -1458,8 +1459,8 @@ var OrderFormViewModel = function () {
 		this.coupon = ko.observable(null);
 
 		this.orderTotal = ko.computed(function () {
-			var total = 0;
-			var serviceCost = parseFloat((self.addWash() ? self.WASH_COST : 0) + (self.addShine() && self.addWash() ? self.TIRE_SHINE_COST : 0) + (self.addWax() && self.addWash() ? self.WAX_COST : 0) + (self.addInterior() ? self.INTERIOR_COST : 0));
+			var total = 0.00;
+			var serviceCost = (self.addWash() ? self.WASH_COST : 0) + (self.addShine() && self.addWash() ? self.TIRE_SHINE_COST : 0) + (self.addWax() && self.addWash() ? self.WAX_COST : 0) + (self.addInterior() ? self.INTERIOR_COST : 0);
 
 			_.each(self.SelectedCars, function (car) {
 				var carSize = _.find(self.carSizes, function (s) {
@@ -1468,33 +1469,34 @@ var OrderFormViewModel = function () {
 				total += carSize.multiplier * serviceCost;
 			});
 
-			return parseFloat(total.toFixed(2));
+			return total.toFixed(2);
 		});
 
 		this.discountedTotal = ko.computed(function () {
 			var total = self.orderTotal();
 			if (!self.coupon()) {
-				return total.toFixed(2);
+				return total;
 			}
 
-			var couponAmount = parseInt(self.coupon().amount);
+			var couponAmount = self.coupon().amount;
 			if (couponAmount > total) {
-				total = 0;
+				total = 0.00;
 			} else {
 				total -= couponAmount;
 			}
 
-			return parseFloat(total.toFixed(2));
+			return total.toFixed(2);
 		});
 
 		this.discountRemaining = ko.computed(function () {
 			if (!self.coupon()) {
-				return 0;
+				return 0.00;
 			}
 
-			var value = parseFloat(self.coupon().amount - self.orderTotal());
+			var couponAmount = self.coupon().amount;
+			var result = couponAmount - self.orderTotal();
 
-			return value < 0 ? 0 : value;
+			return result < 0 ? 0.00 : result.toFixed(2);
 		});
 
 		this.orderSummary = ko.computed(function () {
@@ -1521,16 +1523,6 @@ var OrderFormViewModel = function () {
 				});
 				summary += $.validator.format("<strong>{0} {1}</strong><br>{2}{3}<br>", car.make, car.model, carSize.size, carSize.multiplier > 1 ? " - additional " + Math.round((carSize.multiplier - 1) * 100).toString() + "%" : "");
 			});
-
-			if (self.coupon()) {
-				var promoMsg = "";
-				if (self.coupon().discountPercentage == 50) {
-					promoMsg = "Wow! 50% discount per wash! Now that's a sweet deal!";
-				} else {
-					promoMsg = "Promo discount: " + self.coupon().discountPercentage.toString() + "%";
-				}
-				summary += promoMsg;
-			}
 
 			return summary;
 		});
@@ -1743,21 +1735,6 @@ var OrderFormViewModel = function () {
 			}
 		}
 	}, {
-		key: '_applyCouponDiscount',
-		value: function _applyCouponDiscount(amount) {
-			if (!this.coupon()) {
-				return amount;
-			}
-
-			if (this.coupon().discountPercentage == 100) {
-				// First Time Free Wash Discount
-				return amount -= this.WASH_COST;
-			} else {
-				var percent = this.coupon().discountPercentage / 100;
-				return total - total * percent;
-			}
-		}
-	}, {
 		key: '_openCheckout',
 		value: function _openCheckout() {
 			this.stripeHandler.open({
@@ -1848,7 +1825,8 @@ var OrderFormViewModel = function () {
 	}, {
 		key: '_executeCharge',
 		value: function _executeCharge(token, callback) {
-			this.webSvc.ExecuteCharge(token, this.discountedTotal() * 100, this.last()).then(function () {
+			var total = parseInt(this.discountedTotal() * 100);
+			this.webSvc.ExecuteCharge(token, total, this.last()).then(function () {
 				return callback();
 			}).fail(function (err) {
 				console.log(err);
