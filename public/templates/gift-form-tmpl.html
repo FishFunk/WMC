@@ -1,0 +1,70 @@
+<div class="modal-content">
+  <div class="modal-body">
+    <div class="alert alert-info alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <strong>Give the gift of a clean car!</strong><br><p>Simply fill out the information below and we'll send you a custom coupon for the specified amount.</p>
+    </div>
+    <div class="row">
+      <legend class="col-xs-12">Gift Options</legend>
+      <div class="form-group col-xs-12">
+        <div class="form-group">
+          <div class="checkbox">
+            <label><input type="checkbox" data-bind="checked: addWash">&nbsp;<span data-bind="text: WASH_TITLE"></span></label>&nbsp;(<strong>$<span data-bind="text: WASH_COST"></span></strong>)
+          </div>
+          <div class="checkbox">
+            <label data-bind="css: { 'strike-text': !addWash() }"><input type="checkbox" data-bind="checked: addShine, enable: addWash">&nbsp;<span data-bind="text: TIRE_SHINE_TITLE"></span>&nbsp;</label>(<strong>$<span data-bind="text: TIRE_SHINE_COST"></span></strong>)
+          </div>
+          <div class="checkbox">
+            <label data-bind="css: { 'strike-text': !addWash() }"><input type="checkbox" data-bind="checked: addWax, enable: addWash">&nbsp;<span data-bind="text: WAX_TITLE"></span></label>&nbsp;(<strong>$<span data-bind="text: WAX_COST"></span></strong>)
+          </div>
+          <div class="checkbox">
+            <label><input type="checkbox" data-bind="checked: addInterior">&nbsp;<span data-bind="text: INTERIOR_TITLE"></span></label>&nbsp;(<strong>$<span data-bind="text: INTERIOR_COST"></span></strong>)
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <form id="gift-form" data-toggle="validator" role="form" autocomplete="off">
+        <div class="form-group col-sm-4">
+          <label class="control-label">Your Email:</label>
+          <input data-bind="value: email" name="email" type="email" maxlength="45" placeholder="jappleseed@email.com" class="form-control">
+        </div>
+        <div class="form-group col-sm-4">
+          <label class="control-label" for="select">Their Vehicle</label>
+          <select data-bind="options: carSizes, optionsText: 'size', value: selectedCarSize" class="form-control"></select>
+        </div>
+        <div class="form-group col-sm-4">
+          <label class="control-label">Their Zip Code</label>
+          <input data-bind="value: zip" name="zip" type="tel" pattern="[0-9]*" maxlength="9" placeholder="12345" class="form-control">
+        </div>
+      </form>
+    </div>
+  <br>
+  </div> <!--.modal-body-->
+
+  <!-- Important notice -->
+  <div class="modal-footer">
+    <div id="order-review-panel" class="panel panel-success">
+      <div class="panel-heading">
+        <h3 class="panel-title">Please Review Your Order!</h3>
+      </div>
+      <div class="panel-body">
+        <p data-bind="html: orderSummary"></p>
+        <p>Total: $<strong data-bind="text: orderTotal"></strong></p>
+      </div>
+    </div> <!--.panel-->
+
+    <!-- Submit -->
+    <div class="control-group">
+      <div class="controls">
+        <center id="incomplete-gift-alert" class="alert alert-danger fade in" role="alert" hidden>
+          <strong>Whoops!</strong>&nbsp;<span data-bind="text: incompleteGiftMsg"></span>
+        </center>
+        <center data-bind="visible: orderTotal() > 0">
+          <button data-bind="click: OnFormCancel" class="btn btn-lg btn-danger">Cancel</button>
+          <button class="btn btn-lg btn-primary" data-bind="click: OnSubmit">Finish & Pay</button>
+        </center>
+      </div>
+    </div>
+  </div>
+</div>

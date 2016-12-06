@@ -17,8 +17,8 @@ module.exports.executeCharge = (req, res)=>{
 	{
 		var token = req.body.stripeToken;
 		var price = req.body.price;
-		var lastName = req.body.lastName || "???";
-		var email = req.body.email || "???";
+		var lastName = req.body.lastName || "Unknown";
+		var email = req.body.email || "Unknown";
 
 		var charge = stripe.charges.create({
 		  amount: price, // amount in cents

@@ -52,6 +52,16 @@ class Bootstrapper{
 					});
 				},
 				(callback)=>{
+					$('#gift-form-tmpl')
+					.load('./templates/gift-form-tmpl.html', (res, status, jqHXR)=>{
+						if(status==="error"){
+							callback(failureMsg);
+						} else {
+							callback();
+						}
+					});
+				},
+				(callback)=>{
 					$('#contact-modal-tmpl')
 					.load('./templates/contact-modal-tmpl.html', (res, status, jqHXR)=>{
 						if(status==="error"){
@@ -111,9 +121,9 @@ class Bootstrapper{
 				(callback)=>{
 					var storageHelper = new LocalStorageHelper(sessionStorage);
 					var orderFormVm = new OrderFormViewModel(storageHelper, webSvc);
-					var logInVm = new LogInViewModel(storageHelper, webSvc);
-					
-					var mainVm = new MainViewModel(storageHelper, logInVm, orderFormVm);
+					var giftFormVm = new GiftFormViewModel(storageHelper, webSvc);
+					var logInVm = new LogInViewModel(storageHelper, webSvc);			
+					var mainVm = new MainViewModel(storageHelper, logInVm, orderFormVm, giftFormVm);
 
 					ko.applyBindings(mainVm);
 

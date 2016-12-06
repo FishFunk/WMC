@@ -4,6 +4,11 @@ class Configuration
     this.settings = settings;
   }
 
+  get StripeKey(){
+    return environment == 'production' ? 
+        'pk_live_aULtlGy6YPvc94K5Hjvqwokg' : 'pk_test_luqEThs0vblV173fgAHgPZBG';
+  }
+
   get DATE_FORMAT(){
     return this.settings.DATE_FORMAT || "MM/DD/YY";
   }

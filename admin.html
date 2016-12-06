@@ -117,10 +117,8 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
-                                    <label>Percentage:&nbsp;</label>
-                                    <select data-bind="options: [5,10,15,20,25,30,35,40,45,50,60,70,80,90,100],
-                                                       value: $data.discountPercentage">
-                                    </select>%
+                                    <label>$ Amount:&nbsp;</label>
+                                    <input type="number" data-bind="value: $data.amount" min="5"></input>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -235,7 +233,7 @@
                 </center>
                 <br>
                 <label>Code:&nbsp;</label><span data-bind="text: $data.code"></span><br>
-                <label>Percentage:&nbsp;</label><span data-bind="text: $data.discountPercentage"></span><br>
+                <label>Amount:&nbsp;</label>$<span data-bind="text: $data.amount"></span><br>
                 <label>One Time Only:&nbsp;</label><span data-bind="text: $data.onlyUseOnce"></span><br>
             </div>
         </div>

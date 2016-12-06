@@ -19,6 +19,7 @@ router.post('/forgotPassword', ctrlMsgs.forgotPassword);
 router.post('/sendEmail', ctrlMsgs.sendEmail);
 router.post('/verifyAdmin', ctrlAdmin.verifyAdmin);
 router.post('/verifyCoupon', ctrlCoupon.verifyCoupon);
+router.post('/createOneTimeCoupon', ctrlCoupon.createOneTimeCoupon);
 
 router.put('/updateUser', ctrlUsers.updateUser);
 

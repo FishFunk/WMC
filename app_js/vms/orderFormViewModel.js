@@ -4,17 +4,12 @@ class OrderFormViewModel {
 		return _.filter(this.cars(), (car)=> car.selected());
 	}
 
-	get StripeKey(){
-		return environment == 'production' ? 
-		    'pk_live_aULtlGy6YPvc94K5Hjvqwokg' : 'pk_test_luqEThs0vblV173fgAHgPZBG';
-	}
-
 	constructor(storageHelper, webSvc){
 		var self = this;
 
 		// Configure Stripe
 		this.stripeHandler = StripeCheckout.configure({
-		    key: self.StripeKey,
+		    key: Configuration.StripeKey,
 		    image: '/img/square_logo.png',
 		    locale: 'auto',
 		    token: this._completeOrder.bind(this)
@@ -54,7 +49,6 @@ class OrderFormViewModel {
 		this.addShine = ko.observable(false);
 		this.addWax = ko.observable(false);
 		this.addInterior = ko.observable(false);
-		this.showBillingAddress = ko.observable(false);
 
 		this.description = ko.observable("");
 
@@ -135,28 +129,24 @@ class OrderFormViewModel {
 				return total.toFixed(2);
 			}
 
-			if(self.coupon().discountPercentage == 100){
-				// special case 100% free coupons
-				total = 0;
-			} else if (self.coupon().discountPercentage == 99){
-				// special case 99% for testing
-				total = 0.01;
-			} else if (self.coupon().discountPercentage > 25) {
-				// normal coupons above 25% apply to the wash cost only
-				if(self.addWash() && self.SelectedCars.length > 0){
-					var percent = self.coupon().discountPercentage / 100;
-					_.each(self.SelectedCars, (car)=>{
-						var carSize = _.find(self.carSizes, (s)=> s.size == car.size || s.multiplier == car.multiplier);
-						total -= (self.WASH_COST * carSize.multiplier * percent);
-					});
-				}
+			var couponAmount = parseInt(self.coupon().amount);
+			if(couponAmount > total){
+				total = 0
 			} else {
-				// normal coupons 25% and below apply to the full order value
-				var percent = self.coupon().discountPercentage / 100;
-				total = total - (total * percent);
+				total -= couponAmount;
 			}
 
 			return parseFloat(total.toFixed(2));
+		});
+
+		this.discountRemaining = ko.computed(() =>{
+			if(!self.coupon()){
+				return 0;
+			}
+
+			var value = parseFloat(self.coupon().amount - self.orderTotal());
+
+			return value < 0 ? 0 : value;
 		});
 
 		this.orderSummary = ko.computed(()=>{
@@ -412,7 +402,7 @@ class OrderFormViewModel {
 
 	_openCheckout(){
 		this.stripeHandler.open({
-			key: this.StripeKey,
+			key: Configuration.StripeKey,
 			name: 'WMC Checkout',
 			amount: this.discountedTotal() * 100,
 			zipCode: true,
@@ -573,13 +563,11 @@ class OrderFormViewModel {
 		this.addShine(false);
 		this.addWax(false);
 		this.addInterior(false);
-		this.showBillingAddress(false);
 
 		this.description = ko.observable("");
 		this.selectedTimeRange(Constants.TIME_RANGE_PLACE_HOLDER);
 
 		$('#datetimepicker').data("DateTimePicker").clear();
-		$('#wash-type-select').prop('selectedIndex', 0);
 
 		// Car Info
 		this.showAddVehicleForm(false);

@@ -1,7 +1,6 @@
 var mongoose = require('mongoose');
 var Usr = mongoose.model('User');
 var _ = require('underscore');
-var crtlCoupon = require('./coupon')
 
 const badRequestCode = 400;
 const internalErrorCode = 500;
@@ -212,14 +211,6 @@ module.exports.createNewUser = (req, res)=>{
 				sendJsonResponse(res, internalErrorCode, "DB Failure - createUser", err);
 			} else {
 				sendJsonResponse(res, createSuccessCode, "Success", usr);
-				// if(!usr.isGuest){
-				// 	console.log("New user created. Sending one time coupon");
-				// 	crtlCoupon.createOneTimeCoupon(usr.email);
-				// 	sendJsonResponse(res, createSuccessCode, "Success", usr);
-				// } else {
-				// 	console.log("Guest user created");
-				// 	sendJsonResponse(res, createSuccessCode, "Success", usr);
-				// }
 			}
 		});
 	} else {

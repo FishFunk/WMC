@@ -105,44 +105,52 @@ module.exports.forgotPassword = (req, res)=>{
 	}
 }
 
-// Not part of API - used by coupon.js
-module.exports.sendCouponCode = (couponCode, email)=>{
+// Not exposed to API - used by coupon.js
+module.exports.sendCouponCode = (coupon, email, res)=>{
 	if(DEBUG_MODE){
 		console.log('DEBUG MODE - Coupon code email sent!');
+		sendJsonResponse(res, noContentSuccessCode, "DEBUG MODE - Coupon created and email sent");
 		return;
 	}
 	try{
-		transport.sendMail({
-	          from: 'WashMyCar <donotreply@washmycarva.com>',
-	          to: email,
-	          subject: 'Your WashMyCar 50% Off Coupon!',
-		      html:
-		      	'<html style="font-family: sans-serif; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">\
-		      		<body>\
-					<div style="padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto;">\
-					    <div style="text-align: center;">\
-					    <img src="' + logoUrl + '" style="width:150px;">\
-					    </div>\
-					    <hr>\
-		      			<p>Thanks for joining WashMyCar! \
-		      			Apply the coupon below when checking out and enjoy your <strong>first wash 50% off!</strong> \
-		      			We look forward to servicing you! \
-		      			Discount is valid for 7 days.</p> \
-		      			<u>Coupon Code:</u><h4>' + couponCode + '</h4> \
-		      		</div>\
-		      		</body>\
-		      	</html>'
-	        },(err, responseStatus)=>{
-			  if (err) {
-			    console.log('Failed to send discount email');
-			    console.error(err);
-			  } else {
-			    console.log('Discount email sent');
-			  }
-	    });
+		if(coupon && email){
+			transport.sendMail({
+		          from: 'WashMyCar <donotreply@washmycarva.com>',
+		          to: email,
+		          bcc: [process.env.BCC_EMAIL_1, process.env.BCC_EMAIL_2],
+		          subject: 'Your WashMyCar Coupon!',
+			      html:
+			      	'<html style="font-family: sans-serif; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">\
+			      		<body>\
+						<div style="padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto;">\
+						    <div style="text-align: center;">\
+						    <img src="' + logoUrl + '" style="width:150px;">\
+						    </div>\
+						    <hr>\
+			      			<p>Thanks for choosing WashMyCar, LLC! \
+			      			Apply the coupon below when scheduling an appointment and enjoy <strong>$'+ coupon.amount.toString()  +' off of your order!</strong> \
+			      			Discount is valid for ' + coupon.duration.toString() + ' days.</p> \
+			      			<u>Coupon Code:</u><h4>' + coupon.code + '</h4> \
+			      		</div>\
+			      		</body>\
+			      	</html>'
+		        },(err, responseStatus)=>{
+				  if (err) {
+				    console.log('Failed to send discount email');
+				    console.error(err);
+					sendJsonResponse(res, internalErrorCode, "Failure sending coupon email");
+				  } else {
+					sendJsonResponse(res, noContentSuccessCode, "Coupon created and email sent");
+				  }
+		    });
+		} else {
+			console.log('Failed to send discount email - missing params');
+			sendJsonResponse(res, internalErrorCode, "Failure sending coupon email");
+		}
 	} catch(ex) {
 		console.log("Message send failure - sendCouponCode");
 		console.error(ex);
+		sendJsonResponse(res, internalErrorCode, "Failure sending coupon email");
 	}
 
 }

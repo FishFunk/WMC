@@ -61,6 +61,14 @@ var Bootstrapper = function () {
 					}
 				});
 			}, function (callback) {
+				$('#gift-form-tmpl').load('./templates/gift-form-tmpl.html', function (res, status, jqHXR) {
+					if (status === "error") {
+						callback(failureMsg);
+					} else {
+						callback();
+					}
+				});
+			}, function (callback) {
 				$('#contact-modal-tmpl').load('./templates/contact-modal-tmpl.html', function (res, status, jqHXR) {
 					if (status === "error") {
 						callback(failureMsg);
@@ -110,9 +118,9 @@ var Bootstrapper = function () {
 			}, function (callback) {
 				var storageHelper = new LocalStorageHelper(sessionStorage);
 				var orderFormVm = new OrderFormViewModel(storageHelper, webSvc);
+				var giftFormVm = new GiftFormViewModel(storageHelper, webSvc);
 				var logInVm = new LogInViewModel(storageHelper, webSvc);
-
-				var mainVm = new MainViewModel(storageHelper, logInVm, orderFormVm);
+				var mainVm = new MainViewModel(storageHelper, logInVm, orderFormVm, giftFormVm);
 
 				ko.applyBindings(mainVm);
 
@@ -252,7 +260,7 @@ var cbpAnimatedHeader = function () {
     window.classie = classie;
   }
 })(window);
-"use strict";
+'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -266,57 +274,62 @@ var Configuration = function () {
   }
 
   _createClass(Configuration, [{
-    key: "DATE_FORMAT",
+    key: 'StripeKey',
+    get: function get() {
+      return environment == 'production' ? 'pk_live_aULtlGy6YPvc94K5Hjvqwokg' : 'pk_test_luqEThs0vblV173fgAHgPZBG';
+    }
+  }, {
+    key: 'DATE_FORMAT',
     get: function get() {
       return this.settings.DATE_FORMAT || "MM/DD/YY";
     }
   }, {
-    key: "DEFAULT_JOB_TIME_MINS",
+    key: 'DEFAULT_JOB_TIME_MINS',
     get: function get() {
       return this.settings.DEFAULT_JOB_TIME_MINS || 120;
     }
   }, {
-    key: "MAX_JOB_TIME_PER_DAY_MINS",
+    key: 'MAX_JOB_TIME_PER_DAY_MINS',
     get: function get() {
       return this.settings.MAX_JOB_TIME_PER_DAY_MINS || 720;
     }
   }, {
-    key: "MAX_JOB_TIME_PER_INTERVAL",
+    key: 'MAX_JOB_TIME_PER_INTERVAL',
     get: function get() {
       return this.settings.MAX_JOB_TIME_PER_INTERVAL || 180;
     }
   }, {
-    key: "AVG_JOB_DRIVING_TIME",
+    key: 'AVG_JOB_DRIVING_TIME',
     get: function get() {
       return this.settings.AVG_JOB_DRIVING_TIME || 30;
     }
   }, {
-    key: "AVG_JOB_SETUP_TIME",
+    key: 'AVG_JOB_SETUP_TIME',
     get: function get() {
       return this.settings.JOB_SETUP_TIME || 10;
     }
   }, {
-    key: "WASH_DETAILS",
+    key: 'WASH_DETAILS',
     get: function get() {
       return this.settings.WASH_DETAILS || { price: 22, time: 30, title: "Exterior Hand Wash" };
     }
   }, {
-    key: "TIRE_SHINE_DETAILS",
+    key: 'TIRE_SHINE_DETAILS',
     get: function get() {
       return this.settings.TIRE_SHINE_DETAILS || { price: 8, time: 15, title: "Tire Shine" };
     }
   }, {
-    key: "INTERIOR_DETAILS",
+    key: 'INTERIOR_DETAILS',
     get: function get() {
       return this.settings.INTERIOR_DETAILS || { price: 40, time: 45, title: "Interior Cleaning" };
     }
   }, {
-    key: "WAX_DETAILS",
+    key: 'WAX_DETAILS',
     get: function get() {
       return this.settings.WAX_DETAILS || { price: 30, time: 40, title: "Hand Wax" };
     }
   }, {
-    key: "CAR_SIZES",
+    key: 'CAR_SIZES',
     get: function get() {
       return this.settings.CAR_SIZES || [{
         multiplier: 1,
@@ -330,7 +343,7 @@ var Configuration = function () {
       }];
     }
   }, {
-    key: "ZIP_WHITE_LIST",
+    key: 'ZIP_WHITE_LIST',
     get: function get() {
       return this.settings.ZIP_WHITE_LIST || ["22314", "22301", "22305", "22302", "22304", "22202", "22206", "22311", "22312", "22204", "22041", "22211", "22201", "22203", "22209", "22044", "22151", "22150", "22152", "22153", "22015", "22205", "22042", "22046", "22003", "22207", "22213", "22031", "22043", "22027", "22101", "22182", "22030", "22032", "22039", "20124"];
     }
@@ -725,6 +738,260 @@ var Utils = function () {
 
 	return Utils;
 }();
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var GiftFormViewModel = function () {
+	function GiftFormViewModel(storageHelper, webSvc) {
+		_classCallCheck(this, GiftFormViewModel);
+
+		var self = this;
+
+		// Configure Stripe
+		this.stripeHandler = StripeCheckout.configure({
+			key: Configuration.StripeKey,
+			image: '/img/square_logo.png',
+			locale: 'auto',
+			token: this._completeOrder.bind(this)
+		});
+
+		// Close Checkout on page navigation:
+		$(window).on('popstate', function () {
+			self.stripeHandler.close();
+		});
+
+		this.storageHelper = storageHelper;
+		this.webSvc = webSvc;
+
+		this.$giftFormModal = $('#gift-form-modal');
+
+		this.TIRE_SHINE_COST = Configuration.TIRE_SHINE_DETAILS.price;
+		this.INTERIOR_COST = Configuration.INTERIOR_DETAILS.price;
+		this.WAX_COST = Configuration.WAX_DETAILS.price;
+		this.WASH_COST = Configuration.WASH_DETAILS.price;
+
+		this.TIRE_SHINE_TITLE = Configuration.TIRE_SHINE_DETAILS.title;
+		this.INTERIOR_TITLE = Configuration.INTERIOR_DETAILS.title;
+		this.WAX_TITLE = Configuration.WAX_DETAILS.title;
+		this.WASH_TITLE = Configuration.WASH_DETAILS.title;
+
+		this.incompleteGiftMsg = ko.observable("");
+
+		// Order Details
+		this.addWash = ko.observable(true);
+		this.addShine = ko.observable(false);
+		this.addWax = ko.observable(false);
+		this.addInterior = ko.observable(false);
+
+		// Car Info
+		this.carSizes = Configuration.CAR_SIZES;
+		this.selectedCarSize = ko.observable(this.carSizes[0]);
+
+		// Contact Info
+		this.email = ko.observable("");
+
+		// Location Info
+		this.zip = ko.observable(this.storageHelper.ZipCode);
+
+		this.orderTotal = ko.computed(function () {
+			var total = 0;
+			var serviceCost = parseFloat((self.addWash() ? self.WASH_COST : 0) + (self.addShine() && self.addWash() ? self.TIRE_SHINE_COST : 0) + (self.addWax() && self.addWash() ? self.WAX_COST : 0) + (self.addInterior() ? self.INTERIOR_COST : 0));
+
+			total += self.selectedCarSize().multiplier * serviceCost;
+
+			return parseFloat(total.toFixed(2));
+		});
+
+		this.orderSummary = ko.computed(function () {
+			var summary = "";
+
+			summary += self._buildServicesSummary() + "<hr>";
+
+			summary += $.validator.format("<strong>{0}</strong>{1}<br>", self.selectedCarSize().size, self.selectedCarSize().multiplier > 1 ? " - additional " + Math.round((self.selectedCarSize().multiplier - 1) * 100).toString() + "%" : "");
+
+			return summary;
+		});
+	}
+
+	_createClass(GiftFormViewModel, [{
+		key: 'OnAfterRender',
+		value: function OnAfterRender(elements, self) {
+			self.$giftForm = $('#gift-form');
+			self._initValidation();
+		}
+	}, {
+		key: 'OnSubmit',
+		value: function OnSubmit() {
+			var self = this;
+			if (!this.addWash() && !this.addInterior()) {
+				this.incompleteGiftMsg('Interior and/or exterior cleaning must be selected.');
+				$('#incomplete-gift-alert').show();
+				return;
+			}
+
+			if (!this.$giftForm.valid()) {
+				this.incompleteGiftMsg('Please fill in required details.');
+				$('#incomplete-gift-alert').show();
+				return;
+			}
+
+			if (!Utils.VerifyZip(this.zip())) {
+				this.incompleteGiftMsg("Sorry but we currently don't service within that zip code.");
+				$('#incomplete-gift-alert').show();
+				return;
+			}
+
+			$('#incomplete-gift-alert').hide();
+
+			this._openCheckout();
+		}
+	}, {
+		key: 'OnFormCancel',
+		value: function OnFormCancel() {
+			try {
+				$('#incomplete-gift-alert').hide();
+				this.$giftFormModal.modal('hide');
+				this.$giftForm.validate().resetForm();
+
+				this._resetObservables();
+
+				window.location = "#page-top";
+			} catch (ex) {
+				console.log("Failed to reset fields OnFormCancel()");
+				console.log(ex);
+			}
+		}
+	}, {
+		key: '_openCheckout',
+		value: function _openCheckout() {
+			this.stripeHandler.open({
+				key: Configuration.StripeKey,
+				name: 'WMC Checkout',
+				amount: this.orderTotal() * 100,
+				zipCode: true,
+				email: this.email()
+			});
+		}
+	}, {
+		key: '_completeOrder',
+		value: function _completeOrder(token) {
+			try {
+				var self = this;
+				spinner.Show();
+				async.waterfall([this._executeCharge.bind(this, token), this._sendGiftConfirmation.bind(this)], function (possibleError) {
+					if (possibleError === Constants.CHARGE_FAILURE_MARKER) {
+						self.incompleteGiftMsg('That card information didn\'t work.');
+						$('#incomplete-gift-alert').show();
+					} else if (possibleError) {
+						self._onOrderFailure(possibleError);
+					} else {
+						self._onOrderSuccess();
+					}
+				});
+			} catch (ex) {
+				this._onOrderFailure(ex);
+			}
+		}
+	}, {
+		key: '_onOrderFailure',
+		value: function _onOrderFailure(error) {
+			this.$giftFormModal.modal('hide');
+			setTimeout(function () {
+				spinner.Hide();
+				dialogPresenter.ShowOrderFailure();
+				console.log(error);
+			}, 200);
+		}
+	}, {
+		key: '_onOrderSuccess',
+		value: function _onOrderSuccess() {
+			this.OnFormCancel();
+			setTimeout(function () {
+				spinner.Hide();
+				dialogPresenter.ShowOrderSuccess();
+			}, 200);
+		}
+	}, {
+		key: '_sendGiftConfirmation',
+		value: function _sendGiftConfirmation(callback) {
+			this.webSvc.SendGiftEmail(this.email(), this.orderTotal()).then(function () {
+				return callback();
+			}).fail(function (err) {
+				return callback(err);
+			});
+		}
+	}, {
+		key: '_executeCharge',
+		value: function _executeCharge(token, callback) {
+			this.webSvc.ExecuteCharge(token, this.orderTotal() * 100).then(function () {
+				return callback();
+			}).fail(function (err) {
+				console.log(err);
+				callback(Constants.CHARGE_FAILURE_MARKER);
+			});
+		}
+	}, {
+		key: '_resetObservables',
+		value: function _resetObservables() {
+			this.incompleteGiftMsg("");
+
+			// Order Details
+			this.addWash(true);
+			this.addShine(false);
+			this.addWax(false);
+			this.addInterior(false);
+
+			// Car Info
+			this.selectedCarSize(this.carSizes[0]);
+
+			// Contact Info
+			this.email("");
+
+			// Location Info
+			this.zip("");
+		}
+	}, {
+		key: '_initValidation',
+		value: function _initValidation() {
+			this.$giftForm.validate({
+				rules: {
+					zip: "required",
+					email: {
+						required: true,
+						email: true
+					}
+				},
+				messages: {
+					email: "Please enter a valid email address."
+				}
+			});
+		}
+	}, {
+		key: '_buildServicesSummary',
+		value: function _buildServicesSummary() {
+			var summary = "";
+			if (this.addWash()) {
+				summary += Configuration.WASH_DETAILS.title + "<br>";
+			}
+			if (this.addShine()) {
+				summary += Configuration.TIRE_SHINE_DETAILS.title + "<br>";
+			}
+			if (this.addWax()) {
+				summary += Configuration.WAX_DETAILS.title + "<br>";
+			}
+			if (this.addInterior()) {
+				summary += Configuration.INTERIOR_DETAILS.title + "<br>";
+			}
+
+			return summary;
+		}
+	}]);
+
+	return GiftFormViewModel;
+}();
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -871,7 +1138,7 @@ var LogInViewModel = function () {
 				var self = this;
 				spinner.Show();
 				this.webSvc.ForgotPassword(this.email()).then(function () {
-					self.loginFormMsg("Nice! All signed up ;)");
+					self.loginFormMsg("Nice! Check your email ;)");
 					self.$loginFormInfo.show();
 					self._resetForms();
 					self.ShowCreateAcct(false);
@@ -1023,7 +1290,7 @@ var MainViewModel = function () {
 		}
 	}]);
 
-	function MainViewModel(storageHelper, logInVm, orderFormVm) {
+	function MainViewModel(storageHelper, logInVm, orderFormVm, giftFormVm) {
 		_classCallCheck(this, MainViewModel);
 
 		// observables
@@ -1040,7 +1307,7 @@ var MainViewModel = function () {
 
 		this.LogInViewModel = logInVm;
 		this.OrderFormViewModel = orderFormVm;
-		// observables
+		this.GiftFormViewModel = giftFormVm;
 
 		this.storageHelper = storageHelper;
 		this.zip = ko.observable("");
@@ -1090,11 +1357,6 @@ var OrderFormViewModel = function () {
 				return car.selected();
 			});
 		}
-	}, {
-		key: 'StripeKey',
-		get: function get() {
-			return environment == 'production' ? 'pk_live_aULtlGy6YPvc94K5Hjvqwokg' : 'pk_test_luqEThs0vblV173fgAHgPZBG';
-		}
 	}]);
 
 	function OrderFormViewModel(storageHelper, webSvc) {
@@ -1104,7 +1366,7 @@ var OrderFormViewModel = function () {
 
 		// Configure Stripe
 		this.stripeHandler = StripeCheckout.configure({
-			key: self.StripeKey,
+			key: Configuration.StripeKey,
 			image: '/img/square_logo.png',
 			locale: 'auto',
 			token: this._completeOrder.bind(this)
@@ -1144,7 +1406,6 @@ var OrderFormViewModel = function () {
 		this.addShine = ko.observable(false);
 		this.addWax = ko.observable(false);
 		this.addInterior = ko.observable(false);
-		this.showBillingAddress = ko.observable(false);
 
 		this.description = ko.observable("");
 
@@ -1216,30 +1477,24 @@ var OrderFormViewModel = function () {
 				return total.toFixed(2);
 			}
 
-			if (self.coupon().discountPercentage == 100) {
-				// special case 100% free coupons
+			var couponAmount = parseInt(self.coupon().amount);
+			if (couponAmount > total) {
 				total = 0;
-			} else if (self.coupon().discountPercentage == 99) {
-				// special case 99% for testing
-				total = 0.01;
-			} else if (self.coupon().discountPercentage > 25) {
-				// normal coupons above 25% apply to the wash cost only
-				if (self.addWash() && self.SelectedCars.length > 0) {
-					var percent = self.coupon().discountPercentage / 100;
-					_.each(self.SelectedCars, function (car) {
-						var carSize = _.find(self.carSizes, function (s) {
-							return s.size == car.size || s.multiplier == car.multiplier;
-						});
-						total -= self.WASH_COST * carSize.multiplier * percent;
-					});
-				}
 			} else {
-				// normal coupons 25% and below apply to the full order value
-				var percent = self.coupon().discountPercentage / 100;
-				total = total - total * percent;
+				total -= couponAmount;
 			}
 
 			return parseFloat(total.toFixed(2));
+		});
+
+		this.discountRemaining = ko.computed(function () {
+			if (!self.coupon()) {
+				return 0;
+			}
+
+			var value = parseFloat(self.coupon().amount - self.orderTotal());
+
+			return value < 0 ? 0 : value;
 		});
 
 		this.orderSummary = ko.computed(function () {
@@ -1506,7 +1761,7 @@ var OrderFormViewModel = function () {
 		key: '_openCheckout',
 		value: function _openCheckout() {
 			this.stripeHandler.open({
-				key: this.StripeKey,
+				key: Configuration.StripeKey,
 				name: 'WMC Checkout',
 				amount: this.discountedTotal() * 100,
 				zipCode: true,
@@ -1674,13 +1929,11 @@ var OrderFormViewModel = function () {
 			this.addShine(false);
 			this.addWax(false);
 			this.addInterior(false);
-			this.showBillingAddress(false);
 
 			this.description = ko.observable("");
 			this.selectedTimeRange(Constants.TIME_RANGE_PLACE_HOLDER);
 
 			$('#datetimepicker').data("DateTimePicker").clear();
-			$('#wash-type-select').prop('selectedIndex', 0);
 
 			// Car Info
 			this.showAddVehicleForm(false);
@@ -2029,6 +2282,11 @@ var WebService = function () {
 		key: 'VerifyCoupon',
 		value: function VerifyCoupon(code) {
 			return this._executeAjaxCall('POST', "/api/verifyCoupon", { code: code });
+		}
+	}, {
+		key: 'SendGiftEmail',
+		value: function SendGiftEmail(email, giftAmount) {
+			return this._executeAjaxCall('POST', "/api/createOneTimeCoupon", { email: email, amount: giftAmount, duration: 90 });
 		}
 
 		// 'data' is an optional param

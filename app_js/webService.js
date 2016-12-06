@@ -53,6 +53,10 @@ class WebService {
 		return this._executeAjaxCall('POST', "/api/verifyCoupon", { code: code });
 	}
 
+	SendGiftEmail(email, giftAmount){
+		return this._executeAjaxCall('POST', "/api/createOneTimeCoupon", { email: email, amount: giftAmount, duration: 90 });
+	}
+
 	// 'data' is an optional param
 	_executeAjaxCall(type, ext, data){
 		this.deferred = $.Deferred();

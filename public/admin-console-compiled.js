@@ -155,8 +155,16 @@ var AdminConsoleVm = function () {
 						callback: function callback() {
 							try {
 								var newJson = $('#edit-appointment-json').val();
-								var data = JSON.parse(newJson);
-								webSvc.UpdateAppointment(data).then(function () {
+								var appt = JSON.parse(newJson);
+
+								var dateMoment = moment(appt.date);
+								if (!dateMoment.isValid()) {
+									bootbox.alert("Invalid date");
+									return;
+								}
+
+								appt.date = dateMoment.toDate();
+								webSvc.UpdateAppointment(appt).then(function () {
 									bootbox.alert("Update Successful!");
 									self.Load();
 								}).fail(function (err) {
@@ -297,7 +305,7 @@ var AdminConsoleVm = function () {
 			return {
 				startDate: new Date(),
 				endDate: null,
-				discountPercentage: 0,
+				amount: 0,
 				code: '',
 				onlyUseOnce: false
 			};

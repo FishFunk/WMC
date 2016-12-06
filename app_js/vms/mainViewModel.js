@@ -5,7 +5,7 @@ class MainViewModel {
 		return dialogPresenter;
 	}
 
-	constructor(storageHelper, logInVm, orderFormVm){
+	constructor(storageHelper, logInVm, orderFormVm, giftFormVm){
 		
 		// observables
 		this.WASH_COST = Configuration.WASH_DETAILS.price;
@@ -21,7 +21,7 @@ class MainViewModel {
 
 		this.LogInViewModel = logInVm;
 		this.OrderFormViewModel = orderFormVm;
-		// observables
+		this.GiftFormViewModel = giftFormVm;
 
 		this.storageHelper = storageHelper;
 		this.zip = ko.observable("");

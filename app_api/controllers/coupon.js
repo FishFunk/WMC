@@ -9,6 +9,7 @@ const createSuccessCode = 201;
 const readSuccessCode = 200;
 const noContentSuccessCode = 204;
 
+// Admin console only
 module.exports.getAllCoupons = (req, res)=>{
 	try{
 		Coupon.find({},
@@ -28,6 +29,7 @@ module.exports.getAllCoupons = (req, res)=>{
 	}
 };
 
+// Admin console only
 module.exports.createCoupon = (req, res)=>{
 	if(req.body && req.body.coupon){
 		Coupon.create(req.body.coupon, 
@@ -44,6 +46,7 @@ module.exports.createCoupon = (req, res)=>{
 	}
 };
 
+// Admin console only
 module.exports.deleteSingleCoupon = (req, res)=>{
 	const id = req.query.id;
 	if(id){
@@ -62,64 +65,75 @@ module.exports.deleteSingleCoupon = (req, res)=>{
 };
 
 module.exports.verifyCoupon = (req, res)=>{
-	if(req.body && req.body.code)
-	{
-		var today = new Date();
-		Coupon.findOne( { $or: [{code: req.body.code, startDate: { $lte: today }, endDate:  null },
-			{code: req.body.code, startDate: { $lte: today }, endDate: { $gte: today } }] },
-			(err, coupon)=>{
-			if(err){
-				console.error(err);
-				sendJsonResponse(res, internalErrorCode, "DB Failure - verifyCoupon", err);
-			} else if (!coupon) {
-				sendJsonResponse(res, noContentSuccessCode, "Invalid coupon");
-			} else {
-				if(coupon.onlyUseOnce){
-					Coupon.remove({_id: coupon._id}, (err)=>{
-						if(err){
-							console.error("Failed to remove one time coupon");
-							console.error(err);
-							sendJsonResponse(res, internalErrorCode, "Failed to remove one time coupon");
-						} else {
-							sendJsonResponse(res, readSuccessCode, "Success", coupon);
-						}
-					});
+	try{
+		if(req.body && req.body.code)
+		{
+			var today = new Date();
+			Coupon.findOne( { $or: [{code: req.body.code, startDate: { $lte: today }, endDate:  null },
+				{code: req.body.code, startDate: { $lte: today }, endDate: { $gte: today } }] },
+				(err, coupon)=>{
+				if(err){
+					console.error(err);
+					sendJsonResponse(res, internalErrorCode, "DB Failure - verifyCoupon", err);
+				} else if (!coupon) {
+					sendJsonResponse(res, noContentSuccessCode, "Invalid coupon");
 				} else {
-					sendJsonResponse(res, readSuccessCode, "Success", coupon);
+					if(coupon.onlyUseOnce){
+						Coupon.remove({_id: coupon._id}, (err)=>{
+							if(err){
+								console.error("Failed to remove one time coupon");
+								console.error(err);
+								sendJsonResponse(res, internalErrorCode, "Failed to remove one time coupon");
+							} else {
+								sendJsonResponse(res, readSuccessCode, "Success", coupon);
+							}
+						});
+					} else {
+						sendJsonResponse(res, readSuccessCode, "Success", coupon);
+					}
 				}
-			}
-		});
-	} else {
-		sendJsonResponse(res, badRequestCode, "Invalid request body");
+			});
+		} else {
+			sendJsonResponse(res, badRequestCode, "Invalid request body");
+		}
+	} catch (ex) {
+		sendJsonResponse(res, internalErrorCode, "Exception");
 	}
 };
 
-// Not exposed to API - used by user.js
-module.exports.createOneTimeCoupon = (email)=>{
-	var now = new Date();
-	var end = new Date();
-	end.setDate(now.getDate() + 7);
+module.exports.createOneTimeCoupon = (req, res)=>{
+	try{
+		if(req.body && req.body.email && req.body.amount && req.body.duration){
+			var now = new Date();
+			var end = new Date();
+			const duration = parseInt(req.body.duration);
+			end.setDate(now.getDate() + duration);
 
-	const couponCode = generateRandomCouponCode();
+			const email = req.body.email;
+			const coupon = {
+				code: generateRandomCouponCode(),
+				startDate: now,
+				endDate: end,
+				amount: req.body.amount,
+				onlyUseOnce: true
+			};
 
-	if(email)
-	{
-		Coupon.create({
-			code: couponCode,
-			startDate: now,
-			endDate: end,
-			discountPercentage: 50,
-			onlyUseOnce: true
-		}, (err, coupon)=>{
-			if(err){
-				console.log("DB Failure - createOneTimeCoupon");
-				console.error(err);
-			} else {
-				ctrlMsgs.sendCouponCode(couponCode, email);
-			}
-		});
-	} else {
-		console.log("No email provided - createOneTimeCoupon");
+			Coupon.create(coupon, (err, coup)=>{
+				if(err){
+					console.error("DB Failure - createOneTimeCoupon");
+					console.error(err);
+					sendJsonResponse(res, internalErrorCode, "Failed to create coupon");
+				} else {
+					ctrlMsgs.sendCouponCode(coup, email, res);
+				}
+			});
+		} else {
+			sendJsonResponse(res, badRequestCode, "Bad request body");
+		}
+	} catch (ex) {
+		console.log("Failure creating one time coupon");
+		console.error(ex);
+		sendJsonResponse(res, internalErrorCode, "Exception");
 	}
 }
 

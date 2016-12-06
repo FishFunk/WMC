@@ -161,8 +161,16 @@ class AdminConsoleVm{
 					callback: ()=>{
 						try{
 							const newJson = $('#edit-appointment-json').val();
-							const data = JSON.parse(newJson);
-							webSvc.UpdateAppointment(data)
+							const appt = JSON.parse(newJson);
+
+							const dateMoment = moment(appt.date);
+							if(!dateMoment.isValid()){
+								bootbox.alert("Invalid date");
+								return;
+							}
+
+							appt.date = dateMoment.toDate();
+							webSvc.UpdateAppointment(appt)
 								.then(()=>{
 									bootbox.alert("Update Successful!");
 									self.Load();
@@ -306,7 +314,7 @@ class AdminConsoleVm{
 		return {
 			startDate: new Date(),
 			endDate: null,
-			discountPercentage: 0,
+			amount: 0,
 			code: '',
 			onlyUseOnce: false
 		}
