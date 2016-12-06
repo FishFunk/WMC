@@ -106,7 +106,7 @@ module.exports.forgotPassword = (req, res)=>{
 }
 
 // Not exposed to API - used by coupon.js
-module.exports.sendCouponCode = (coupon, email, res)=>{
+module.exports.sendCouponCode = (coupon, email, duration, res)=>{
 	if(DEBUG_MODE){
 		console.log('DEBUG MODE - Coupon code email sent!');
 		sendJsonResponse(res, noContentSuccessCode, "DEBUG MODE - Coupon created and email sent");
@@ -129,7 +129,7 @@ module.exports.sendCouponCode = (coupon, email, res)=>{
 						    <hr>\
 			      			<p>Thanks for choosing WashMyCar, LLC! \
 			      			Apply the coupon below when scheduling an appointment and enjoy <strong>$'+ coupon.amount.toString()  +' off of your order!</strong> \
-			      			Discount is valid for ' + coupon.duration.toString() + ' days.</p> \
+			      			Discount is valid for ' + duration.toString() + ' days.</p> \
 			      			<u>Coupon Code:</u><h4>' + coupon.code + '</h4> \
 			      		</div>\
 			      		</body>\

@@ -124,7 +124,7 @@ module.exports.createOneTimeCoupon = (req, res)=>{
 					console.error(err);
 					sendJsonResponse(res, internalErrorCode, "Failed to create coupon");
 				} else {
-					ctrlMsgs.sendCouponCode(coup, email, res);
+					ctrlMsgs.sendCouponCode(coup, email, duration, res);
 				}
 			});
 		} else {
