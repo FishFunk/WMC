@@ -19,7 +19,6 @@ const strong = "<strong>";
 const _strong = "</strong>";
 
 const LOCAL = process.env.NODE_ENV == null;
-
 const TEST_MODE = process.env.NODE_ENV != 'production';
 
 const logoUrl = process.env.NODE_ENV == 'production' ? 
@@ -29,7 +28,7 @@ const logoUrl = process.env.NODE_ENV == 'production' ?
 const hrefPhone = "+12028109274";
 const displayPhone = "+202.810.9274";
 const contactEmail = "contact@washmycarva.com";
-const noReplyEmail = "donotreply@washmycarva.com";
+const fromNoReply = TEST_MODE ? "TESTING <donotreply@washmycarva.com>" : "WashMyCar, LLC <donotreply@washmycarva.com>";
 const appUrl = "http://www.washmycarva.com";
 
 var transport;
@@ -72,7 +71,7 @@ module.exports.forgotPassword = (req, res)=>{
 			}
 			else {
 				transport.sendMail({
-					from: 'WashMyCar, LLC <' + noReplyEmail + '>',
+					from: fromNoReply,
 					to: usr.email,
 					subject: 'Forgot Password',
 					html:
@@ -117,7 +116,7 @@ module.exports.sendCouponCode = (coupon, email, duration, res)=>{
 	try{
 		if(coupon && email){
 			transport.sendMail({
-		          from: TEST_MODE ? 'TESTING' : 'WashMyCar, LLC <donotreply@washmycarva.com>',
+		          from: fromNoReply,
 		          to: email,
 		          bcc: [process.env.BCC_EMAIL_1, process.env.BCC_EMAIL_2],
 		          subject: 'Your WashMyCar Coupon!',
@@ -191,7 +190,7 @@ module.exports.sendConfirmationEmail = (req, res)=>{
 		var newAppt = req.body.newAppt;
 
 		transport.sendMail({
-          from: TEST_MODE ? 'TESTING' : 'WashMyCar, LLC <donotreply@washmycarva.com>',
+          from: fromNoReply,
           to: userEmail,
           bcc: [process.env.BCC_EMAIL_1, process.env.BCC_EMAIL_2],
           subject: 'Order Confirmation',
@@ -236,7 +235,7 @@ module.exports.sendEmail = (req, res)=>{
 		var subject = req.body.subject
 
 		transport.sendMail({
-          from: TEST_MODE ? 'TESTING' : 'WashMyCar, LLC <' + from + '>',
+          from: 'WashMyCar, LLC <' + from + '>',
           to: to,
           bcc: [process.env.BCC_EMAIL_1, process.env.BCC_EMAIL_2],
           subject: subject,
