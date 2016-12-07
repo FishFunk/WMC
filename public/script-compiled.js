@@ -1549,6 +1549,14 @@ var OrderFormViewModel = function () {
 			}).on('dp.change', self._onDatepickerChange.bind(self));
 
 			self._initValidation();
+
+			var urlParams = new URLSearchParams(window.location.search);
+			var code = urlParams.get('coupon');
+			if (code) {
+				code = code.trim().toUpperCase();
+				self.couponCode(code);
+				self.$orderFormModal.modal('show');
+			};
 		}
 	}, {
 		key: 'OnAddNewLocation',

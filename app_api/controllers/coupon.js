@@ -109,7 +109,7 @@ module.exports.createOneTimeCoupon = (req, res)=>{
 			const duration = parseInt(req.body.duration);
 			end.setDate(now.getDate() + duration);
 
-			const email = req.body.email;
+			const email = req.body.email.trim().toLowerCase();
 			const coupon = {
 				code: generateRandomCouponCode(),
 				startDate: now,

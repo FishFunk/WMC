@@ -125,7 +125,7 @@ module.exports.sendCouponCode = (coupon, email, duration, res)=>{
 					 	<body>\
 					    <div style="padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto;">\
 					        <div style="text-align: center;">\
-					        <img src="square_logo.png" style="width:150px;">\
+					        <img src="' + logoUrl + '" style="width:150px;">\
 					        </div>\
 					        <hr>\
 					        <p>Thanks for choosing WashMyCar! \
@@ -133,30 +133,14 @@ module.exports.sendCouponCode = (coupon, email, duration, res)=>{
 					        <div style="width:100%;">\
 					            <div style="width: 340px; margin: 0 auto; height: auto; border-color: black; border-radius: 20px; border-style: dashed; text-align: center; padding:10px;">\
 					                <h3 id="coupon">' + coupon.code + '</h3>\
-					                <button style="color: rgb(255, 255, 255);background-color: rgb(0, 172, 234);border-color: rgb(0, 126, 255);display: inline-block; padding: 6px 12px; \
+					                <a style="color: rgb(255, 255, 255);background-color: rgb(0, 172, 234);border-color: rgb(0, 126, 255);display: inline-block; padding: 6px 12px; \
 					                font-size: 14px; font-weight: bold; text-align: center; vertical-align: middle; -ms-touch-action: manipulation; touch-action: manipulation; cursor: pointer; \
-					                border: 2px solid transparent; border-radius: 5px; width:80%;" onclick="copyToClipboard()">Copy Code And Go To Site</button><br><br>\
+					                border: 2px solid transparent; border-radius: 5px; width:80%;" href="' + appUrl + '?coupon=' + coupon.code + '">Copy Code And Go To Site</a><br><br>\
 					                <i style="font-size: 14px;">Coupon is valid for ' + duration.toString() + ' days.</i>\
 					            </div>\
 					        </div>\
 					    </div>\
 					    </body>\
-					    <script type="text/javascript">\
-					        function executeCopy(text) {\
-					            var input = document.createElement("textarea");\
-					            document.body.appendChild(input);\
-					            input.value = text;\
-					            input.focus();\
-					            input.select();\
-					            document.execCommand("Copy");\
-					            input.remove();\
-					        }\
-					        function copyToClipboard() {\
-					            var text = document.getElementById("coupon").innerHTML;\
-					            executeCopy(text);\
-					            window.location = "' + appUrl + '";\
-					        }\
-					    </script>\
 					</html>'
 		        },(err, responseStatus)=>{
 				  if (err) {
@@ -186,7 +170,7 @@ module.exports.sendConfirmationEmail = (req, res)=>{
 	}
 
 	if(req.body && req.body.email && req.body.newAppt){
-		var userEmail = req.body.email;
+		var userEmail = req.body.email.trim().toLowerCase();
 		var newAppt = req.body.newAppt;
 
 		transport.sendMail({
