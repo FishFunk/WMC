@@ -18,7 +18,9 @@ const br = "<br/>";
 const strong = "<strong>";
 const _strong = "</strong>";
 
-const DEBUG_MODE = process.env.NODE_ENV == null;
+const LOCAL = process.env.NODE_ENV == null;
+
+const TEST_MODE = process.env.NODE_ENV != 'production';
 
 const logoUrl = process.env.NODE_ENV == 'production' ? 
 	"https://wmc-prod.herokuapp.com/img/wmc_logo.png" :
@@ -28,11 +30,11 @@ const hrefPhone = "+12028109274";
 const displayPhone = "+202.810.9274";
 const contactEmail = "contact@washmycarva.com";
 const noReplyEmail = "donotreply@washmycarva.com";
-const appUrl = "www.washmycarva.com";
+const appUrl = "http://www.washmycarva.com";
 
 var transport;
 
-if(DEBUG_MODE){
+if(LOCAL){
 	console.log("Messenger controller running in DEBUG MODE");
 } else {
 	transport = mailer.createTransport(
@@ -54,7 +56,7 @@ if(DEBUG_MODE){
 }
 
 module.exports.forgotPassword = (req, res)=>{
-	if(DEBUG_MODE){
+	if(LOCAL){
 		sendJsonResponse(res, noContentSuccessCode, 'DEBUG MODE - Password reminder email sent! (not really)');
 		return;
 	}
@@ -70,7 +72,7 @@ module.exports.forgotPassword = (req, res)=>{
 			}
 			else {
 				transport.sendMail({
-					from: 'WashMyCar <' + noReplyEmail + '>',
+					from: 'WashMyCar, LLC <' + noReplyEmail + '>',
 					to: usr.email,
 					subject: 'Forgot Password',
 					html:
@@ -107,7 +109,7 @@ module.exports.forgotPassword = (req, res)=>{
 
 // Not exposed to API - used by coupon.js
 module.exports.sendCouponCode = (coupon, email, duration, res)=>{
-	if(DEBUG_MODE){
+	if(LOCAL){
 		console.log('DEBUG MODE - Coupon code email sent!');
 		sendJsonResponse(res, noContentSuccessCode, "DEBUG MODE - Coupon created and email sent");
 		return;
@@ -115,25 +117,48 @@ module.exports.sendCouponCode = (coupon, email, duration, res)=>{
 	try{
 		if(coupon && email){
 			transport.sendMail({
-		          from: 'WashMyCar <donotreply@washmycarva.com>',
+		          from: TEST_MODE ? 'TESTING' : 'WashMyCar, LLC <donotreply@washmycarva.com>',
 		          to: email,
 		          bcc: [process.env.BCC_EMAIL_1, process.env.BCC_EMAIL_2],
 		          subject: 'Your WashMyCar Coupon!',
-			      html:
-			      	'<html style="font-family: sans-serif; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">\
-			      		<body>\
-						<div style="padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto;">\
-						    <div style="text-align: center;">\
-						    <img src="' + logoUrl + '" style="width:150px;">\
-						    </div>\
-						    <hr>\
-			      			<p>Thanks for choosing WashMyCar, LLC! \
-			      			Apply the coupon below when scheduling an appointment and enjoy <strong>$'+ coupon.amount.toFixed(2).toString()  +' off of your order!</strong> \
-			      			Discount is valid for ' + duration.toString() + ' days.</p> \
-			      			<u>Coupon Code:</u><h4>' + coupon.code + '</h4> \
-			      		</div>\
-			      		</body>\
-			      	</html>'
+		          html:
+		          '<html style="font-family: sans-serif; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; font-size:18px;">\
+					 	<body>\
+					    <div style="padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto;">\
+					        <div style="text-align: center;">\
+					        <img src="square_logo.png" style="width:150px;">\
+					        </div>\
+					        <hr>\
+					        <p>Thanks for choosing WashMyCar! \
+					        Apply the coupon code below when scheduling an appointment and enjoy <strong>$' + coupon.amount.toFixed(2).toString() + ' off of your order!</strong></p><br>\
+					        <div style="width:100%;">\
+					            <div style="width: 340px; margin: 0 auto; height: auto; border-color: black; border-radius: 20px; border-style: dashed; text-align: center; padding:10px;">\
+					                <h3 id="coupon">' + coupon.code + '</h3>\
+					                <button style="color: rgb(255, 255, 255);background-color: rgb(0, 172, 234);border-color: rgb(0, 126, 255);display: inline-block; padding: 6px 12px; \
+					                font-size: 14px; font-weight: bold; text-align: center; vertical-align: middle; -ms-touch-action: manipulation; touch-action: manipulation; cursor: pointer; \
+					                border: 2px solid transparent; border-radius: 5px; width:80%;" onclick="copyToClipboard()">Copy Code And Go To Site</button><br><br>\
+					                <i style="font-size: 14px;">Coupon is valid for ' + duration.toString() + ' days.</i>\
+					            </div>\
+					        </div>\
+					    </div>\
+					    </body>\
+					    <script type="text/javascript">\
+					        function executeCopy(text) {\
+					            var input = document.createElement("textarea");\
+					            document.body.appendChild(input);\
+					            input.value = text;\
+					            input.focus();\
+					            input.select();\
+					            document.execCommand("Copy");\
+					            input.remove();\
+					        }\
+					        function copyToClipboard() {\
+					            var text = document.getElementById("coupon").innerHTML;\
+					            executeCopy(text);\
+					            window.location = "' + appUrl + '";\
+					        }\
+					    </script>\
+					</html>'
 		        },(err, responseStatus)=>{
 				  if (err) {
 				    console.log('Failed to send discount email');
@@ -156,7 +181,7 @@ module.exports.sendCouponCode = (coupon, email, duration, res)=>{
 }
 
 module.exports.sendConfirmationEmail = (req, res)=>{
-	if(DEBUG_MODE){
+	if(LOCAL){
 		sendJsonResponse(res, noContentSuccessCode, 'DEBUG MODE - Confirmation email(s) sent!');
 		return;
 	}
@@ -166,7 +191,7 @@ module.exports.sendConfirmationEmail = (req, res)=>{
 		var newAppt = req.body.newAppt;
 
 		transport.sendMail({
-          from: 'WashMyCar <donotreply@washmycarva.com>',
+          from: TEST_MODE ? 'TESTING' : 'WashMyCar, LLC <donotreply@washmycarva.com>',
           to: userEmail,
           bcc: [process.env.BCC_EMAIL_1, process.env.BCC_EMAIL_2],
           subject: 'Order Confirmation',
@@ -178,7 +203,7 @@ module.exports.sendConfirmationEmail = (req, res)=>{
 				    <img src="' + logoUrl + '" style="width:150px;">\
 				    </div>\
 				    <hr>\
-	      			<p>Thanks for your WMC order! We hope you enjoy your soon-to-be sparkling clean vehicle!</p>\
+	      			<p>Thanks for your WashMyCar order! We hope you enjoy your soon-to-be sparkling clean vehicle!</p>\
 	      			<legend>Your Appointment Details</legend>'
 	      			+ formatAppt(newAppt) +
 	      		'</div>\
@@ -199,7 +224,7 @@ module.exports.sendConfirmationEmail = (req, res)=>{
 
 // Used by admin console only
 module.exports.sendEmail = (req, res)=>{
-	if(DEBUG_MODE){
+	if(LOCAL){
 		sendJsonResponse(res, noContentSuccessCode, 'DEBUG MODE - Email(s) sent!');
 		return;
 	}
@@ -211,7 +236,7 @@ module.exports.sendEmail = (req, res)=>{
 		var subject = req.body.subject
 
 		transport.sendMail({
-          from: 'WashMyCar ' + from,
+          from: TEST_MODE ? 'TESTING' : 'WashMyCar, LLC <' + from + '>',
           to: to,
           bcc: [process.env.BCC_EMAIL_1, process.env.BCC_EMAIL_2],
           subject: subject,
