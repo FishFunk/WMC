@@ -29,7 +29,9 @@ const hrefPhone = "+12028109274";
 const displayPhone = "+202.810.9274";
 const contactEmail = "contact@washmycarva.com";
 const fromNoReply = TEST_MODE ? "TESTING <donotreply@washmycarva.com>" : "WashMyCar, LLC <donotreply@washmycarva.com>";
-const appUrl = "http://www.washmycarva.com";
+const appUrl = process.env.NODE_ENV == 'production' ? 
+	"http://www.washmycarva.com" :
+	"https://wmc-test.herokuapp.com";
 
 var transport;
 
