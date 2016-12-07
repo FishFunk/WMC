@@ -128,7 +128,7 @@ module.exports.sendCouponCode = (coupon, email, duration, res)=>{
 						    </div>\
 						    <hr>\
 			      			<p>Thanks for choosing WashMyCar, LLC! \
-			      			Apply the coupon below when scheduling an appointment and enjoy <strong>$'+ coupon.amount.toString()  +' off of your order!</strong> \
+			      			Apply the coupon below when scheduling an appointment and enjoy <strong>$'+ coupon.amount.toFixed(2).toString()  +' off of your order!</strong> \
 			      			Discount is valid for ' + duration.toString() + ' days.</p> \
 			      			<u>Coupon Code:</u><h4>' + coupon.code + '</h4> \
 			      		</div>\

@@ -123,10 +123,11 @@ class GiftFormViewModel {
 	}
 
 	_openCheckout(){
+		const total = parseInt(this.orderTotal() * 100);
 		this.stripeHandler.open({
 			key: Configuration.StripeKey,
 			name: 'WMC Checkout',
-			amount: this.orderTotal() * 100,
+			amount: total,
 			zipCode: true,
 			email: this.email()
 	    });

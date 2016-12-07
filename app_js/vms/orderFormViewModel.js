@@ -377,10 +377,11 @@ class OrderFormViewModel {
 	}
 
 	_openCheckout(){
+		const total = parseInt(this.discountedTotal() * 100);
 		this.stripeHandler.open({
 			key: Configuration.StripeKey,
 			name: 'WMC Checkout',
-			amount: this.discountedTotal() * 100,
+			amount: total,
 			zipCode: true,
 			email: this.email()
 	    });

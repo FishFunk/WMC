@@ -867,10 +867,11 @@ var GiftFormViewModel = function () {
 	}, {
 		key: '_openCheckout',
 		value: function _openCheckout() {
+			var total = parseInt(this.orderTotal() * 100);
 			this.stripeHandler.open({
 				key: Configuration.StripeKey,
 				name: 'WMC Checkout',
-				amount: this.orderTotal() * 100,
+				amount: total,
 				zipCode: true,
 				email: this.email()
 			});
@@ -1737,10 +1738,11 @@ var OrderFormViewModel = function () {
 	}, {
 		key: '_openCheckout',
 		value: function _openCheckout() {
+			var total = parseInt(this.discountedTotal() * 100);
 			this.stripeHandler.open({
 				key: Configuration.StripeKey,
 				name: 'WMC Checkout',
-				amount: this.discountedTotal() * 100,
+				amount: total,
 				zipCode: true,
 				email: this.email()
 			});
