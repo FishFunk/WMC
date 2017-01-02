@@ -207,14 +207,30 @@ class OrderFormViewModel {
 		}).on('dp.change', self._onDatepickerChange.bind(self));
 
 		self._initValidation();
-
-		var urlParams = new URLSearchParams(window.location.search);
-		var code = urlParams.get('coupon');
-		if(code){
-			code = code.trim().toUpperCase();
-			self.couponCode(code);
-			self.$orderFormModal.modal('show');
-		};
+		
+		try{
+			var code;
+			if(URLSearchParams != undefined){
+				var urlParams = new URLSearchParams(window.location.search);
+				code = urlParams.get('coupon');
+			} else {
+			    var query = window.location.search.substring(1);
+			    var vars = query.split('&');
+			    for (var i = 0; i < vars.length; i++) {
+				var pair = vars[i].split('=');
+				if (decodeURIComponent(pair[0]) == 'coupon') {
+				    code = decodeURIComponent(pair[1]);
+				}
+			    }
+			}
+			if(code){
+				code = code.trim().toUpperCase();
+				self.couponCode(code);
+				self.$orderFormModal.modal('show');
+			}
+		} catch (ex) {
+			console.log(ex);
+		}
 	}
 
 	OnAddNewLocation(){
