@@ -1541,7 +1541,7 @@ var OrderFormViewModel = function () {
 
 			$('#datetimepicker').datetimepicker({
 				minDate: moment().subtract(1, 'days'),
-				maxDate: moment().add(60, 'days'),
+				maxDate: moment().add(30, 'days'),
 				format: Configuration.DATE_FORMAT,
 				allowInputToggle: true,
 				focusOnShow: false,
