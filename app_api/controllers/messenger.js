@@ -28,7 +28,7 @@ const logoUrl = process.env.NODE_ENV == 'production' ?
 const hrefPhone = "+12028109274";
 const displayPhone = "+202.810.9274";
 const contactEmail = "contact@washmycarva.com";
-const fromNoReply = TEST_MODE ? "TESTING <donotreply@washmycarva.com>" : "WashMyCar, LLC <donotreply@washmycarva.com>";
+const fromNoReply = TEST_MODE ? "TESTING <donotreply@washmycarva.com>" : "WashMyCar LLC <donotreply@washmycarva.com>";
 const appUrl = process.env.NODE_ENV == 'production' ? 
 	"http://www.washmycarva.com" :
 	"https://wmc-test.herokuapp.com";
@@ -221,7 +221,7 @@ module.exports.sendEmail = (req, res)=>{
 		var subject = req.body.subject
 
 		transport.sendMail({
-          from: 'WashMyCar, LLC <' + from + '>',
+          from: 'WashMyCar LLC <' + from + '>',
           to: to,
           bcc: [process.env.BCC_EMAIL_1, process.env.BCC_EMAIL_2],
           subject: subject,
