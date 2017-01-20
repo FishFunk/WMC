@@ -201,6 +201,7 @@ class OrderFormViewModel {
 			minDate: moment().subtract(1, 'days'),
 			maxDate: moment().add(30, 'days'),
 			format: Configuration.DATE_FORMAT,
+			daysOfWeekDisabled: Configuration.BLOCKED_DAYS,
 			allowInputToggle: true,
 			focusOnShow: false,
 			ignoreReadonly: true
@@ -469,7 +470,6 @@ class OrderFormViewModel {
 
 	_verifyUser(callback){
 		var self = this;
-
 		if(this.storageHelper.LoggedInUser){
 			callback(null, this.storageHelper.LoggedInUser);
 		} else {
@@ -605,7 +605,7 @@ class OrderFormViewModel {
 	}
 
 	_updatePickerAndTimerangeOptions(momentObj){
-		if(Utils.IsHoliday(momentObj)){
+		if(Utils.IsHoliday(momentObj) || Utils.IsDayBlocked(momentObj)){
 			_.each(this.timeRangeOptions, (o)=>{
 				o.disabled(true);
 			});

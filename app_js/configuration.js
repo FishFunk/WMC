@@ -106,4 +106,8 @@ class Configuration
       "20124"
     ];
   }
+
+  get BLOCKED_DAYS(){
+    return this.settings.BLOCKED_DAYS || [];
+  }
 }

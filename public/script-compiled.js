@@ -347,6 +347,11 @@ var Configuration = function () {
     get: function get() {
       return this.settings.ZIP_WHITE_LIST || ["22314", "22301", "22305", "22302", "22304", "22202", "22206", "22311", "22312", "22204", "22041", "22211", "22201", "22203", "22209", "22044", "22151", "22150", "22152", "22153", "22015", "22205", "22042", "22046", "22003", "22207", "22213", "22031", "22043", "22027", "22101", "22182", "22030", "22032", "22039", "20124"];
     }
+  }, {
+    key: 'BLOCKED_DAYS',
+    get: function get() {
+      return this.settings.BLOCKED_DAYS || [];
+    }
   }]);
 
   return Configuration;
@@ -733,6 +738,12 @@ var Utils = function () {
 			    memorial = dateObj.getDay() === 1 && dateObj.getDate() + 7 > 30 ? "5" : null;
 
 			return _holidays['M'][momentObj.format('MM/DD')] || _holidays['W'][momentObj.format('M/' + (memorial || diff) + '/d')];
+		}
+	}, {
+		key: 'IsDayBlocked',
+		value: function IsDayBlocked(momentObj) {
+			var dayOfWeek = momentObj.day();
+			return _.contains(Configuration.BLOCKED_DAYS, dayOfWeek);
 		}
 	}]);
 
@@ -1543,6 +1554,7 @@ var OrderFormViewModel = function () {
 				minDate: moment().subtract(1, 'days'),
 				maxDate: moment().add(30, 'days'),
 				format: Configuration.DATE_FORMAT,
+				daysOfWeekDisabled: Configuration.BLOCKED_DAYS,
 				allowInputToggle: true,
 				focusOnShow: false,
 				ignoreReadonly: true
@@ -1827,7 +1839,6 @@ var OrderFormViewModel = function () {
 		key: '_verifyUser',
 		value: function _verifyUser(callback) {
 			var self = this;
-
 			if (this.storageHelper.LoggedInUser) {
 				callback(null, this.storageHelper.LoggedInUser);
 			} else {
@@ -1975,7 +1986,7 @@ var OrderFormViewModel = function () {
 	}, {
 		key: '_updatePickerAndTimerangeOptions',
 		value: function _updatePickerAndTimerangeOptions(momentObj) {
-			if (Utils.IsHoliday(momentObj)) {
+			if (Utils.IsHoliday(momentObj) || Utils.IsDayBlocked(momentObj)) {
 				_.each(this.timeRangeOptions, function (o) {
 					o.disabled(true);
 				});
