@@ -348,9 +348,30 @@ var Configuration = function () {
       return this.settings.ZIP_WHITE_LIST || ["22314", "22301", "22305", "22302", "22304", "22202", "22206", "22311", "22312", "22204", "22041", "22211", "22201", "22203", "22209", "22044", "22151", "22150", "22152", "22153", "22015", "22205", "22042", "22046", "22003", "22207", "22213", "22031", "22043", "22027", "22101", "22182", "22030", "22032", "22039", "20124"];
     }
   }, {
-    key: 'BLOCKED_DAYS',
+    key: 'SCHEDULE',
     get: function get() {
-      return this.settings.BLOCKED_DAYS || [];
+      return this.settings.SCHEDULE || [{
+        day: 0, // Sunday
+        blockedTimeSlots: []
+      }, {
+        day: 1,
+        blockedTimeSlots: []
+      }, {
+        day: 2,
+        blockedTimeSlots: [1, 2]
+      }, {
+        day: 3,
+        blockedTimeSlots: [1, 2]
+      }, {
+        day: 4,
+        blockedTimeSlots: [1, 2]
+      }, {
+        day: 5,
+        blockedTimeSlots: [1, 2]
+      }, {
+        day: 6,
+        blockedTimeSlots: []
+      }];
     }
   }]);
 
@@ -738,12 +759,6 @@ var Utils = function () {
 			    memorial = dateObj.getDay() === 1 && dateObj.getDate() + 7 > 30 ? "5" : null;
 
 			return _holidays['M'][momentObj.format('MM/DD')] || _holidays['W'][momentObj.format('M/' + (memorial || diff) + '/d')];
-		}
-	}, {
-		key: 'IsDayBlocked',
-		value: function IsDayBlocked(momentObj) {
-			var dayOfWeek = momentObj.day();
-			return _.contains(Configuration.BLOCKED_DAYS, dayOfWeek);
 		}
 	}]);
 
@@ -1986,7 +2001,7 @@ var OrderFormViewModel = function () {
 	}, {
 		key: '_updatePickerAndTimerangeOptions',
 		value: function _updatePickerAndTimerangeOptions(momentObj) {
-			if (Utils.IsHoliday(momentObj) || Utils.IsDayBlocked(momentObj)) {
+			if (Utils.IsHoliday(momentObj)) {
 				_.each(this.timeRangeOptions, function (o) {
 					o.disabled(true);
 				});
@@ -1996,6 +2011,10 @@ var OrderFormViewModel = function () {
 			var hourOfDay = moment().hour();
 			var today = moment().format(Configuration.DATE_FORMAT);
 			var selectedDate = momentObj.format(Configuration.DATE_FORMAT);
+			var dayOfWeek = momentObj.day();
+			var schedule = _.find(Configuration.SCHEDULE, function (x) {
+				return x.day === dayOfWeek;
+			});
 
 			var appointments = this.storageHelper.AppointmentsByDate[selectedDate] || [];
 
@@ -2015,16 +2034,16 @@ var OrderFormViewModel = function () {
 
 			Constants.MORNING_TIME_RANGE.disabled(_.reduce(morningAppts, function (total, appt) {
 				return total + appt.timeEstimate;
-			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 9);
+			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 9 || _.contains(schedule.blockedTimeSlots, Constants.MORNING_TIME_RANGE.key));
 			Constants.AFTERNOON_TIME_RANGE.disabled(_.reduce(afternoonAppts, function (total, appt) {
 				return total + appt.timeEstimate;
-			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 12);
+			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 12 || _.contains(schedule.blockedTimeSlots, Constants.AFTERNOON_TIME_RANGE.key));
 			Constants.EVENING_TIME_RANGE.disabled(_.reduce(eveningAppts, function (total, appt) {
 				return total + appt.timeEstimate;
-			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 15);
+			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 15 || _.contains(schedule.blockedTimeSlots, Constants.EVENING_TIME_RANGE.key));
 			Constants.NIGHT_TIME_RANGE.disabled(_.reduce(nightAppts, function (total, appt) {
 				return total + appt.timeEstimate;
-			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 18);
+			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 18 || _.contains(schedule.blockedTimeSlots, Constants.NIGHT_TIME_RANGE.key));
 
 			this.selectedTimeRange(Constants.TIME_RANGE_PLACE_HOLDER);
 		}

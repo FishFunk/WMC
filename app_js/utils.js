@@ -74,9 +74,4 @@ class Utils{
 
         return (_holidays['M'][momentObj.format('MM/DD')] || _holidays['W'][momentObj.format('M/'+ (memorial || diff) +'/d')]);
 	}
-
-	static IsDayBlocked(momentObj){
-		const dayOfWeek = momentObj.day();
-		return _.contains(Configuration.BLOCKED_DAYS, dayOfWeek);
-	}
 }

@@ -107,7 +107,36 @@ class Configuration
     ];
   }
 
-  get BLOCKED_DAYS(){
-    return this.settings.BLOCKED_DAYS || [];
+  get SCHEDULE(){
+    return this.settings.SCHEDULE || [
+      {
+        day : 0, // Sunday
+        blockedTimeSlots : []
+      },
+      {
+        day : 1,
+        blockedTimeSlots : []
+      },
+      {
+        day : 2,
+        blockedTimeSlots : [1,2]
+      },
+      {
+        day : 3,
+        blockedTimeSlots : [1,2]
+      },
+      {
+        day : 4,
+        blockedTimeSlots : [1,2]
+      },
+      {
+        day : 5,
+        blockedTimeSlots : [1,2]
+      },
+      {
+        day : 6,
+        blockedTimeSlots : []
+      }
+    ];
   }
 }
