@@ -468,8 +468,8 @@ class OrderFormViewModel {
 		}, 200);
 	}
 
-	_sendEmailConfirmation(email, newAppt, callback){
-		this.webSvc.SendConfirmationEmail(email, newAppt)
+	_sendEmailConfirmation(user, newAppt, callback){
+		this.webSvc.SendConfirmationEmail(user.firstName, user.email, user.phone, newAppt)
 			.then(()=> callback())
 			.fail(err => callback(err));
 	}
@@ -480,14 +480,14 @@ class OrderFormViewModel {
 			callback(null, this.storageHelper.LoggedInUser);
 		} else {
 			this.webSvc.GetUserByEmail(this.email())
-				.then((usr)=>{
-					if(usr){
-						callback(null, usr);
+				.then((user)=>{
+					if(user){
+						callback(null, user);
 					} else {
 						// create new guest user
-						var guestUsr = self._makeGuestUserSchema();
-						self.webSvc.CreateUser(guestUsr)
-							.then(()=>callback(null, guestUsr))
+						var guestUser = self._makeGuestUserSchema();
+						self.webSvc.CreateUser(guestUser)
+							.then(()=>callback(null, guestUser))
 							.fail((err)=>callback(err));
 					}
 				})
@@ -524,7 +524,7 @@ class OrderFormViewModel {
 		currentUsr.lastName = this.last();
 
 		this.webSvc.UpdateUser(currentUsr)
-			.then(()=>callback(null, currentUsr.email, newAppt))
+			.then(()=>callback(null, currentUsr, newAppt))
 			.fail((err) =>callback(err));
 	}
 

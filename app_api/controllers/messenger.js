@@ -171,9 +171,13 @@ module.exports.sendConfirmationEmail = (req, res)=>{
 		return;
 	}
 
-	if(req.body && req.body.email && req.body.newAppt){
+	if(req.body && req.body.phone && req.body.email && req.body.newAppt){
 		var userEmail = req.body.email.trim().toLowerCase();
 		var newAppt = req.body.newAppt;
+		var phone = req.body.phone;
+		var greeting = req.body.firstName ? 
+			"<h4>Hi " + req.body.firstName + ",</h4>" : 
+			"";
 
 		transport.sendMail({
           from: fromNoReply,
@@ -187,10 +191,11 @@ module.exports.sendConfirmationEmail = (req, res)=>{
 				    <div style="text-align: center;">\
 				    <img src="' + logoUrl + '" style="width:150px;">\
 				    </div>\
-				    <hr>\
-	      			<p>Thanks for your WashMyCar order! We hope you enjoy your soon-to-be sparkling clean vehicle!</p>\
+				    <hr>' + 
+				    greeting +
+	      			'<p>Thanks for your WashMyCar order! We hope you enjoy your soon-to-be sparkling clean vehicle!</p>\
 	      			<legend>Your Appointment Details</legend>'
-	      			+ formatAppt(newAppt) +
+	      			+ formatInfo(newAppt, phone) +
 	      		'</div>\
 	      		</body>\
 	      	</html>'
@@ -250,13 +255,14 @@ module.exports.sendEmail = (req, res)=>{
 	}
 }
 
-var formatAppt = (appt)=>{
+var formatInfo = (appt, phone)=>{
 	var apptHtml = "";
 
 	var dt = new Date(appt.date);
 	var prepaid = appt.prepaid ? " (Prepaid: YES)" : " (Prepaid: NO)";
 	
 	apptHtml += ul +
+		li + strong + 'Phone: ' + _strong + phone + _li +
 		li + strong + 'Where: ' + _strong + formatLocation(appt.location) + _li +
 		li + strong + 'Date: ' + _strong + dt.toLocaleDateString("en-US") + _li + 
 		li + strong + 'Time: ' + _strong + appt.timeRange + _li + 

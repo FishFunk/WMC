@@ -20,8 +20,9 @@ class WebService {
 		return this._executeAjaxCall('POST', "/api/getUserByEmailAndPwd", {email: email, pwd: pwd});
 	}
 
-	SendConfirmationEmail(email, newAppt){
-		return this._executeAjaxCall('POST', "/api/sendConfirmationEmail", {email: email, newAppt: newAppt})
+	SendConfirmationEmail(firstName, email, phone, newAppt){
+		return this._executeAjaxCall('POST', "/api/sendConfirmationEmail", 
+			{firstName: firstName, email: email, phone: phone, newAppt: newAppt})
 	}
 
 	UpdateUser(user){

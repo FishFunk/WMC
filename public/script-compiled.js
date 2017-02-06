@@ -1923,8 +1923,8 @@ var OrderFormViewModel = function () {
 		}
 	}, {
 		key: '_sendEmailConfirmation',
-		value: function _sendEmailConfirmation(email, newAppt, callback) {
-			this.webSvc.SendConfirmationEmail(email, newAppt).then(function () {
+		value: function _sendEmailConfirmation(user, newAppt, callback) {
+			this.webSvc.SendConfirmationEmail(user.firstName, user.email, user.phone, newAppt).then(function () {
 				return callback();
 			}).fail(function (err) {
 				return callback(err);
@@ -1937,14 +1937,14 @@ var OrderFormViewModel = function () {
 			if (this.storageHelper.LoggedInUser) {
 				callback(null, this.storageHelper.LoggedInUser);
 			} else {
-				this.webSvc.GetUserByEmail(this.email()).then(function (usr) {
-					if (usr) {
-						callback(null, usr);
+				this.webSvc.GetUserByEmail(this.email()).then(function (user) {
+					if (user) {
+						callback(null, user);
 					} else {
 						// create new guest user
-						var guestUsr = self._makeGuestUserSchema();
-						self.webSvc.CreateUser(guestUsr).then(function () {
-							return callback(null, guestUsr);
+						var guestUser = self._makeGuestUserSchema();
+						self.webSvc.CreateUser(guestUser).then(function () {
+							return callback(null, guestUser);
 						}).fail(function (err) {
 							return callback(err);
 						});
@@ -1984,7 +1984,7 @@ var OrderFormViewModel = function () {
 			currentUsr.lastName = this.last();
 
 			this.webSvc.UpdateUser(currentUsr).then(function () {
-				return callback(null, currentUsr.email, newAppt);
+				return callback(null, currentUsr, newAppt);
 			}).fail(function (err) {
 				return callback(err);
 			});
@@ -2335,8 +2335,8 @@ var WebService = function () {
 		}
 	}, {
 		key: 'SendConfirmationEmail',
-		value: function SendConfirmationEmail(email, newAppt) {
-			return this._executeAjaxCall('POST', "/api/sendConfirmationEmail", { email: email, newAppt: newAppt });
+		value: function SendConfirmationEmail(firstName, email, phone, newAppt) {
+			return this._executeAjaxCall('POST', "/api/sendConfirmationEmail", { firstName: firstName, email: email, phone: phone, newAppt: newAppt });
 		}
 	}, {
 		key: 'UpdateUser',
