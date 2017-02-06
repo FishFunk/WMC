@@ -29,26 +29,32 @@ class OrderFormViewModel {
 			self._prePopulateUserData();
 		});
 
-		this.TIRE_SHINE_COST = Configuration.TIRE_SHINE_DETAILS.price;
-		this.INTERIOR_COST = Configuration.INTERIOR_DETAILS.price;
-		this.WAX_COST = Configuration.WAX_DETAILS.price;
-		this.WASH_COST = Configuration.WASH_DETAILS.price;
-
-		this.TIRE_SHINE_TITLE = Configuration.TIRE_SHINE_DETAILS.title;
-		this.INTERIOR_TITLE = Configuration.INTERIOR_DETAILS.title;
-		this.WAX_TITLE = Configuration.WAX_DETAILS.title;
-		this.WASH_TITLE = Configuration.WASH_DETAILS.title;
-
 		this.disableEmailInput = ko.observable(false);
 		this.incompleteFormMsg = ko.observable("");
 
 		this.showNewUserAlert = ko.observable(false);
 
 		// Order Details
-		this.addWash = ko.observable(true);
-		this.addShine = ko.observable(false);
-		this.addWax = ko.observable(false);
-		this.addInterior = ko.observable(false);
+		this.Services = ko.observableArray(Configuration.SERVICES);
+		this.addWash = ko.computed(()=>{
+			return _.find(this.Services(), (s) => s.item == Constants.WASH).checked();
+		});
+		this.addInterior = ko.computed(()=>{
+			return _.find(this.Services(), (s) => s.item == Constants.INTERIOR).checked();
+		});
+
+		this.addWash.subscribe((bool)=>{
+			this.Services().forEach((s)=>{
+				if(s.item != Constants.INTERIOR && s.item != Constants.WASH)
+				{
+					s.disable(!bool);
+				}
+			});
+		});
+
+		this.Rows = _.partition(this.Services(), (s)=>{
+			return s.sortOrder <= Math.ceil(this.Services().length / 2);
+		});
 
 		this.description = ko.observable("");
 
@@ -109,12 +115,12 @@ class OrderFormViewModel {
 
 		this.orderTotal = ko.computed(()=>{
 			let total = 0.00;
-			let serviceCost = 
-					(self.addWash() ? self.WASH_COST : 0) +
-					(self.addShine() && self.addWash()? self.TIRE_SHINE_COST : 0) + 
-					(self.addWax() && self.addWash() ? self.WAX_COST : 0) + 
-					(self.addInterior() ? self.INTERIOR_COST : 0);
-
+			let serviceCost = _.reduce(this.Services(), function(memo, s){ 
+				if(s.checked()){
+					memo += s.price;
+				} 
+				return memo;
+			}, 0);
 			_.each(self.SelectedCars, (car)=>{
 				var carSize = _.find(self.carSizes, (s)=> s.size == car.size || s.multiplier == car.multiplier);
 				total += carSize.multiplier * serviceCost;
@@ -561,11 +567,6 @@ class OrderFormViewModel {
 		this.incompleteFormMsg("");
 
 		// Order Details
-		this.addWash(true);
-		this.addShine(false);
-		this.addWax(false);
-		this.addInterior(false);
-
 		this.description = ko.observable("");
 		this.selectedTimeRange(Constants.TIME_RANGE_PLACE_HOLDER);
 
@@ -770,19 +771,11 @@ class OrderFormViewModel {
 	_getTimeEstimate(){
 		var totalTime = 0;
 
-		if(this.addWash()){
-			totalTime += Configuration.WASH_DETAILS.time;
-		}
-
-		if(this.addShine()){
-			totalTime += Configuration.TIRE_SHINE_DETAILS.time;
-		}
-		if(this.addWax()){
-			totalTime += Configuration.WAX_DETAILS.time;
-		}
-		if(this.addInterior()){
-			totalTime += Configuration.INTERIOR_DETAILS.time;
-		}
+		this.Services().forEach(s =>{
+			if(s.checked()){
+				totalTime += s.time;
+			}
+		});
 
 		totalTime += Configuration.AVG_JOB_SETUP_TIME;
 
@@ -793,35 +786,24 @@ class OrderFormViewModel {
 
 	_buildServicesArray(){
 		var services = [];
-		if(this.addWash()){
-			services.push(Configuration.WASH_DETAILS.title);
-		}
-		if(this.addShine()){
-			services.push(Configuration.TIRE_SHINE_DETAILS.title);
-		}
-		if(this.addWax()){
-			services.push(Configuration.WAX_DETAILS.title);
-		}
-		if(this.addInterior()){
-			services.push(Configuration.INTERIOR_DETAILS.title);
-		}
+
+		this.Services().forEach(s =>{
+			if(s.checked()){
+				services.push(s.title);
+			}
+		});
+
 		return services;
 	}
 
 	_buildServicesSummary(){
 		var summary = "";
-		if(this.addWash()){
-			summary += Configuration.WASH_DETAILS.title + "<br>";
-		}
-		if(this.addShine()){
-			summary += Configuration.TIRE_SHINE_DETAILS.title + "<br>";
-		}
-		if(this.addWax()){
-			summary += Configuration.WAX_DETAILS.title + "<br>";
-		}
-		if(this.addInterior()){
-			summary += Configuration.INTERIOR_DETAILS.title + "<br>";
-		}
+		
+		this.Services().forEach(s =>{
+			if(s.checked()){
+				summary += s.title + "<br>";
+			}
+		});
 
 		return summary;	
 	}

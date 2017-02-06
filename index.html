@@ -144,55 +144,34 @@
                         <h2 class="section-heading">Services</h2>
                     </div>
                 </div>
-                <div class="row text-center">
-                   <div class="col-md-6">
-                        <div class="circle">
-                            <span data-bind="html: WashPriceHtml"></span>
+                <!-- ko foreach: Services -->
+                <div class="text-center" data-bind="css: { 'col-md-6' : !$data.fullSpan, 'col-md-12' : $data.fullSpan }">
+                    <div class="circle">
+                        <div>
+                            <span><sup>$</sup><span data-bind="text: $data.price"></span></span>
                         </div>
-                        <h4 class="service-heading" data-bind="text: WASH_TITLE"></h4>
-                        <p class="text-muted">We use an advanced eco-friendly hand washing technique to thoroughly remove contaminants from the wheels and surface of your vehicle!</p>
                     </div>
-                   <div class="col-md-6">
-                        <div class="circle">
-                            <span data-bind="html: InteriorPriceHtml"></span>
-                        </div>
-                        <h4 class="service-heading" data-bind="text: INTERIOR_TITLE"></h4>
-                        <p class="text-muted">A clean interior means happy passengers. Add this service and we'll vacuum, spot remove stains, clean windows, and wipe down the dash, seats, door jambs, and trim!</p>
+                    <h4 class="service-heading" data-bind="text: $data.title"></h4>
+                    <p class="text-muted" data-bind="text: $data.description"></p>
+                </div>
+                <!-- /ko -->
+            </div>
+        </section>
+
+        <section id="contact">
+            <div class="container dim">
+                <div class="row">
+                    <div class="col-xs-12 text-center">
+                        <h4 class="section-heading">Save time and keep your car looking great.</h4>
                     </div>
                 </div>
-                <div class="row text-center">
-                    <div class="col-md-6">
-                        <div class="circle">
-                           <span data-bind="html: TireShinePriceHtml"></span>
-                        </div>
-                        <h4 class="service-heading" data-bind="text: TIRE_SHINE_TITLE"></h4>
-                        <p class="text-muted">Make your car look new again with a hand applied gel coating that protects your tires from harmful UV rays and provides a beautiful shine.</p>
-                   </div>
-                    <div class="col-md-6">
-                        <div class="circle">
-                        	<span data-bind="html: WaxPriceHtml"></span>
-                        </div>
-                        <h4 class="service-heading" data-bind="text: WAX_TITLE"></h4>
-                        <p class="text-muted">With this package we'll hand apply top of the line wax to your vehicle's body which provides extra shine and protection! We recommend waxing your vehicles every 3 to 6 months.</p>
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <button class="btn btn-xl ghost-btn" type="button" data-toggle="modal" data-target="#login-modal">Schedule Now!</button>
                     </div>
                 </div>
             </div>
         </section>
-
-    <section id="contact">
-        <div class="container dim">
-            <div class="row">
-                <div class="col-xs-12 text-center">
-                    <h4 class="section-heading">Save time and keep your car looking great.</h4>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <button class="btn btn-xl ghost-btn" type="button" data-toggle="modal" data-target="#login-modal">Schedule Now!</button>
-                </div>
-            </div>
-        </div>
-    </section>
 
 <footer>
     <div class="container">

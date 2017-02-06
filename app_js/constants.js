@@ -23,7 +23,13 @@ const ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
       TIME_RANGE_PLACE_HOLDER = {
         range: "",
         disabled: ko.observable(true)
-      }
+      },
+      WASH = 1,
+      TIRE_SHINE = 2,
+      INTERIOR = 3,
+      WAX = 4
+      // RAIN_GUARD = 5,
+      // HEADLIGHT_RESTORE = 6
 
 class Constants {
   static get MORNING_TIME_RANGE(){
@@ -53,4 +59,28 @@ class Constants {
   static get TIME_RANGE_PLACE_HOLDER(){
     return TIME_RANGE_PLACE_HOLDER;
   }
+
+  static get WASH(){
+    return WASH;
+  }
+
+  static get TIRE_SHINE(){
+    return TIRE_SHINE;
+  }
+
+  static get INTERIOR(){
+    return INTERIOR;
+  }
+
+  static get WAX(){
+    return WAX;
+  }
+
+  // static get WAX(){
+  //   return RAIN_GUARD;
+  // }
+
+  // static get WAX(){
+  //   return HEADLIGHT_RESTORE;
+  // }
 }

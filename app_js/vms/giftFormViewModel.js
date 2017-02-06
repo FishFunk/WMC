@@ -21,23 +21,30 @@ class GiftFormViewModel {
 
 		this.$giftFormModal = $('#gift-form-modal');
 
-		this.TIRE_SHINE_COST = Configuration.TIRE_SHINE_DETAILS.price;
-		this.INTERIOR_COST = Configuration.INTERIOR_DETAILS.price;
-		this.WAX_COST = Configuration.WAX_DETAILS.price;
-		this.WASH_COST = Configuration.WASH_DETAILS.price;
-
-		this.TIRE_SHINE_TITLE = Configuration.TIRE_SHINE_DETAILS.title;
-		this.INTERIOR_TITLE = Configuration.INTERIOR_DETAILS.title;
-		this.WAX_TITLE = Configuration.WAX_DETAILS.title;
-		this.WASH_TITLE = Configuration.WASH_DETAILS.title;
-
 		this.incompleteGiftMsg = ko.observable("");
 
 		// Order Details
-		this.addWash = ko.observable(true);
-		this.addShine = ko.observable(false);
-		this.addWax = ko.observable(false);
-		this.addInterior = ko.observable(false);
+		this.Services = ko.observableArray(Configuration.SERVICES);
+		this.addWash = ko.computed(()=>{
+			return _.find(this.Services(), (s) => s.item == Constants.WASH).checked();
+		});
+		this.addInterior = ko.computed(()=>{
+			return _.find(this.Services(), (s) => s.item == Constants.INTERIOR).checked();
+		});
+
+		this.addWash.subscribe((bool)=>{
+			this.Services().forEach((s)=>{
+				if(s.item != Constants.INTERIOR && s.item != Constants.WASH)
+				{
+					s.disable(!bool);
+				}
+			});
+		});
+
+		this.Rows = _.partition(this.Services(), (s)=>{
+			return s.sortOrder <= Math.ceil(this.Services().length / 2);
+		});
+
 
 		// Car Info
 		this.carSizes = Configuration.CAR_SIZES;
@@ -51,11 +58,12 @@ class GiftFormViewModel {
 
 		this.orderTotal = ko.computed(()=>{
 			let total = 0.00;
-			let serviceCost = 
-					(self.addWash() ? self.WASH_COST : 0) +
-					(self.addShine() && self.addWash()? self.TIRE_SHINE_COST : 0) + 
-					(self.addWax() && self.addWash() ? self.WAX_COST : 0) + 
-					(self.addInterior() ? self.INTERIOR_COST : 0);
+			let serviceCost = _.reduce(this.Services(), function(memo, s){ 
+				if(s.checked()){
+					memo += s.price;
+				} 
+				return memo;
+			}, 0);
 
 			total += self.selectedCarSize().multiplier * serviceCost;
 
@@ -83,6 +91,7 @@ class GiftFormViewModel {
 
 	OnSubmit(){
 		var self = this;
+
 		if(!this.addWash() && !this.addInterior()){
 			this.incompleteGiftMsg('Interior and/or exterior cleaning must be selected.');
 			$('#incomplete-gift-alert').show();
@@ -195,10 +204,7 @@ class GiftFormViewModel {
 		this.incompleteGiftMsg("");
 
 		// Order Details
-		this.addWash(true);
-		this.addShine(false);
-		this.addWax(false);
-		this.addInterior(false);
+		this.Services().forEach(s => s.checked(false));
 
 		// Car Info
 		this.selectedCarSize(this.carSizes[0]);
@@ -227,18 +233,12 @@ class GiftFormViewModel {
 
 	_buildServicesSummary(){
 		var summary = "";
-		if(this.addWash()){
-			summary += Configuration.WASH_DETAILS.title + "<br>";
-		}
-		if(this.addShine()){
-			summary += Configuration.TIRE_SHINE_DETAILS.title + "<br>";
-		}
-		if(this.addWax()){
-			summary += Configuration.WAX_DETAILS.title + "<br>";
-		}
-		if(this.addInterior()){
-			summary += Configuration.INTERIOR_DETAILS.title + "<br>";
-		}
+		
+		this.Services().forEach(s =>{
+			if(s.checked()){
+				summary += s.title + "<br>";
+			}
+		});
 
 		return summary;	
 	}

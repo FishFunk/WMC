@@ -7,27 +7,21 @@
     <div class="row">
       <legend class="col-xs-12">Order Details</legend>
       <div class="form-group col-xs-12">
-        <label class="control-label" for="checkbox">Service Options</label>
-        <div class="form-group">
+        <!-- ko foreach: Rows -->
+        <div class="col-sm-6">
+          <!-- ko foreach: $data -->
           <div class="checkbox">
-            <label><input type="checkbox" data-bind="checked: addWash">&nbsp;<span data-bind="text: WASH_TITLE"></span></label>&nbsp;(<strong>$<span data-bind="text: WASH_COST"></span></strong>)
+            <label data-bind="css: { 'strike-text': $data.disable }"><input type="checkbox" data-bind="checked: $data.checked, disable: $data.disable">&nbsp;<span data-bind="text: $data.title"></span></label>&nbsp;(<strong>$<span data-bind="text: $data.price"></span></strong>)
           </div>
-          <div class="checkbox">
-            <label data-bind="css: { 'strike-text': !addWash() }"><input type="checkbox" data-bind="checked: addShine, enable: addWash">&nbsp;<span data-bind="text: TIRE_SHINE_TITLE"></span>&nbsp;</label>(<strong>$<span data-bind="text: TIRE_SHINE_COST"></span></strong>)
-          </div>
-          <div class="checkbox">
-            <label data-bind="css: { 'strike-text': !addWash() }"><input type="checkbox" data-bind="checked: addWax, enable: addWash">&nbsp;<span data-bind="text: WAX_TITLE"></span></label>&nbsp;(<strong>$<span data-bind="text: WAX_COST"></span></strong>)
-          </div>
-          <div class="checkbox">
-            <label><input type="checkbox" data-bind="checked: addInterior">&nbsp;<span data-bind="text: INTERIOR_TITLE"></span></label>&nbsp;(<strong>$<span data-bind="text: INTERIOR_COST"></span></strong>)
-          </div>
-          <div data-bind="visible: addInterior" class="alert alert-info alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <strong>Heads Up!</strong> Interior work requires you to be present so we can enter your vehicle. Be sure to remove any personal items. We are not responsible for anything reported lost or stolen.
-          </div>
+          <!-- /ko -->
         </div>
-        <p class="text-muted text-small italic">* Additional cost for larger vehicles *</p>
+        <!-- /ko -->
       </div>
+      <div data-bind="visible: addInterior" class="alert alert-info alert-dismissible col-xs-12" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>Heads Up!</strong> Interior work requires you to be present so we can enter your vehicle. Be sure to remove any personal items. We are not responsible for anything reported lost or stolen.
+      </div>
+      <p class="text-muted text-small italic col-xs-12">* Additional cost for larger vehicles</p>
     </div>
     <div class="row">
       <form id="order-details-form" data-toggle="validator" role="form" autocomplete="off">
@@ -47,7 +41,7 @@
           </select>
         </div>
         <div class="col-xs-12">
-          <p class="text-muted text-small italic">* Disabled dates & times mean we're overbooked or unavailable. We only accept orders up to 30 days in advance *</p>
+          <p class="text-muted text-small italic">* Disabled dates & times mean we're overbooked or unavailable. We only accept orders up to 30 days in advance</p>
         </div>
         <div class="form-group col-xs-12">
           <label class="control-label">Description</label>

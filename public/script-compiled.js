@@ -329,6 +329,29 @@ var Configuration = function () {
       return this.settings.WAX_DETAILS || { price: 30, time: 40, title: "Hand Wax" };
     }
   }, {
+    key: 'SERVICES',
+    get: function get() {
+      var data = this.settings.SERVICES || [{ item: Constants.WASH, sortOrder: 1, price: 22, time: 50, title: "Exterior Hand Wash", description: "We use an advanced eco-friendly hand washing technique to thoroughly remove contaminants from the wheels and surface of your vehicle!" }, { item: Constants.TIRE_SHINE, sortOrder: 2, price: 8, time: 20, title: "Tire Shine", description: "Make your car look new again with a hand applied gel coating that protects your tires from harmful UV rays and provides a beautiful shine." }, { item: Constants.INTERIOR, sortOrder: 3, price: 45, time: 45, title: "Interior Cleaning", description: "A clean interior means happy passengers. Add this service and we'll vacuum, spot remove stains, clean windows, and wipe down the dash, seats, door jambs, and trim!" }, { item: Constants.WAX, sortOrder: 4, price: 32, time: 45, title: "Hand Wax", description: "With this package we'll hand apply top of the line wax to your vehicle's body which provides extra shine and protection! We recommend waxing your vehicles every 3 to 6 months." }
+      //{ item: Constants.RAIN_GUARD, sortOrder: 5, price: 10, time: 15, title: "Rain Guard", description: "Tired of windshield wiper streaks? Add this service and we'll put a protective sealant on your windows that repels water and snow." }
+      //{ item: Constants.HEADLIGHT_RESTORE, sortOrder: 6, price: 25, time: 20, title: "Headlight Restoration", description: "Foggy headlights? No worries. We can polish them up like new!" }
+      ];
+
+      var serviceCopy = JSON.parse(JSON.stringify(data));
+      serviceCopy.forEach(function (s) {
+        if (s.item == Constants.WASH) {
+          s.checked = ko.observable(true);
+          s.disable = ko.observable(false);
+        } else {
+          s.checked = ko.observable(false);
+          s.disable = ko.observable(false);
+        }
+      });
+
+      return _.sortBy(serviceCopy, function (s) {
+        return s.sortOrder;
+      });
+    }
+  }, {
     key: 'CAR_SIZES',
     get: function get() {
       return this.settings.CAR_SIZES || [{
@@ -408,7 +431,13 @@ var ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
     TIME_RANGE_PLACE_HOLDER = {
   range: "",
   disabled: ko.observable(true)
-};
+},
+    WASH = 1,
+    TIRE_SHINE = 2,
+    INTERIOR = 3,
+    WAX = 4;
+// RAIN_GUARD = 5,
+// HEADLIGHT_RESTORE = 6
 
 var Constants = function () {
   function Constants() {
@@ -450,6 +479,35 @@ var Constants = function () {
     get: function get() {
       return TIME_RANGE_PLACE_HOLDER;
     }
+  }, {
+    key: "WASH",
+    get: function get() {
+      return WASH;
+    }
+  }, {
+    key: "TIRE_SHINE",
+    get: function get() {
+      return TIRE_SHINE;
+    }
+  }, {
+    key: "INTERIOR",
+    get: function get() {
+      return INTERIOR;
+    }
+  }, {
+    key: "WAX",
+    get: function get() {
+      return WAX;
+    }
+
+    // static get WAX(){
+    //   return RAIN_GUARD;
+    // }
+
+    // static get WAX(){
+    //   return HEADLIGHT_RESTORE;
+    // }
+
   }]);
 
   return Constants;
@@ -772,6 +830,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var GiftFormViewModel = function () {
 	function GiftFormViewModel(storageHelper, webSvc) {
+		var _this = this;
+
 		_classCallCheck(this, GiftFormViewModel);
 
 		var self = this;
@@ -794,23 +854,32 @@ var GiftFormViewModel = function () {
 
 		this.$giftFormModal = $('#gift-form-modal');
 
-		this.TIRE_SHINE_COST = Configuration.TIRE_SHINE_DETAILS.price;
-		this.INTERIOR_COST = Configuration.INTERIOR_DETAILS.price;
-		this.WAX_COST = Configuration.WAX_DETAILS.price;
-		this.WASH_COST = Configuration.WASH_DETAILS.price;
-
-		this.TIRE_SHINE_TITLE = Configuration.TIRE_SHINE_DETAILS.title;
-		this.INTERIOR_TITLE = Configuration.INTERIOR_DETAILS.title;
-		this.WAX_TITLE = Configuration.WAX_DETAILS.title;
-		this.WASH_TITLE = Configuration.WASH_DETAILS.title;
-
 		this.incompleteGiftMsg = ko.observable("");
 
 		// Order Details
-		this.addWash = ko.observable(true);
-		this.addShine = ko.observable(false);
-		this.addWax = ko.observable(false);
-		this.addInterior = ko.observable(false);
+		this.Services = ko.observableArray(Configuration.SERVICES);
+		this.addWash = ko.computed(function () {
+			return _.find(_this.Services(), function (s) {
+				return s.item == Constants.WASH;
+			}).checked();
+		});
+		this.addInterior = ko.computed(function () {
+			return _.find(_this.Services(), function (s) {
+				return s.item == Constants.INTERIOR;
+			}).checked();
+		});
+
+		this.addWash.subscribe(function (bool) {
+			_this.Services().forEach(function (s) {
+				if (s.item != Constants.INTERIOR && s.item != Constants.WASH) {
+					s.disable(!bool);
+				}
+			});
+		});
+
+		this.Rows = _.partition(this.Services(), function (s) {
+			return s.sortOrder <= Math.ceil(_this.Services().length / 2);
+		});
 
 		// Car Info
 		this.carSizes = Configuration.CAR_SIZES;
@@ -824,7 +893,12 @@ var GiftFormViewModel = function () {
 
 		this.orderTotal = ko.computed(function () {
 			var total = 0.00;
-			var serviceCost = (self.addWash() ? self.WASH_COST : 0) + (self.addShine() && self.addWash() ? self.TIRE_SHINE_COST : 0) + (self.addWax() && self.addWash() ? self.WAX_COST : 0) + (self.addInterior() ? self.INTERIOR_COST : 0);
+			var serviceCost = _.reduce(_this.Services(), function (memo, s) {
+				if (s.checked()) {
+					memo += s.price;
+				}
+				return memo;
+			}, 0);
 
 			total += self.selectedCarSize().multiplier * serviceCost;
 
@@ -852,6 +926,7 @@ var GiftFormViewModel = function () {
 		key: 'OnSubmit',
 		value: function OnSubmit() {
 			var self = this;
+
 			if (!this.addWash() && !this.addInterior()) {
 				this.incompleteGiftMsg('Interior and/or exterior cleaning must be selected.');
 				$('#incomplete-gift-alert').show();
@@ -967,10 +1042,9 @@ var GiftFormViewModel = function () {
 			this.incompleteGiftMsg("");
 
 			// Order Details
-			this.addWash(true);
-			this.addShine(false);
-			this.addWax(false);
-			this.addInterior(false);
+			this.Services().forEach(function (s) {
+				return s.checked(false);
+			});
 
 			// Car Info
 			this.selectedCarSize(this.carSizes[0]);
@@ -1001,18 +1075,12 @@ var GiftFormViewModel = function () {
 		key: '_buildServicesSummary',
 		value: function _buildServicesSummary() {
 			var summary = "";
-			if (this.addWash()) {
-				summary += Configuration.WASH_DETAILS.title + "<br>";
-			}
-			if (this.addShine()) {
-				summary += Configuration.TIRE_SHINE_DETAILS.title + "<br>";
-			}
-			if (this.addWax()) {
-				summary += Configuration.WAX_DETAILS.title + "<br>";
-			}
-			if (this.addInterior()) {
-				summary += Configuration.INTERIOR_DETAILS.title + "<br>";
-			}
+
+			this.Services().forEach(function (s) {
+				if (s.checked()) {
+					summary += s.title + "<br>";
+				}
+			});
 
 			return summary;
 		}
@@ -1322,16 +1390,13 @@ var MainViewModel = function () {
 		_classCallCheck(this, MainViewModel);
 
 		// observables
-		this.WASH_COST = Configuration.WASH_DETAILS.price;
-		this.WashPriceHtml = "<sup>$</sup>" + this.WASH_COST;
-		this.TireShinePriceHtml = "<sup>$</sup>" + Configuration.TIRE_SHINE_DETAILS.price;
-		this.InteriorPriceHtml = "<sup>$</sup>" + Configuration.INTERIOR_DETAILS.price;
-		this.WaxPriceHtml = "<sup>$</sup>" + Configuration.WAX_DETAILS.price;
-
-		this.WASH_TITLE = Configuration.WASH_DETAILS.title;
-		this.TIRE_SHINE_TITLE = Configuration.TIRE_SHINE_DETAILS.title;
-		this.WAX_TITLE = Configuration.WAX_DETAILS.title;
-		this.INTERIOR_TITLE = Configuration.INTERIOR_DETAILS.title;
+		this.Services = Configuration.SERVICES;
+		this.WASH_COST = _.find(this.Services, function (s) {
+			return s.item == Constants.WASH;
+		}).price;
+		if (this.Services.length % 2 != 0) {
+			_.last(this.Services).fullSpan = "col-md-12";
+		}
 
 		this.LogInViewModel = logInVm;
 		this.OrderFormViewModel = orderFormVm;
@@ -1388,6 +1453,8 @@ var OrderFormViewModel = function () {
 	}]);
 
 	function OrderFormViewModel(storageHelper, webSvc) {
+		var _this = this;
+
 		_classCallCheck(this, OrderFormViewModel);
 
 		var self = this;
@@ -1414,26 +1481,35 @@ var OrderFormViewModel = function () {
 			self._prePopulateUserData();
 		});
 
-		this.TIRE_SHINE_COST = Configuration.TIRE_SHINE_DETAILS.price;
-		this.INTERIOR_COST = Configuration.INTERIOR_DETAILS.price;
-		this.WAX_COST = Configuration.WAX_DETAILS.price;
-		this.WASH_COST = Configuration.WASH_DETAILS.price;
-
-		this.TIRE_SHINE_TITLE = Configuration.TIRE_SHINE_DETAILS.title;
-		this.INTERIOR_TITLE = Configuration.INTERIOR_DETAILS.title;
-		this.WAX_TITLE = Configuration.WAX_DETAILS.title;
-		this.WASH_TITLE = Configuration.WASH_DETAILS.title;
-
 		this.disableEmailInput = ko.observable(false);
 		this.incompleteFormMsg = ko.observable("");
 
 		this.showNewUserAlert = ko.observable(false);
 
 		// Order Details
-		this.addWash = ko.observable(true);
-		this.addShine = ko.observable(false);
-		this.addWax = ko.observable(false);
-		this.addInterior = ko.observable(false);
+		this.Services = ko.observableArray(Configuration.SERVICES);
+		this.addWash = ko.computed(function () {
+			return _.find(_this.Services(), function (s) {
+				return s.item == Constants.WASH;
+			}).checked();
+		});
+		this.addInterior = ko.computed(function () {
+			return _.find(_this.Services(), function (s) {
+				return s.item == Constants.INTERIOR;
+			}).checked();
+		});
+
+		this.addWash.subscribe(function (bool) {
+			_this.Services().forEach(function (s) {
+				if (s.item != Constants.INTERIOR && s.item != Constants.WASH) {
+					s.disable(!bool);
+				}
+			});
+		});
+
+		this.Rows = _.partition(this.Services(), function (s) {
+			return s.sortOrder <= Math.ceil(_this.Services().length / 2);
+		});
 
 		this.description = ko.observable("");
 
@@ -1487,8 +1563,12 @@ var OrderFormViewModel = function () {
 
 		this.orderTotal = ko.computed(function () {
 			var total = 0.00;
-			var serviceCost = (self.addWash() ? self.WASH_COST : 0) + (self.addShine() && self.addWash() ? self.TIRE_SHINE_COST : 0) + (self.addWax() && self.addWash() ? self.WAX_COST : 0) + (self.addInterior() ? self.INTERIOR_COST : 0);
-
+			var serviceCost = _.reduce(_this.Services(), function (memo, s) {
+				if (s.checked()) {
+					memo += s.price;
+				}
+				return memo;
+			}, 0);
 			_.each(self.SelectedCars, function (car) {
 				var carSize = _.find(self.carSizes, function (s) {
 					return s.size == car.size || s.multiplier == car.multiplier;
@@ -1955,11 +2035,6 @@ var OrderFormViewModel = function () {
 			this.incompleteFormMsg("");
 
 			// Order Details
-			this.addWash(true);
-			this.addShine(false);
-			this.addWax(false);
-			this.addInterior(false);
-
 			this.description = ko.observable("");
 			this.selectedTimeRange(Constants.TIME_RANGE_PLACE_HOLDER);
 
@@ -2182,19 +2257,11 @@ var OrderFormViewModel = function () {
 		value: function _getTimeEstimate() {
 			var totalTime = 0;
 
-			if (this.addWash()) {
-				totalTime += Configuration.WASH_DETAILS.time;
-			}
-
-			if (this.addShine()) {
-				totalTime += Configuration.TIRE_SHINE_DETAILS.time;
-			}
-			if (this.addWax()) {
-				totalTime += Configuration.WAX_DETAILS.time;
-			}
-			if (this.addInterior()) {
-				totalTime += Configuration.INTERIOR_DETAILS.time;
-			}
+			this.Services().forEach(function (s) {
+				if (s.checked()) {
+					totalTime += s.time;
+				}
+			});
 
 			totalTime += Configuration.AVG_JOB_SETUP_TIME;
 
@@ -2206,36 +2273,25 @@ var OrderFormViewModel = function () {
 		key: '_buildServicesArray',
 		value: function _buildServicesArray() {
 			var services = [];
-			if (this.addWash()) {
-				services.push(Configuration.WASH_DETAILS.title);
-			}
-			if (this.addShine()) {
-				services.push(Configuration.TIRE_SHINE_DETAILS.title);
-			}
-			if (this.addWax()) {
-				services.push(Configuration.WAX_DETAILS.title);
-			}
-			if (this.addInterior()) {
-				services.push(Configuration.INTERIOR_DETAILS.title);
-			}
+
+			this.Services().forEach(function (s) {
+				if (s.checked()) {
+					services.push(s.title);
+				}
+			});
+
 			return services;
 		}
 	}, {
 		key: '_buildServicesSummary',
 		value: function _buildServicesSummary() {
 			var summary = "";
-			if (this.addWash()) {
-				summary += Configuration.WASH_DETAILS.title + "<br>";
-			}
-			if (this.addShine()) {
-				summary += Configuration.TIRE_SHINE_DETAILS.title + "<br>";
-			}
-			if (this.addWax()) {
-				summary += Configuration.WAX_DETAILS.title + "<br>";
-			}
-			if (this.addInterior()) {
-				summary += Configuration.INTERIOR_DETAILS.title + "<br>";
-			}
+
+			this.Services().forEach(function (s) {
+				if (s.checked()) {
+					summary += s.title + "<br>";
+				}
+			});
 
 			return summary;
 		}
