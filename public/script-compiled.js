@@ -558,14 +558,9 @@ var DialogPresenter = function () {
 window.jQuery(document).ready(function ($) {
 	try {
 		// Initialize Application
-		Bootstrapper.Run().then(function () {
-			var timer = setTimeout(function () {
-				$('#splash').fadeOut(1000);
-				clearTimeout(timer);
-			}, 1000);
-		}).fail(function (err) {
+		Bootstrapper.Run().fail(function (err) {
 			console.error(err);
-			$('#splash').append('<div><h3>Website under maintenance. We apologize for the inconvenience</h3></div>');
+			$('#splash').removeAttr('hidden').append('<div><h3>Website is under maintenance. We apologize for the inconvenience</h3></div>');
 		});
 	} catch (ex) {
 		console.error(ex);
@@ -582,7 +577,7 @@ var LocalStorageHelper = function () {
 		_classCallCheck(this, LocalStorageHelper);
 
 		try {
-			this.storageType.test = "test";
+			storageType.test = "test";
 			this.storageType = storageType;
 		} catch (ex) {
 			console.info("No local storage available. Using memory...");
@@ -1196,7 +1191,7 @@ var LogInViewModel = function () {
 						self._toggleModals();
 					} else {
 						self.loginFormMsg("Hmmm, we didn't find an account matching those credentials. \
-							Please verify your info and try again or click the 'Forgot Password' link.");
+							Please verify your info and try again or click 'Forgot Password'.");
 						self.$loginFormAlert.show();
 						self._resetForms();
 					}
@@ -1302,7 +1297,7 @@ var LogInViewModel = function () {
 		value: function _initValidation() {
 			var self = this;
 			$.validator.addMethod("pwdLength", function (value) {
-				return value && value.length >= 8;
+				return value && value.length >= 6;
 			});
 			$.validator.addMethod("pwdEqual", function () {
 				return self.pwd() === self.verifyPwd();
@@ -1332,7 +1327,7 @@ var LogInViewModel = function () {
 				},
 				messages: {
 					email: "Please enter a valid email address.",
-					pwd: "Password must be at least 8 characters."
+					pwd: "Password must be at least 6 characters."
 				}
 			});
 

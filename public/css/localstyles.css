@@ -32,7 +32,7 @@ input, textarea, select {
 .text-small{font-size: 12px};
 .text-muted{color:#777}
 .text-primary{color:#00acea}
-p{font-size:16px;line-height:1.75}
+p{font-size:16px;line-height:1.75;font-family:Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;}
 p.large{font-size:18px}a,a:hover,a:active,a.active{outline:0}a{color:#00acea}
 a:hover,a:active,a.active{color:#00acea}
 h1,h2,h3,h4,h5,h6{font-family:Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;text-transform:uppercase;font-weight:700}
@@ -45,12 +45,9 @@ h1,h2,h3,h4,h5,h6{font-family:Montserrat,"Helvetica Neue",Helvetica,Arial,sans-s
 .btn-primary:hover,.btn-primary:active,.btn-primary.active,.open .dropdown-toggle.btn-primary{color:#fff;background-color:#264a85;border-color:#00acea}
 .btn-primary:active,.btn-primary.active,.open .dropdown-toggle.btn-primary{background-image:none}
 .btn-primary.disabled,.btn-primary[disabled],fieldset[disabled] .btn-primary,.btn-primary.disabled:hover,.btn-primary[disabled]:hover,fieldset[disabled] .btn-primary:hover,fieldset[disabled] .btn-primary.disabled:active,.btn-primary[disabled]:active,fieldset[disabled] .btn-primary:active,.btn-primary.disabled.active,.btn-primary[disabled].active,fieldset[disabled] .btn-primary.active{background-color:#00acea;border-color:#00acea}
-.btn-primary .badge{color:#00acea;background-color:#fff}
 .btn-xl{color:#fff;background-color:#00acea;border-color:#00acea;font-family:Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;text-transform:uppercase;font-weight:700;border-radius:3px;font-size:18px;padding:20px 40px}
-.btn-xl:hover,.btn-xl:active,.btn-xl.active,.open .dropdown-toggle.btn-xl{color:#fff;background-color:#264a85;border-color:#00acea}
-.btn-xl:active,.btn-xl.active,.open .dropdown-toggle.btn-xl{background-image:none}
+.btn-xl:hover,.btn-xl:active,.btn-xl:visited {color:#fff;background-color:#264a85;border-color:#00acea}
 .btn-xl.disabled,.btn-xl[disabled],fieldset[disabled] .btn-xl,.btn-xl.disabled:hover,.btn-xl[disabled]:hover,fieldset[disabled] .btn-xl:hover,fieldset[disabled] .btn-xl.disabled:active,.btn-xl[disabled]:active,fieldset[disabled] .btn-xl:active,.btn-xl.disabled.active,.btn-xl[disabled].active,fieldset[disabled] .btn-xl.active{background-color:#00acea;border-color:#00acea}
-.btn-xl .badge{color:#00acea;background-color:#fff}
 .ghost-btn{
 	background-color: transparent;
 	border-color: white;
@@ -84,19 +81,24 @@ input[readonly] { background-color: white !important; }
 .navbar-default.navbar-shrink .navbar-brand{font-size:2em}}
 
 header{background-image:url(../img/towel.jpg);background-repeat:none;background-attachment:scroll;background-position:center center;-webkit-background-size:cover;-moz-background-size:cover;background-size:cover;-o-background-size:cover;text-align:center;color:#fff}
-header .intro-text{padding-top:100px;padding-bottom:50px;text-shadow: 1px 1px 1px black;}
-header .intro-text .intro-subtext{font-family:"Droid Serif","Helvetica Neue",Helvetica,Arial,sans-serif;font-style:italic;font-size:22px;line-height:1.5;margin-bottom:25px}
-header .intro-text .intro-heading{font-family:"subway";text-transform:uppercase;font-weight:700;font-size:42px;line-height:50px;margin-bottom:25px;letter-spacing:2px}
+header .intro-text{padding-top:75px;padding-bottom:50px;text-shadow: 1px 1px 1px black;}
+header .intro-text .intro-subtext{font-family:"Droid Serif","Helvetica Neue",Helvetica,Arial,sans-serif;font-style:italic;font-size:20px;line-height:1.5;margin-bottom:20px}
+header .intro-text .intro-heading{font-family:"subway";text-transform:uppercase;font-weight:700;font-size:40px;line-height:50px;margin-bottom:20px;letter-spacing:2px}
 @media (min-width:768px){
 	header .intro-text{padding-top:200px;padding-bottom:200px;text-shadow: 1px 1px 1px black;}
 	header .intro-text .intro-subtext{font-family:"Droid Serif","Helvetica Neue",Helvetica,Arial,sans-serif;font-style:italic;font-size:40px;line-height:1.5;margin-bottom:25px}
 	header .intro-text .intro-heading{font-family:"subway";text-transform:uppercase;font-weight:700;font-size:62px;line-height:75px;margin-bottom:50px;letter-spacing:2px}
 }
 
-section{padding:100px 0}section h2.section-heading{font-size:40px;margin-top:0;margin-bottom:15px}
-section h3.section-subheading{font-size:16px;font-family:"Droid Serif","Helvetica Neue",Helvetica,Arial,sans-serif;text-transform:none;font-style:italic;font-weight:400;margin-bottom:75px}
+section{padding:50px 0}
+section h2.section-heading{font-size:40px;margin-top:0;margin-bottom:15px}
+section h3.section-subheading{font-size:16px;font-family:"Droid Serif","Helvetica Neue",Helvetica,Arial,sans-serif;text-transform:none;font-style:italic;font-weight:400;margin-bottom:25px}
 
-@media (min-width:768px){section{padding:150px 0}}.service-heading{margin:15px 0;text-transform:none}
+@media (min-width:768px){
+	section{padding:100px 0}
+	section h3.section-subheading{font-size:16px;font-family:"Droid Serif","Helvetica Neue",Helvetica,Arial,sans-serif;text-transform:none;font-style:italic;font-weight:400;margin-bottom:75px}
+}
+.service-heading{margin:15px 0;text-transform:none;}
 
 section#contact{background-image:url(../img/wheel-detail.jpg);background-repeat:none;background-attachment:scroll;background-position:center center;-webkit-background-size:cover;-moz-background-size:cover;background-size:cover;-o-background-size:cover;text-align:center;color:#fff}
 section#contact .section-heading{color:#fff}
@@ -161,7 +163,7 @@ select.error, textarea.error, input.error {
 
 #wmc-mini-logo{
 	background-image: url(../img/wmc_logo.png);
-	width:100px;
+	width:120px;
 }
 
 #verify-zip{
@@ -177,7 +179,6 @@ select.error, textarea.error, input.error {
 	position: fixed;
 	width: 100%;
 	height:100%;
-	display: flex;
 	align-items: center;
 	top: 0;
 	background-color: white;
@@ -186,7 +187,6 @@ select.error, textarea.error, input.error {
 
 #splash img{
 	width: 50%;
-	display: flex;
 	margin: 0 auto;
 }
 

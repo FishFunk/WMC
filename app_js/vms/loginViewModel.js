@@ -97,7 +97,7 @@ class LogInViewModel {
 						self._toggleModals();
 					} else {
 						self.loginFormMsg("Hmmm, we didn't find an account matching those credentials. \
-							Please verify your info and try again or click the 'Forgot Password' link.");
+							Please verify your info and try again or click 'Forgot Password'.");
 						self.$loginFormAlert.show()
 						self._resetForms();
 					}
@@ -201,7 +201,7 @@ class LogInViewModel {
 	_initValidation(){
 		var self = this;
 		$.validator.addMethod("pwdLength", (value)=>{
-			return value && value.length >= 8;
+			return value && value.length >= 6;
 		});
 		$.validator.addMethod("pwdEqual", ()=>{
 			return self.pwd() === self.verifyPwd();
@@ -231,7 +231,7 @@ class LogInViewModel {
 			},
 			messages: {
 				email: "Please enter a valid email address.",
-				pwd: "Password must be at least 8 characters."
+				pwd: "Password must be at least 6 characters."
 			}
 		});
 

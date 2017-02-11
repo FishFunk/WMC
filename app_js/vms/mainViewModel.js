@@ -5,8 +5,7 @@ class MainViewModel {
 		return dialogPresenter;
 	}
 
-	constructor(storageHelper, logInVm, orderFormVm, giftFormVm){
-		
+	constructor(storageHelper, logInVm, orderFormVm, giftFormVm) {
 		// observables
 		this.Services = Configuration.SERVICES;
 		this.WASH_COST = _.find(this.Services, (s) => s.item == Constants.WASH).price;

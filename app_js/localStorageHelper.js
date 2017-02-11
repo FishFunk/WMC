@@ -1,7 +1,7 @@
 class LocalStorageHelper{
 	constructor(storageType){
 		try {
-			this.storageType.test = "test";
+			storageType.test = "test";
 			this.storageType = storageType;
 		} catch (ex) {
 			console.info("No local storage available. Using memory...");
