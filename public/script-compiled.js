@@ -2075,6 +2075,7 @@ var OrderFormViewModel = function () {
 				_.each(this.timeRangeOptions, function (o) {
 					o.disabled(true);
 				});
+				this.selectedTimeRange(Constants.TIME_RANGE_PLACE_HOLDER);
 				return;
 			}
 
@@ -2115,7 +2116,9 @@ var OrderFormViewModel = function () {
 				return total + appt.timeEstimate;
 			}, 0) > maxMinutesPerInterval || selectedDate == today && hourOfDay >= 18 || _.contains(schedule.blockedTimeSlots, Constants.NIGHT_TIME_RANGE.key));
 
-			this.selectedTimeRange(Constants.TIME_RANGE_PLACE_HOLDER);
+			if (this.selectedTimeRange().disabled()) {
+				this.selectedTimeRange(Constants.TIME_RANGE_PLACE_HOLDER);
+			}
 		}
 	}, {
 		key: '_initValidation',

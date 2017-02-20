@@ -610,6 +610,7 @@ class OrderFormViewModel {
 			_.each(this.timeRangeOptions, (o)=>{
 				o.disabled(true);
 			});
+			this.selectedTimeRange(Constants.TIME_RANGE_PLACE_HOLDER);
 			return;
 		}
 
@@ -644,7 +645,9 @@ class OrderFormViewModel {
 			(selectedDate == today && hourOfDay >= 18) ||
 			_.contains(schedule.blockedTimeSlots, Constants.NIGHT_TIME_RANGE.key));
 
-		this.selectedTimeRange(Constants.TIME_RANGE_PLACE_HOLDER);
+		if(this.selectedTimeRange().disabled()){
+			this.selectedTimeRange(Constants.TIME_RANGE_PLACE_HOLDER);
+		}
 	}
 
 	_initValidation(){
