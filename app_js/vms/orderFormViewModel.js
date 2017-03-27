@@ -629,19 +629,19 @@ class OrderFormViewModel {
 		var nightAppts = _.filter(appointments, (appt) => appt.timeRangeKey === Constants.NIGHT_TIME_RANGE.key);
 
 		Constants.MORNING_TIME_RANGE.disabled(
-			(_.reduce(morningAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval) ||
+			(_.reduce(morningAppts, (total, appt) => {return total + appt.timeEstimate}, 0) >= maxMinutesPerInterval) ||
 			(selectedDate == today && hourOfDay >= 9) ||
 			_.contains(schedule.blockedTimeSlots, Constants.MORNING_TIME_RANGE.key));
 		Constants.AFTERNOON_TIME_RANGE.disabled(
-			(_.reduce(afternoonAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval) ||
+			(_.reduce(afternoonAppts, (total, appt) => {return total + appt.timeEstimate}, 0) >= maxMinutesPerInterval) ||
 			(selectedDate == today && hourOfDay >= 12) ||
 			_.contains(schedule.blockedTimeSlots, Constants.AFTERNOON_TIME_RANGE.key));
 		Constants.EVENING_TIME_RANGE.disabled(
-			(_.reduce(eveningAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval) ||
+			(_.reduce(eveningAppts, (total, appt) => {return total + appt.timeEstimate}, 0) >= maxMinutesPerInterval) ||
 			(selectedDate == today && hourOfDay >= 15) ||
 			_.contains(schedule.blockedTimeSlots, Constants.EVENING_TIME_RANGE.key));
 		Constants.NIGHT_TIME_RANGE.disabled(
-			(_.reduce(nightAppts, (total, appt) => {return total + appt.timeEstimate}, 0) > maxMinutesPerInterval) ||
+			(_.reduce(nightAppts, (total, appt) => {return total + appt.timeEstimate}, 0) >= maxMinutesPerInterval) ||
 			(selectedDate == today && hourOfDay >= 18) ||
 			_.contains(schedule.blockedTimeSlots, Constants.NIGHT_TIME_RANGE.key));
 
