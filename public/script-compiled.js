@@ -381,16 +381,16 @@ var Configuration = function () {
         blockedTimeSlots: []
       }, {
         day: 2,
-        blockedTimeSlots: [1, 2]
+        blockedTimeSlots: []
       }, {
         day: 3,
-        blockedTimeSlots: [1, 2]
+        blockedTimeSlots: []
       }, {
         day: 4,
-        blockedTimeSlots: [1, 2]
+        blockedTimeSlots: []
       }, {
         day: 5,
-        blockedTimeSlots: [1, 2]
+        blockedTimeSlots: []
       }, {
         day: 6,
         blockedTimeSlots: []
