@@ -399,7 +399,7 @@ var Configuration = function () {
   }, {
     key: 'BLOCKED_DAYS',
     get: function get() {
-      return this.settings.BLOCKED_DAYS || ['08/30/17'];
+      return this.settings.BLOCKED_DAYS || [];
     }
   }]);
 
