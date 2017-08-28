@@ -163,4 +163,10 @@ class Configuration
       }
     ];
   }
+
+  get BLOCKED_DAYS(){
+      return this.settings.BLOCKED_DAYS || [
+        '08/30/17'
+      ];
+  }
 }

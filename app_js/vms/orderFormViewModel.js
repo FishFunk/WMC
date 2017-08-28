@@ -207,7 +207,7 @@ class OrderFormViewModel {
 			minDate: moment().subtract(1, 'days'),
 			maxDate: moment().add(30, 'days'),
 			format: Configuration.DATE_FORMAT,
-			daysOfWeekDisabled: Configuration.BLOCKED_DAYS,
+			disabledDates: Configuration.BLOCKED_DAYS,
 			allowInputToggle: true,
 			focusOnShow: false,
 			ignoreReadonly: true
