@@ -264,7 +264,7 @@ var formatInfo = (appt, phone)=>{
 	apptHtml += ul +
 		li + strong + 'Phone: ' + _strong + phone + _li +
 		li + strong + 'Where: ' + _strong + formatLocation(appt.location) + _li +
-		li + strong + 'Date: ' + _strong + dt.toLocaleDateString("en-US") + _li + 
+		li + strong + 'Date: ' + _strong + formatDate(dt) + _li + 
 		li + strong + 'Time: ' + _strong + appt.timeRange + _li + 
 		li + strong + 'Cars:' + _strong + formatCars(appt.cars) + _li +
 		li + strong + 'Services: '  + _strong + formatServices(appt.services) + _li +
@@ -300,6 +300,14 @@ var formatCars = (cars)=>{
 
 var formatLocation = (loc)=>{
 	return br + loc.street + br + loc.city + ', ' + loc.zip;
+}
+
+var formatDate = (d)=>{
+	var curr_date = d.getDate();
+    var curr_month = d.getMonth() + 1; //Months are zero based
+    curr_month = curr_month.length > 1 ? "0" + curr_month : curr_month;
+    var curr_year = d.getFullYear();
+    return curr_month + "/" + curr_date + "/" + curr_year;
 }
 
 var sendJsonResponse = (res, status, msg, data)=>{
