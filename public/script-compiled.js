@@ -2109,10 +2109,10 @@ var OrderFormViewModel = function () {
 
 			Constants.MORNING_TIME_RANGE.disabled(_.reduce(morningAppts, function (total, appt) {
 				return total + appt.timeEstimate;
-			}, 0) >= maxMinutesPerInterval || selectedDate == today && hourOfDay >= 1 || selectedDate == tmrw && hourOfDay > 21 || _.contains(schedule.blockedTimeSlots, Constants.MORNING_TIME_RANGE.key));
+			}, 0) >= maxMinutesPerInterval || selectedDate == today && hourOfDay >= 1 || selectedDate == tmrw && hourOfDay >= 20 || _.contains(schedule.blockedTimeSlots, Constants.MORNING_TIME_RANGE.key));
 			Constants.AFTERNOON_TIME_RANGE.disabled(_.reduce(afternoonAppts, function (total, appt) {
 				return total + appt.timeEstimate;
-			}, 0) >= maxMinutesPerInterval || selectedDate == today && hourOfDay >= 9 || selectedDate == tmrw && hourOfDay > 21 || _.contains(schedule.blockedTimeSlots, Constants.AFTERNOON_TIME_RANGE.key));
+			}, 0) >= maxMinutesPerInterval || selectedDate == today && hourOfDay >= 9 || selectedDate == tmrw && hourOfDay >= 20 || _.contains(schedule.blockedTimeSlots, Constants.AFTERNOON_TIME_RANGE.key));
 			Constants.EVENING_TIME_RANGE.disabled(_.reduce(eveningAppts, function (total, appt) {
 				return total + appt.timeEstimate;
 			}, 0) >= maxMinutesPerInterval || selectedDate == today && hourOfDay >= 12 || _.contains(schedule.blockedTimeSlots, Constants.EVENING_TIME_RANGE.key));
