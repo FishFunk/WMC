@@ -616,6 +616,7 @@ class OrderFormViewModel {
 
 		var hourOfDay = moment().hour();
 		var today = moment().format(Configuration.DATE_FORMAT);
+		var tmrw = moment().add(1,'day').format(Configuration.DATE_FORMAT);
 		var selectedDate = momentObj.format(Configuration.DATE_FORMAT);
 		var dayOfWeek = momentObj.day();
 		var schedule = _.find(Configuration.SCHEDULE, (x) => x.day === dayOfWeek);
@@ -630,19 +631,21 @@ class OrderFormViewModel {
 
 		Constants.MORNING_TIME_RANGE.disabled(
 			(_.reduce(morningAppts, (total, appt) => {return total + appt.timeEstimate}, 0) >= maxMinutesPerInterval) ||
-			(selectedDate == today && hourOfDay >= 9) ||
+			(selectedDate == today && hourOfDay >= 1) ||
+			(selectedDate == tmrw && hourOfDay >= 20) ||
 			_.contains(schedule.blockedTimeSlots, Constants.MORNING_TIME_RANGE.key));
 		Constants.AFTERNOON_TIME_RANGE.disabled(
 			(_.reduce(afternoonAppts, (total, appt) => {return total + appt.timeEstimate}, 0) >= maxMinutesPerInterval) ||
-			(selectedDate == today && hourOfDay >= 12) ||
+			(selectedDate == today && hourOfDay >= 9) ||
+			(selectedDate == tmrw && hourOfDay >= 20) ||
 			_.contains(schedule.blockedTimeSlots, Constants.AFTERNOON_TIME_RANGE.key));
 		Constants.EVENING_TIME_RANGE.disabled(
 			(_.reduce(eveningAppts, (total, appt) => {return total + appt.timeEstimate}, 0) >= maxMinutesPerInterval) ||
-			(selectedDate == today && hourOfDay >= 15) ||
+			(selectedDate == today && hourOfDay >= 12) ||
 			_.contains(schedule.blockedTimeSlots, Constants.EVENING_TIME_RANGE.key));
 		Constants.NIGHT_TIME_RANGE.disabled(
 			(_.reduce(nightAppts, (total, appt) => {return total + appt.timeEstimate}, 0) >= maxMinutesPerInterval) ||
-			(selectedDate == today && hourOfDay >= 18) ||
+			(selectedDate == today && hourOfDay >= 15) ||
 			_.contains(schedule.blockedTimeSlots, Constants.NIGHT_TIME_RANGE.key));
 
 		if(this.selectedTimeRange().disabled()){
