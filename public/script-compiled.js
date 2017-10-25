@@ -1513,7 +1513,9 @@ var OrderFormViewModel = function () {
 
 		this.description = ko.observable("");
 
-		this.timeRangeOptions = [Constants.TIME_RANGE_PLACE_HOLDER, Constants.MORNING_TIME_RANGE, Constants.AFTERNOON_TIME_RANGE, Constants.EVENING_TIME_RANGE, Constants.NIGHT_TIME_RANGE];
+		this.timeRangeOptions = [Constants.TIME_RANGE_PLACE_HOLDER, Constants.MORNING_TIME_RANGE, Constants.AFTERNOON_TIME_RANGE, Constants.EVENING_TIME_RANGE
+		//Constants.NIGHT_TIME_RANGE
+		];
 		this.selectedTimeRange = ko.observable(Constants.TIME_RANGE_PLACE_HOLDER);
 
 		this.dateMoment = null;
