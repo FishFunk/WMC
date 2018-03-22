@@ -1,0 +1,10 @@
+
+certs/server.csr
+
+certs/server.key
+
+certs/server.pass.key
+
+certs/www_washmycarva_com.ca-bundle
+
+certs/www_washmycarva_com.crt
