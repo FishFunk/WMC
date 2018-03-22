@@ -93,21 +93,6 @@ class OrderFormViewModel {
 		this.city = ko.observable("");
 		this.zip = ko.observable(this.storageHelper.ZipCode);
 
-		// Subscriptions
-		this.hideSubscriptionForm = ko.observable(true);
-		this.subIntervals = [1,2,3];
-		this.selectedSubInterval = ko.observable(this.subIntervals[0]);
-		this.subSpans = [
-			{
-				days: 7,
-				display: "Week(s)"
-			},
-			{
-				days: 28,
-				display: "Month(s)"
-			}
-		];
-		this.selectedSubSpan = ko.observable(this.subSpans[0]);
 
 		// Coupon
 		this.couponCode = ko.observable("");
@@ -159,21 +144,10 @@ class OrderFormViewModel {
 		this.orderSummary = ko.computed(()=>{
 			let summary = "";
 
-			if(!self.hideSubscriptionForm()) {
-				if(self.dateMoment){
-					summary = $.validator.format("<strong>{0} every {1} {2} starting {3}</strong><hr>",
-					self.selectedTimeRange().range,
-					self.selectedSubInterval(),
-					self.selectedSubSpan().display,
-					self.dateMoment.format("ddd MMM Do"));
-				}
-
-			} else {
-				if(self.dateMoment){
-					summary = $.validator.format("<strong>{0} {1}</strong><br>",
-						self.dateMoment.format("ddd MMM Do"),
-						self.selectedTimeRange().range);
-				}
+			if(self.dateMoment){
+				summary = $.validator.format("<strong>{0} {1}</strong><br>",
+					self.dateMoment.format("ddd MMM Do"),
+					self.selectedTimeRange().range);
 			}
 
 			const selectedCars = self.SelectedCars;
@@ -510,13 +484,6 @@ class OrderFormViewModel {
 		currentUsr.appointments != null ? 
 				currentUsr.appointments.push(newAppt) : currentUsr.appointments = [newAppt];
 
-		if(!this.hideSubscriptionForm()){
-			const startDate = new Date(newAppt.date);
-			const subscription = this._makeSubscriptionSchema(startDate);
-			currentUsr.subscriptions != null ? 
-				currentUsr.subscriptions.push(subscription) : currentUsr.subscriptions = [subscription];
-		}
-
 		currentUsr.cars = this.cars();
 		currentUsr.phone = this.phone();
 		currentUsr.locations = this.locations();
@@ -728,34 +695,6 @@ class OrderFormViewModel {
 			location: selectedLocation,
 			prepaid: prepaid,
 			price: this.discountedTotal(),
-			services: this._buildServicesArray(),
-			timeEstimate: this._getTimeEstimate(),
-			timeRange: this.selectedTimeRange().range,
-			timeRangeKey: this.selectedTimeRange().key,
-			description: this.description()
-		}
-	}
-
-	_makeSubscriptionSchema(startDate){
-		const selectedCars = this.SlectedCars;
-		const selectedLocation = _.find(this.locations(), (loc)=> loc.selected());
-		const daySpan = this.selectedSubInterval() * this.selectedSubSpan().days;
-		const x = Math.round(365 / daySpan);
-		let daysToAdd = daySpan;
-		let futureDates = [];
-
-		for(let i = 0; i < x; i++){
-			let futureDate = new Date(startDate);
-			futureDate.setDate(startDate.getDate() + daysToAdd);
-			futureDates.push(futureDate);
-			daysToAdd += daySpan;
-		}
-
-		return {
-			cars: selectedCars,
-			dates: futureDates,
-			location: selectedLocation,
-			price: this.orderTotal(),
 			services: this._buildServicesArray(),
 			timeEstimate: this._getTimeEstimate(),
 			timeRange: this.selectedTimeRange().range,

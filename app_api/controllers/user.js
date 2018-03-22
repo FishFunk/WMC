@@ -13,7 +13,6 @@ module.exports.updateUser = (req, res)=>{
 	{
 		Usr.update({email: req.body.email.trim().toLowerCase()},
 		{
-			subscriptions: req.body.subscriptions || [],
 			appointments: req.body.appointments || [],
 			cars: req.body.cars,
 			phone: req.body.phone,
@@ -36,8 +35,7 @@ module.exports.updateUser = (req, res)=>{
 
 module.exports.getFutureApptDatesAndTimes = (req, res)=>{
 	Usr.find()
-	   .select('appointments.date appointments.timeEstimate appointments.timeRange appointments.timeRangeKey \
-	   		subscriptions.dates subscriptions.timeEstimate subscriptions.timeRange subscriptions.timeRangeKey')
+	   .select('appointments.date appointments.timeEstimate appointments.timeRange appointments.timeRangeKey')
 	   .exec((err, docs)=>{
 		if(err){
 			console.error(err);
@@ -45,22 +43,6 @@ module.exports.getFutureApptDatesAndTimes = (req, res)=>{
 		} else {
 			var now = new Date();
 			var userAppointments = _.flatten(_.map(docs, (d)=>{ return d.appointments }));
-			var userSubscriptions = _.flatten(_.map(docs, (d)=>{ return d.subscriptions }));
-			_.each(userSubscriptions, (sub)=>{
-				if(sub && sub.dates){
-					_.each(sub.dates, (date)=>{
-						if(date){
-							userAppointments.push({
-								date: date,
-								timeEstimate: sub.timeEstimate,
-								timeRange: sub.timeRange,
-								timeRangeKey: sub.timeRangeKey
-							});
-						}
-					});
-				}
-			});
-
 			var result = _.filter(userAppointments, (appt)=> {
 				return appt.date > now;
 			});
@@ -73,7 +55,7 @@ module.exports.getFutureApptDatesAndTimes = (req, res)=>{
 // Used by admin console only
 module.exports.getAllAppointments = (req, res)=>{
 	Usr.find()
-	   .select('firstName lastName phone email appointments subscriptions')
+	   .select('firstName lastName phone email appointments')
 	   .exec((err, docs)=>{
 		if(err){
 			console.error(err);
@@ -90,21 +72,6 @@ module.exports.getAllAppointments = (req, res)=>{
 					apptCopy.phone = doc.phone;
 					apptCopy.email = doc.email;
 					userAppointments.push(apptCopy);
-				});
-
-				_.each(doc.subscriptions, (sub)=>{
-					_.each(sub.dates, (date)=>{
-						var appt = JSON.parse(JSON.stringify(sub));
-						appt.firstName = doc.firstName;
-						appt.lastName = doc.lastName;
-						appt.phone = doc.phone;
-						appt.email = doc.email;
-						appt._id = null;
-						appt.dates = null;
-						appt.date = date;
-						appt.prepaid = false;
-						userAppointments.push(appt);
-					});
 				});
 			});
 
@@ -194,7 +161,6 @@ module.exports.createNewUser = (req, res)=>{
 	if(req.body && req.body.email)
 	{
 		Usr.create({
-			subscriptions: [],
 			appointments: [],
 			cars: [],
 			email: req.body.email.trim().toLowerCase(),
