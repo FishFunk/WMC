@@ -45,7 +45,8 @@ class OrderFormViewModel {
 
 		this.addWash.subscribe((bool)=>{
 			this.Services().forEach((s)=>{
-				if(s.item != Constants.INTERIOR && s.item != Constants.WASH)
+				if(s.item == Constants.TIRE_SHINE || 
+				   s.item == Constants.WAX)
 				{
 					s.disable(!bool);
 				}

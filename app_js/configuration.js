@@ -33,35 +33,20 @@ class Configuration
     return this.settings.JOB_SETUP_TIME || 10;
   }
 
-  get WASH_DETAILS(){
-    return this.settings.WASH_DETAILS || { price: 22, time: 30, title: "Exterior Hand Wash"};
-  }
-
-  get TIRE_SHINE_DETAILS(){
-    return this.settings.TIRE_SHINE_DETAILS || { price: 8, time: 15, title: "Tire Shine"};
-  }
-
-  get INTERIOR_DETAILS(){
-    return this.settings.INTERIOR_DETAILS || { price: 40, time: 45, title: "Interior Cleaning"};
-  }
-
-  get WAX_DETAILS(){
-    return this.settings.WAX_DETAILS || {price: 30, time: 40, title: "Hand Wax"};
-  }
-
   get SERVICES() {
     const data = this.settings.SERVICES || [
       { item: Constants.WASH, sortOrder: 1, price: 22, time: 50, title: "Exterior Hand Wash", description: "We use an advanced eco-friendly hand washing technique to thoroughly remove contaminants from the wheels and surface of your vehicle!" },
       { item: Constants.TIRE_SHINE, sortOrder: 2, price: 8, time: 20, title: "Tire Shine", description: "Make your car look new again with a hand applied gel coating that protects your tires from harmful UV rays and provides a beautiful shine." },
       { item: Constants.INTERIOR, sortOrder: 3, price: 45, time: 45, title: "Interior Cleaning", description: "A clean interior means happy passengers. Add this service and we'll vacuum, spot remove stains, clean windows, and wipe down the dash, seats, door jambs, and trim!" },
-      { item: Constants.WAX, sortOrder: 4, price: 32, time: 45, title: "Hand Wax", description: "With this package we'll hand apply top of the line wax to your vehicle's body which provides extra shine and protection! We recommend waxing your vehicles every 3 to 6 months." }
-      //{ item: Constants.RAIN_GUARD, sortOrder: 5, price: 10, time: 15, title: "Rain Guard", description: "Tired of windshield wiper streaks? Add this service and we'll put a protective sealant on your windows that repels water and snow." }
-      //{ item: Constants.HEADLIGHT_RESTORE, sortOrder: 6, price: 25, time: 20, title: "Headlight Restoration", description: "Foggy headlights? No worries. We can polish them up like new!" }
+      { item: Constants.WAX, sortOrder: 4, price: 32, time: 45, title: "Hand Wax", description: "With this package we'll hand apply top of the line wax to your vehicle's body which provides extra shine and protection! We recommend waxing your vehicles every 3 to 6 months." },
+      { item: 5, sortOrder: 5, price: 25, time: 30, title: "Headlight Restore", description: "Foggy headlights? Tack on this service and we'll polish them up like new!" },
+      { item: 6, sortOrder: 6, price: 50, time: 60, title: "Carpet Shampoo", description: "Freshen your car's carpets with a deep clean and shampoo." },
+      { item: 7, sortOrder: 7, price: 50, time: 60, title: "Shampoo/Condition Seats", description: "This service adds either a shampoo washing of fabric seats or a thorough conditioning of leather seats." }
     ];
 
     var serviceCopy = JSON.parse(JSON.stringify(data));
     serviceCopy.forEach(s => {
-      if(s.item == Constants.WASH){
+      if(s.item == Constants.WASH || s.item == Constants.INTERIOR){
         s.checked = ko.observable(true);
         s.disable = ko.observable(false);
       } else {
