@@ -27,9 +27,10 @@ const ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
       WASH = 1,
       TIRE_SHINE = 2,
       INTERIOR = 3,
-      WAX = 4
-      // RAIN_GUARD = 5,
-      // HEADLIGHT_RESTORE = 6
+      WAX = 4,
+      SHAMPOO = 5,
+      CONDITIONER = 6,
+      HEADLIGHT_RESTORE = 7
 
 class Constants {
   static get MORNING_TIME_RANGE(){
@@ -76,11 +77,15 @@ class Constants {
     return WAX;
   }
 
-  // static get WAX(){
-  //   return RAIN_GUARD;
-  // }
+  static get CONDITIONER(){
+    return CONDITIONER;
+  }
 
-  // static get WAX(){
-  //   return HEADLIGHT_RESTORE;
-  // }
+  static get SHAMPOO(){
+    return SHAMPOO;
+  }
+
+  static get HEADLIGHT_RESTORE(){
+    return HEADLIGHT_RESTORE;
+  }
 }

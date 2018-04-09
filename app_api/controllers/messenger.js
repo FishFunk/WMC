@@ -260,6 +260,7 @@ var formatInfo = (appt, phone)=>{
 
 	var dt = new Date(appt.date);
 	var prepaid = appt.prepaid ? " (Prepaid: YES)" : " (Prepaid: NO)";
+
 	
 	apptHtml += ul +
 		li + strong + 'Phone: ' + _strong + phone + _li +

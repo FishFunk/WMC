@@ -440,9 +440,10 @@ var ASYNC_INTERUPTION_MARKER = "ASYNC_INTERUPTION_MARKER",
     WASH = 1,
     TIRE_SHINE = 2,
     INTERIOR = 3,
-    WAX = 4;
-// RAIN_GUARD = 5,
-// HEADLIGHT_RESTORE = 6
+    WAX = 4,
+    SHAMPOO = 5,
+    CONDITIONER = 6,
+    HEADLIGHT_RESTORE = 7;
 
 var Constants = function () {
   function Constants() {
@@ -504,15 +505,21 @@ var Constants = function () {
     get: function get() {
       return WAX;
     }
-
-    // static get WAX(){
-    //   return RAIN_GUARD;
-    // }
-
-    // static get WAX(){
-    //   return HEADLIGHT_RESTORE;
-    // }
-
+  }, {
+    key: "CONDITIONER",
+    get: function get() {
+      return CONDITIONER;
+    }
+  }, {
+    key: "SHAMPOO",
+    get: function get() {
+      return SHAMPOO;
+    }
+  }, {
+    key: "HEADLIGHT_RESTORE",
+    get: function get() {
+      return HEADLIGHT_RESTORE;
+    }
   }]);
 
   return Constants;
@@ -1507,6 +1514,14 @@ var OrderFormViewModel = function () {
 			});
 		});
 
+		this.addInterior.subscribe(function (bool) {
+			_this.Services().forEach(function (s) {
+				if (s.item == Constants.SHAMPOO || s.item == Constants.CONDITIONER || s.item == Constants.HEADLIGHT_RESTORE) {
+					s.disable(!bool);
+				}
+			});
+		});
+
 		this.Rows = _.partition(this.Services(), function (s) {
 			return s.sortOrder <= Math.ceil(_this.Services().length / 2);
 		});
@@ -1543,19 +1558,6 @@ var OrderFormViewModel = function () {
 		this.street = ko.observable("");
 		this.city = ko.observable("");
 		this.zip = ko.observable(this.storageHelper.ZipCode);
-
-		// Subscriptions
-		this.hideSubscriptionForm = ko.observable(true);
-		this.subIntervals = [1, 2, 3];
-		this.selectedSubInterval = ko.observable(this.subIntervals[0]);
-		this.subSpans = [{
-			days: 7,
-			display: "Week(s)"
-		}, {
-			days: 28,
-			display: "Month(s)"
-		}];
-		this.selectedSubSpan = ko.observable(this.subSpans[0]);
 
 		// Coupon
 		this.couponCode = ko.observable("");
@@ -1609,14 +1611,8 @@ var OrderFormViewModel = function () {
 		this.orderSummary = ko.computed(function () {
 			var summary = "";
 
-			if (!self.hideSubscriptionForm()) {
-				if (self.dateMoment) {
-					summary = $.validator.format("<strong>{0} every {1} {2} starting {3}</strong><hr>", self.selectedTimeRange().range, self.selectedSubInterval(), self.selectedSubSpan().display, self.dateMoment.format("ddd MMM Do"));
-				}
-			} else {
-				if (self.dateMoment) {
-					summary = $.validator.format("<strong>{0} {1}</strong><br>", self.dateMoment.format("ddd MMM Do"), self.selectedTimeRange().range);
-				}
+			if (self.dateMoment) {
+				summary = $.validator.format("<strong>{0} {1}</strong><br>", self.dateMoment.format("ddd MMM Do"), self.selectedTimeRange().range);
 			}
 
 			var selectedCars = self.SelectedCars;
@@ -1971,12 +1967,6 @@ var OrderFormViewModel = function () {
 			var newAppt = this._makeAppointmentSchema(prepaid);
 			currentUsr.appointments != null ? currentUsr.appointments.push(newAppt) : currentUsr.appointments = [newAppt];
 
-			if (!this.hideSubscriptionForm()) {
-				var startDate = new Date(newAppt.date);
-				var subscription = this._makeSubscriptionSchema(startDate);
-				currentUsr.subscriptions != null ? currentUsr.subscriptions.push(subscription) : currentUsr.subscriptions = [subscription];
-			}
-
 			currentUsr.cars = this.cars();
 			currentUsr.phone = this.phone();
 			currentUsr.locations = this.locations();
@@ -2207,37 +2197,6 @@ var OrderFormViewModel = function () {
 				location: selectedLocation,
 				prepaid: prepaid,
 				price: this.discountedTotal(),
-				services: this._buildServicesArray(),
-				timeEstimate: this._getTimeEstimate(),
-				timeRange: this.selectedTimeRange().range,
-				timeRangeKey: this.selectedTimeRange().key,
-				description: this.description()
-			};
-		}
-	}, {
-		key: '_makeSubscriptionSchema',
-		value: function _makeSubscriptionSchema(startDate) {
-			var selectedCars = this.SlectedCars;
-			var selectedLocation = _.find(this.locations(), function (loc) {
-				return loc.selected();
-			});
-			var daySpan = this.selectedSubInterval() * this.selectedSubSpan().days;
-			var x = Math.round(365 / daySpan);
-			var daysToAdd = daySpan;
-			var futureDates = [];
-
-			for (var i = 0; i < x; i++) {
-				var futureDate = new Date(startDate);
-				futureDate.setDate(startDate.getDate() + daysToAdd);
-				futureDates.push(futureDate);
-				daysToAdd += daySpan;
-			}
-
-			return {
-				cars: selectedCars,
-				dates: futureDates,
-				location: selectedLocation,
-				price: this.orderTotal(),
 				services: this._buildServicesArray(),
 				timeEstimate: this._getTimeEstimate(),
 				timeRange: this.selectedTimeRange().range,
