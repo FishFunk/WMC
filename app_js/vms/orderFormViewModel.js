@@ -113,7 +113,7 @@ class OrderFormViewModel {
 		this.orderTotal = ko.computed(()=>{
 			let total = 0.00;
 			let serviceCost = _.reduce(this.Services(), function(memo, s){ 
-				if(s.checked()){
+				if(s.checked() && !s.disable()){
 					memo += s.price;
 				} 
 				return memo;
@@ -757,7 +757,7 @@ class OrderFormViewModel {
 		var summary = "";
 		
 		this.Services().forEach(s =>{
-			if(s.checked()){
+			if(s.checked() && !s.disable()){
 				summary += s.title + "<br>";
 			}
 		});

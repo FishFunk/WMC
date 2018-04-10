@@ -1543,7 +1543,7 @@ var OrderFormViewModel = function () {
 		this.orderTotal = ko.computed(function () {
 			var total = 0.00;
 			var serviceCost = _.reduce(_this.Services(), function (memo, s) {
-				if (s.checked()) {
+				if (s.checked() && !s.disable()) {
 					memo += s.price;
 				}
 				return memo;
@@ -2228,7 +2228,7 @@ var OrderFormViewModel = function () {
 			var summary = "";
 
 			this.Services().forEach(function (s) {
-				if (s.checked()) {
+				if (s.checked() && !s.disable()) {
 					summary += s.title + "<br>";
 				}
 			});
