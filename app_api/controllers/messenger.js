@@ -227,8 +227,7 @@ module.exports.sendEmail = (req, res)=>{
 
 		transport.sendMail({
           from: 'WashMyCar LLC <' + from + '>',
-          to: to,
-          bcc: [process.env.BCC_EMAIL_1, process.env.BCC_EMAIL_2],
+          bcc: [process.env.BCC_EMAIL_1, process.env.BCC_EMAIL_2].concat(to),
           subject: subject,
 	      html:
 	      	'<html style="font-family: sans-serif; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">\
