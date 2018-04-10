@@ -34,7 +34,19 @@ class GiftFormViewModel {
 
 		this.addWash.subscribe((bool)=>{
 			this.Services().forEach((s)=>{
-				if(s.item != Constants.INTERIOR && s.item != Constants.WASH)
+				if(s.item == Constants.TIRE_SHINE || 
+				   s.item == Constants.WAX)
+				{
+					s.disable(!bool);
+				}
+			});
+		});
+
+	    this.addInterior.subscribe((bool)=>{
+			this.Services().forEach((s)=>{
+				if(s.item == Constants.SHAMPOO || 
+				   s.item == Constants.CONDITIONER ||
+				   s.item == Constants.HEADLIGHT_RESTORE)
 				{
 					s.disable(!bool);
 				}
@@ -59,7 +71,7 @@ class GiftFormViewModel {
 		this.orderTotal = ko.computed(()=>{
 			let total = 0.00;
 			let serviceCost = _.reduce(this.Services(), function(memo, s){ 
-				if(s.checked()){
+				if(s.checked() && !s.disable()){
 					memo += s.price;
 				} 
 				return memo;
@@ -235,7 +247,7 @@ class GiftFormViewModel {
 		var summary = "";
 		
 		this.Services().forEach(s =>{
-			if(s.checked()){
+			if(s.checked() && !s.disable()){
 				summary += s.title + "<br>";
 			}
 		});

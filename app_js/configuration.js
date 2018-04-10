@@ -39,9 +39,9 @@ class Configuration
       { item: Constants.TIRE_SHINE, sortOrder: 2, price: 8, time: 20, title: "Tire Shine", description: "Make your car look new again with a hand applied gel coating that protects your tires from harmful UV rays and provides a beautiful shine." },
       { item: Constants.INTERIOR, sortOrder: 3, price: 45, time: 45, title: "Interior Cleaning", description: "A clean interior means happy passengers. Add this service and we'll vacuum, spot remove stains, clean windows, and wipe down the dash, seats, door jambs, and trim!" },
       { item: Constants.WAX, sortOrder: 4, price: 32, time: 45, title: "Hand Wax", description: "With this package we'll hand apply top of the line wax to your vehicle's body which provides extra shine and protection! We recommend waxing your vehicles every 3 to 6 months." },
-      { item: 5, sortOrder: 5, price: 25, time: 30, title: "Headlight Restore", description: "Foggy headlights? Tack on this service and we'll polish them up like new!" },
-      { item: 6, sortOrder: 6, price: 50, time: 60, title: "Carpet Shampoo", description: "Freshen your car's carpets with a deep clean and shampoo." },
-      { item: 7, sortOrder: 7, price: 50, time: 60, title: "Shampoo/Condition Seats", description: "This service adds either a shampoo washing of fabric seats or a thorough conditioning of leather seats." }
+      { item: Constants.SHAMPOO, sortOrder: 6, price: 50, time: 60, title: "Carpet Shampoo", description: "Freshen your car's carpets with a deep clean and shampoo." },
+      { item: Constants.CONDITIONER, sortOrder: 7, price: 50, time: 60, title: "Shampoo/Condition Seats", description: "This service adds either a shampoo washing of fabric seats or a thorough conditioning of leather seats." },
+      { item: Constants.HEADLIGHT_RESTORE, sortOrder: 5, price: 25, time: 30, title: "Headlight Restore", description: "Foggy headlights? Tack on this service and we'll polish them up like new!" }
     ];
 
     var serviceCopy = JSON.parse(JSON.stringify(data));
