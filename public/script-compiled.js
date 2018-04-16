@@ -863,7 +863,7 @@ var GiftFormViewModel = function () {
 
 		this.addInterior.subscribe(function (bool) {
 			_this.Services().forEach(function (s) {
-				if (s.item == Constants.SHAMPOO || s.item == Constants.CONDITIONER || s.item == Constants.HEADLIGHT_RESTORE) {
+				if (s.item == Constants.SHAMPOO || s.item == Constants.CONDITIONER) {
 					s.disable(!bool);
 				}
 			});
@@ -1501,7 +1501,7 @@ var OrderFormViewModel = function () {
 
 		this.addInterior.subscribe(function (bool) {
 			_this.Services().forEach(function (s) {
-				if (s.item == Constants.SHAMPOO || s.item == Constants.CONDITIONER || s.item == Constants.HEADLIGHT_RESTORE) {
+				if (s.item == Constants.SHAMPOO || s.item == Constants.CONDITIONER) {
 					s.disable(!bool);
 				}
 			});

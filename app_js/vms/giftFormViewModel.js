@@ -45,8 +45,7 @@ class GiftFormViewModel {
 	    this.addInterior.subscribe((bool)=>{
 			this.Services().forEach((s)=>{
 				if(s.item == Constants.SHAMPOO || 
-				   s.item == Constants.CONDITIONER ||
-				   s.item == Constants.HEADLIGHT_RESTORE)
+				   s.item == Constants.CONDITIONER)
 				{
 					s.disable(!bool);
 				}
